@@ -40,7 +40,7 @@ interface ChatWidgetProps {
 
 const geminiApiKeys = import.meta.env.VITE_GEMINI_KEY?.split(',').map((k: string) => k.trim()).filter(Boolean) || [];
 const geminiClients = geminiApiKeys.map((key: string) => new GoogleGenerativeAI(key));
-const geminiModelCandidates = ['gemini-2.0-flash-lite', 'gemini-1.5-flash'];
+const geminiModelCandidates = ['gemini-2.0-flash', 'gemini-1.5-flash-latest'];
 const medicalSystemInstruction = [
   'Bạn là một biên tập viên báo sức khỏe giàu kinh nghiệm. Hãy đóng vai trợ lý EcoHeritage AI.',
   'Nhiệm vụ: Giải thích về dược liệu và di sản y học Việt Nam.',
