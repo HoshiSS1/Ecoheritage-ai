@@ -1,0 +1,202 @@
+import { motion } from 'motion/react';
+import { Activity } from 'lucide-react';
+import { Link } from 'react-router';
+import { EnvironmentCard } from '../components/EnvironmentCard';
+import { HealthAdviceCard } from '../components/HealthAdviceCard';
+import { EnvironmentChart } from '../components/EnvironmentChart';
+import { TraditionalRemedyCard } from '../components/TraditionalRemedyCard';
+import { Hero } from '../components/Hero';
+import { StatsSection } from '../components/StatsSection';
+import { HeritageStory } from '../components/HeritageStory';
+import { environmentData, healthAdvices, traditionalRemedies } from '../data';
+
+export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => void }) {
+  // Chỉ lấy 3 bài thuốc tiêu biểu cho trang chủ
+  const featuredRemedies = traditionalRemedies.slice(0, 3);
+
+  return (
+    <>
+      <Hero />
+      <StatsSection />
+
+      <section id="environment" className="py-20 sm:py-32 relative bg-[#051a11] overflow-hidden scroll-mt-20">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-emerald-600/20 blur-[120px] mix-blend-screen animate-pulse" />
+          <div className="absolute bottom-[20%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-amber-600/10 blur-[150px] mix-blend-screen" style={{ animation: "pulse 8s infinite alternate" }} />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-5 py-2 mb-6 backdrop-blur-md"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-emerald-200 font-bold">Giám sát thời gian thực</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-tight mb-6 break-words"
+            >
+              Chỉ số môi trường <br />
+              <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-300 not-italic font-bold">Đà Nẵng</em> hôm nay
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-base sm:text-lg text-emerald-100/70 font-light"
+            >
+              Mỗi chỉ số là một tín hiệu. Chúng tôi giúp bạn hiểu và hành động — từ chiếc khẩu trang đến ly trà lá sen.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 perspective-[1000px]">
+            {environmentData.map((d, i) => (
+              <EnvironmentCard key={d.title} {...d} index={i} />
+            ))}
+          </div>
+
+          <EnvironmentChart />
+        </div>
+      </section>
+
+      <section id="health" className="py-20 sm:py-32 relative bg-gradient-to-b from-[#051a11] to-[#0a2e1f] overflow-hidden scroll-mt-20">
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-emerald-400 to-transparent" />
+          <div className="absolute top-0 right-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-amber-400 to-transparent" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-5 py-2 mb-6 backdrop-blur-md"
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+              <span className="text-[10px] uppercase tracking-[0.3em] text-amber-200 font-bold">Lời khuyên hôm nay</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-tight mb-6 break-words"
+            >
+              Hai con đường, <br />
+              <em className="text-amber-400 font-bold not-italic">một sức khỏe</em>.
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-base sm:text-lg text-emerald-100/70 font-light"
+            >
+              Mỗi gợi ý đều đi cặp đôi — khoa học hiện đại và y học cổ truyền, để bạn lựa chọn điều phù hợp nhất.
+            </motion.p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 perspective-[1000px]">
+            {healthAdvices.map((a, i) => (
+              <HealthAdviceCard key={a.title} {...a} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <HeritageStory />
+
+      <section id="heritage-featured" className="py-20 sm:py-32 relative bg-[#0a2e1f] overflow-hidden scroll-mt-20">
+        <div className="absolute inset-0 opacity-[0.03] bg-[url('/textures/cubes.png')]" />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+          <div className="text-center mb-20 max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-5 py-2 mb-6 backdrop-blur-md"
+            >
+              <span className="text-[10px] uppercase tracking-[0.3em] text-emerald-300 font-bold">Bộ sưu tập bài thuốc</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-tight mb-6 break-words"
+            >
+              Di sản y học <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic font-bold">Đà Nẵng</em>.
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-base sm:text-lg text-emerald-100/70 font-light"
+            >
+              Những bài thuốc tiêu biểu được truyền qua nhiều thế hệ, nay được số hóa và gợi ý theo từng điều kiện môi trường.
+            </motion.p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-[1200px]">
+            {featuredRemedies.map((r, i) => (
+              <TraditionalRemedyCard key={r.name} {...r} index={i} />
+            ))}
+          </div>
+          
+          <div className="mt-16 text-center">
+             <Link 
+                to="/heritage"
+                className="inline-flex items-center gap-2 relative group overflow-hidden bg-white/5 border border-amber-400/50 text-amber-300 px-8 py-4 rounded-full font-bold text-base backdrop-blur-sm transition-all duration-500 hover:bg-amber-400 hover:text-[#051a11]"
+              >
+                Khám phá kho tàng di sản
+             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 sm:py-32 relative bg-[#051a11] overflow-hidden flex items-center justify-center min-h-[60vh] sm:min-h-[70vh]">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-gradient-to-tr from-emerald-600/30 to-amber-500/30 blur-[100px] rounded-full animate-pulse mix-blend-screen" />
+        </div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: "easeOut" }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-12 md:p-20 rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-emerald-400 mb-6 drop-shadow-lg">Sẵn sàng sống xanh?</p>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8 text-white drop-shadow-2xl break-words">
+              Mỗi hơi thở là một <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">lựa chọn</em>.<br />
+              Hãy để <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">di sản</em> đồng hành.
+            </h2>
+            <p className="text-emerald-100/80 max-w-2xl mx-auto mb-10 sm:mb-12 text-base sm:text-lg font-light leading-relaxed">
+              Tạo tài khoản miễn phí và nhận gợi ý sức khỏe cá nhân hóa mỗi sáng, dựa trên thời tiết Đà Nẵng và thể trạng riêng của bạn.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <button 
+                onClick={() => setIsAuthOpen(true)}
+                className="relative group overflow-hidden bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#051a11] px-12 py-5 rounded-full font-bold text-lg shadow-[0_0_40px_rgba(16,185,129,0.4)] hover:shadow-[0_0_60px_rgba(16,185,129,0.7)] transition-all duration-500 hover:-translate-y-1"
+              >
+                <span className="relative z-10 flex items-center gap-2">Tham gia EcoHeritage <Activity className="w-5 h-5" /></span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+              </button>
+              <Link 
+                to="/heritage"
+                className="relative group overflow-hidden bg-white/5 border border-white/20 text-white hover:text-amber-300 px-12 py-5 rounded-full font-bold text-lg backdrop-blur-sm transition-all duration-500 hover:-translate-y-1"
+              >
+                Tìm hiểu thêm
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </>
+  );
+}

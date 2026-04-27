@@ -1,0 +1,546 @@
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router';
+import { Send, Leaf, Sparkles, Loader2, MessageCircle, X, RotateCcw } from 'lucide-react';
+import { GoogleGenerativeAI, type GenerationConfig, type Content } from '@google/generative-ai';
+import { toast } from 'sonner';
+import { traditionalRemedies } from '../data';
+
+type HeritageSuggestion = {
+  id: string;
+  name: string;
+  href: string;
+  reason: string;
+};
+
+type ChatMessage =
+  | {
+      from: 'user';
+      text: string;
+    }
+  | {
+      from: 'ai';
+      text: string;
+      relatedHeritage?: HeritageSuggestion[];
+    };
+
+const defaultInitialMessages: ChatMessage[] = [
+  {
+    from: 'ai',
+    text:
+      'Chào bạn, tôi là trợ lý tư vấn của EcoHeritage.\nBạn mô tả ngắn triệu chứng hoặc tên bài thuốc, tôi sẽ đọc nhanh và ghim di sản phù hợp bên dưới.',
+  },
+];
+
+const suggestions = ['Ho khan, ngứa cổ', 'Nóng trong, nổi mụn', 'Đau nhức xương khớp'];
+
+interface ChatWidgetProps {
+  user?: { name: string; email: string } | null;
+}
+
+const geminiApiKeys = import.meta.env.VITE_GEMINI_KEY?.split(',').map((k: string) => k.trim()).filter(Boolean) || [];
+const geminiClients = geminiApiKeys.map((key: string) => new GoogleGenerativeAI(key));
+const geminiModelCandidates = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+const medicalSystemInstruction = [
+  'Bạn là một lương y / bác sĩ y học cổ truyền tận tâm của hệ sinh thái EcoHeritage.',
+  'Hãy trò chuyện với bệnh nhân một cách tự nhiên, ân cần, và thấu cảm như một bác sĩ thực thụ đang khám bệnh trực tiếp.',
+  'Đừng trả lời theo khuôn mẫu máy móc. Hãy linh hoạt đưa ra nhận định, lời khuyên, và cách xử lý một cách trôi chảy.',
+  'Bạn có thể định dạng văn bản tự do (xuống dòng, dùng dấu gạch ngang) để dễ đọc, nhưng giữ câu chữ gần gũi.',
+  'NẾU LÀ TÌNH TRẠNG CẤP CỨU (như ho ra máu, khó thở): Bằng giọng điệu khẩn thiết nhưng bình tĩnh, khuyên họ đến bệnh viện ngay lập tức.',
+  'NẾU LÀ CÂU HỎI NGOÀI LỀ: Cười xòa nhẹ nhàng và lái câu chuyện về lại chủ đề sức khỏe, thảo dược cổ truyền.',
+  'Luôn xưng là "tôi" và gọi người dùng là "bạn" hoặc "anh/chị" tùy ngữ cảnh. Nếu có bài thuốc phù hợp, hãy nhắc đến nó một cách khéo léo trong câu chuyện.',
+  'LUÔN LUÔN nhắc người dùng đi khám bác sĩ hoặc tham vấn chuyên gia y tế nếu họ hỏi về các bệnh lý nặng hoặc có triệu chứng nguy hiểm.',
+].join(' ');
+
+const medicalGenerationConfig: GenerationConfig = {
+  temperature: 0.6,
+  topP: 0.9,
+  maxOutputTokens: 1024,
+};
+
+const normalizeSearchText = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const hasNormalizedTerm = (queryNormalized: string, queryTokens: Set<string>, term: string) => {
+  const normalizedTerm = normalizeSearchText(term);
+  if (!normalizedTerm) return false;
+
+  const tokens = normalizedTerm.split(' ').filter(Boolean);
+  if (!tokens.length) return false;
+
+  if (tokens.length === 1) {
+    return queryTokens.has(tokens[0]);
+  }
+
+  return tokens.every((token) => queryTokens.has(token)) || queryNormalized.includes(normalizedTerm);
+};
+
+const heritageBoostRules = [
+  {
+    label: 'hô hấp',
+    terms: ['ho', 'ho khan', 'ho co dom', 'nghet mui', 'so mui', 'viem hong', 'cam cum', 'dau hong'],
+    ids: ['siro-la-lot', 'toi-ngam-mat-ong', 'nuoc-tia-to', 'xong-hoi', 'chao-tia-to', 'nuoc-sa-chanh', 'tra-gung-mat-ong', 'chanh-dao-mat-ong'],
+  },
+  {
+    label: 'thanh nhiệt',
+    terms: ['nong trong nguoi', 'noi mun', 'nhiet mieng', 'mat gan', 'thanh nhiet', 'giai doc', 'khat nuoc'],
+    ids: ['tra-la-sen', 'tra-atiso', 'che-vang', 'nha-dam', 'nuoc-rau-ma', 'nuoc-dau-van-rang', 'canh-bi-dao'],
+  },
+  {
+    label: 'xương khớp',
+    terms: ['xuong khop', 'dau nhuc', 'nhuc moi', 'lanh chan', 'met moi'],
+    ids: ['ngam-chan-ngai-cuu'],
+  },
+  {
+    label: 'tiêu hóa',
+    terms: ['tieu hoa', 'an khong tieu', 'day bung', 'tao bon', 'tri'],
+    ids: ['canh-kho-qua', 'nuoc-voi-tuoi', 'nuoc-ep-diep-ca', 'sua-gao-lut-rang'],
+  },
+  {
+    label: 'an thần',
+    terms: ['stress', 'mat ngu', 'khong ngu', 'cang thang', 'suy nhuoc'],
+    ids: ['tra-hoa-cuc', 'tra-tam-sen', 'che-hat-sen-long-nhan'],
+  },
+];
+
+const heritageIndex = traditionalRemedies.map((remedy) => ({
+  id: remedy.id,
+  name: remedy.name,
+  category: remedy.category,
+  benefits: remedy.benefits,
+  ingredients: remedy.ingredients ?? [],
+  keywords: remedy.keywords ?? [],
+}));
+
+const findRelatedHeritage = (promptText: string): HeritageSuggestion[] => {
+  const queryNormalized = normalizeSearchText(promptText);
+  const queryTokens = new Set(queryNormalized.split(' ').filter(Boolean));
+
+  const scored = heritageIndex
+    .map((remedy) => {
+      let score = 0;
+      const reasons: string[] = [];
+      const matchingKeywords: string[] = [];
+
+      for (const keyword of remedy.keywords) {
+        if (hasNormalizedTerm(queryNormalized, queryTokens, keyword)) {
+          score += 4;
+          matchingKeywords.push(keyword);
+        }
+      }
+
+      for (const ingredient of remedy.ingredients) {
+        if (hasNormalizedTerm(queryNormalized, queryTokens, ingredient)) {
+          score += 2;
+          reasons.push(ingredient);
+        }
+      }
+
+      if (hasNormalizedTerm(queryNormalized, queryTokens, remedy.name)) {
+        score += 3;
+        reasons.push(remedy.name);
+      }
+
+      if (hasNormalizedTerm(queryNormalized, queryTokens, remedy.category)) {
+        score += 2;
+        reasons.push(remedy.category);
+      }
+
+      for (const rule of heritageBoostRules) {
+        if (rule.ids.includes(remedy.id) && rule.terms.some((term) => hasNormalizedTerm(queryNormalized, queryTokens, term))) {
+          score += 5;
+          reasons.push(rule.label);
+        }
+      }
+
+      if (matchingKeywords.length) {
+        reasons.unshift(matchingKeywords[0]);
+      }
+
+      const reasonText = reasons[0] ? `Khớp với ${reasons[0]}.` : `Thuộc nhóm ${remedy.category.toLowerCase()}.`;
+
+      return {
+        remedy,
+        score,
+        reasonText,
+      };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  return scored.map(({ remedy, reasonText }) => ({
+    id: remedy.id,
+    name: remedy.name,
+    href: `/heritage#${remedy.id}`,
+    reason: reasonText,
+  }));
+};
+
+const formatHeritageContext = (matches: HeritageSuggestion[]) => {
+  if (!matches.length) {
+    return 'Bài thuốc di sản liên quan: chưa có gợi ý khớp rõ từ kho hiện tại.';
+  }
+
+  return [
+    'Bài thuốc di sản liên quan từ kho EcoHeritage:',
+    ...matches.map((item, index) => `${index + 1}. ${item.name} — ${item.reason}`),
+    'Nếu thật sự phù hợp với triệu chứng, hãy nhắc tên 1-2 bài thuốc này một cách tự nhiên trong phần nhận định hoặc xử lý. Không chèn URL.',
+  ].join('\n');
+};
+
+// Removed rigid JSON parsing and replaced with natural chat flow.
+const retryableErrorPattern =
+  /(?:\b429\b|\b500\b|\b503\b|\b504\b|UNAVAILABLE|INTERNAL|RESOURCE_EXHAUSTED|DEADLINE_EXCEEDED|high demand|overloaded|temporarily)/i;
+const missingModelPattern = /(?:\b404\b|NOT_FOUND|not found|unsupported for generateContent|not supported)/i;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
+const isRetryableGeminiError = (error: unknown) => retryableErrorPattern.test(getErrorMessage(error));
+
+const isMissingModelError = (error: unknown) => missingModelPattern.test(getErrorMessage(error));
+
+export function ChatWidget({ user }: ChatWidgetProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>(defaultInitialMessages);
+  const [inputMessage, setInputMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (isOpen && !isMinimized) {
+      scrollToBottom();
+    }
+  }, [messages, isOpen, isMinimized]);
+
+  useEffect(() => {
+    const handleOpenChat = () => {
+      setIsOpen(true);
+      setIsMinimized(false);
+    };
+    window.addEventListener('openChatWidget', handleOpenChat);
+    return () => window.removeEventListener('openChatWidget', handleOpenChat);
+  }, []);
+
+  const buildPrompt = (promptText: string, heritageMatches: HeritageSuggestion[]) => {
+    const userContext = user ? `Người dùng hiện tại: ${user.name} (${user.email}).` : 'Người dùng chưa đăng nhập.';
+    const heritageContext = formatHeritageContext(heritageMatches);
+    return [
+      userContext,
+      heritageContext,
+      `Câu hỏi hiện tại: ${promptText}`,
+    ].join('\n\n');
+  };
+
+  const generateWithRetry = async (modelName: string, contents: Content[]) => {
+    if (geminiClients.length === 0) {
+      throw new Error('Thiếu VITE_GEMINI_KEY trong .env.local');
+    }
+
+    let lastError: unknown = null;
+
+    // Lặp qua từng API Key (Client)
+    for (const client of geminiClients) {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const model = client.getGenerativeModel({
+            model: modelName,
+            systemInstruction: medicalSystemInstruction,
+            generationConfig: medicalGenerationConfig,
+          });
+          const result = await model.generateContent({ contents });
+          return result.response.text();
+        } catch (error) {
+          lastError = error;
+
+          // Nếu lỗi là do hết quota (429), break vòng lặp attempt để nhảy sang API Key tiếp theo
+          const isQuotaError = getErrorMessage(error).includes('429') || getErrorMessage(error).includes('Quota');
+          if (isQuotaError) {
+            console.warn('API Key hiện tại hết hạn mức, đang chuyển sang API Key dự phòng...');
+            break; // Thoát vòng lặp retry của client này, tiếp tục với client kế tiếp
+          }
+
+          if (isMissingModelError(error) || !isRetryableGeminiError(error) || attempt === 2) {
+            throw error; // Lỗi không thể cứu vãn (hoặc không tìm thấy model), ném ra ngoài
+          }
+
+          await sleep(700 * 2 ** attempt);
+        }
+      }
+    }
+
+    throw lastError ?? new Error(`Không thể sinh phản hồi với model ${modelName}.`);
+  };
+
+  const handleSendMessage = async (text?: string) => {
+    const promptText = (text ?? inputMessage).trim();
+    if (!promptText || isTyping) return;
+
+    setMessages((prev) => [...prev, { from: 'user', text: promptText }]);
+    setInputMessage('');
+    setIsTyping(true);
+
+    try {
+      if (geminiClients.length === 0) {
+        throw new Error('Thiếu VITE_GEMINI_KEY trong .env.local');
+      }
+
+      const heritageMatches = findRelatedHeritage(promptText);
+      const currentPrompt = buildPrompt(promptText, heritageMatches);
+      
+      const historyContents: Content[] = messages.slice(1).map(msg => ({
+        role: msg.from === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.text }]
+      }));
+      
+      const contents: Content[] = [
+        ...historyContents,
+        { role: 'user', parts: [{ text: currentPrompt }] }
+      ];
+
+      let lastError: unknown = null;
+
+      for (const modelName of geminiModelCandidates) {
+        try {
+          const aiText = await generateWithRetry(modelName, contents);
+
+          setMessages((prev) => [
+            ...prev,
+            {
+              from: 'ai',
+              text: aiText,
+              relatedHeritage: heritageMatches,
+            },
+          ]);
+          return;
+        } catch (error) {
+          lastError = error;
+
+          const shouldTryNextModel =
+            isRetryableGeminiError(error) ||
+            isMissingModelError(error);
+
+          if (!shouldTryNextModel) {
+            throw error;
+          }
+        }
+      }
+
+      throw lastError ?? new Error('Không tìm thấy model Gemini phù hợp.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Không xác định được lỗi';
+      console.error('AI Error:', error);
+
+      let fallbackText = 'Xin lỗi, hiện tại tôi đang quá tải kết nối. Bạn hãy thử gửi lại sau vài giây để tôi hỗ trợ chính xác hơn nhé.';
+      let toastMessage = `Lỗi kết nối AI: ${message}`;
+      
+      if (message.includes('429') || message.includes('Quota') || message.includes('RESOURCE_EXHAUSTED')) {
+        fallbackText = 'Thật xin lỗi, hiện tại phòng khám đang có quá nhiều người truy cập (vượt giới hạn API miễn phí). Bạn vui lòng chờ khoảng 1 phút rồi thử lại nhé!';
+        toastMessage = 'Phòng khám đang quá tải (Hết lượt API miễn phí). Vui lòng thử lại sau 1 phút!';
+      }
+
+      toast.error(toastMessage);
+      setMessages((prev) => [...prev, { from: 'ai', text: fallbackText }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    setIsMinimized(false);
+  };
+
+  return (
+    <>
+      <button
+        onClick={handleOpen}
+        className={`fixed bottom-6 right-6 z-[100] p-4 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)] hover:scale-110 transition-all duration-300 ${
+          isOpen && !isMinimized ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
+        }`}
+      >
+        <MessageCircle className="w-6 h-6 md:w-7 md:h-7 text-[#051a11]" />
+        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+        </span>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && !isMinimized && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="fixed bottom-6 right-6 w-[90vw] max-w-[400px] sm:w-full h-[550px] max-h-[85vh] z-[101] bg-[#0a1913]/95 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+          >
+            <div className="bg-[#051a11] px-5 py-4 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg">
+                    <Leaf className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#051a11] shadow-[0_0_10px_rgba(52,211,153,0.8)]" />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-sm md:text-base">Trợ lý EcoHeritage</h3>
+                  <p className="text-emerald-400/80 text-[10px] md:text-[11px] flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Trực tuyến
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setMessages(defaultInitialMessages)}
+                  className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                  title="Làm mới trò chuyện"
+                >
+                  <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 text-white/50 hover:text-rose-400 hover:bg-rose-500/10 rounded-full transition-colors"
+                  title="Đóng"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
+              {messages.map((msg, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: msg.from === 'user' ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[92%] rounded-2xl px-4 py-3 text-[13px] md:text-sm leading-relaxed shadow-md ${
+                      msg.from === 'user'
+                        ? 'bg-amber-400 text-[#051a11] font-medium rounded-br-sm'
+                        : 'bg-white/10 text-white/90 border border-white/5 rounded-bl-sm'
+                    }`}
+                  >
+                    {msg.from === 'ai' ? (
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          {msg.text.split('\n').map((line, i) => (
+                            <p
+                              key={i}
+                              className={`text-[14px] md:text-[15px] leading-relaxed text-white/95 ${
+                                line.startsWith('-') ? 'ml-4 flex gap-2' : ''
+                              }`}
+                            >
+                              {line.startsWith('-') ? (
+                                <>
+                                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-emerald-400/50 shrink-0" />
+                                  <span>{line.substring(1).trim()}</span>
+                                </>
+                              ) : (
+                                line
+                              )}
+                            </p>
+                          ))}
+                        </div>
+
+                        {msg.relatedHeritage?.length ? (
+                          <div className="pt-3 mt-4 border-t border-white/10">
+                            <div className="mb-3 text-[10px] uppercase tracking-[0.35em] text-amber-300/70 font-bold flex items-center gap-2">
+                              <Sparkles className="w-3 h-3 text-amber-300" />
+                              Di sản liên quan
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {msg.relatedHeritage.map((heritage) => (
+                                <Link
+                                  key={heritage.id}
+                                  to={heritage.href}
+                                  title={heritage.reason}
+                                  className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-[12px] font-semibold text-emerald-100 hover:bg-emerald-500/30 transition-colors shadow-sm"
+                                >
+                                  <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+                                  <span>{heritage.name}</span>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : (
+                      msg.text.split('\n').map((line, i) => (
+                        <p key={i} className={i > 0 ? 'mt-2' : ''}>
+                          {line}
+                        </p>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+
+              {isTyping && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                  <div className="bg-white/10 border border-white/5 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5 items-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60 animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </motion.div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="p-4 bg-[#051a11] border-t border-white/5">
+              <div className="flex gap-2 overflow-x-auto pb-3 custom-scrollbar hide-scrollbar">
+                {suggestions.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => handleSendMessage(s)}
+                    className="whitespace-nowrap px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs rounded-full border border-emerald-500/20 transition-colors"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Hỏi AI về sức khỏe..."
+                  className="w-full bg-[#0a2e1f] border border-white/10 rounded-full py-3 md:py-3.5 pl-4 pr-12 text-[13px] md:text-sm text-white placeholder-white/30 focus:outline-none focus:border-amber-400/50 transition-colors"
+                />
+                <button
+                  onClick={() => handleSendMessage()}
+                  disabled={!inputMessage.trim() || isTyping}
+                  className="absolute right-1.5 p-2 bg-amber-400 text-[#051a11] rounded-full hover:bg-amber-300 disabled:opacity-50 disabled:hover:bg-amber-400 transition-colors"
+                >
+                  {isTyping ? <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" /> : <Send className="w-4 h-4 md:w-5 md:h-5" />}
+                </button>
+              </div>
+              <p className="mt-3 text-[10px] md:text-[11px] text-white/40 italic text-center leading-tight">
+                ⚠️ Lưu ý: EcoHeritage AI là trợ lý cung cấp thông tin tham khảo từ di sản dân gian. Vui lòng tham vấn ý kiến chuyên gia y tế trước khi sử dụng bài thuốc.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

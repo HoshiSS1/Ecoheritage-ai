@@ -1,0 +1,18 @@
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Toaster } from "sonner";
+import App from "./app/App.tsx";
+import "./styles/index.css";
+
+// Lấy Google Client ID từ biến môi trường
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
+createRoot(document.getElementById("root")!).render(
+  <BrowserRouter>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <App />
+      <Toaster position="bottom-right" richColors />
+    </GoogleOAuthProvider>
+  </BrowserRouter>
+);
