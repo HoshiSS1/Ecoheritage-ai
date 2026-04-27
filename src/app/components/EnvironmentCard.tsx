@@ -45,9 +45,9 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
         </div>
       </div>
 
-      <p className="text-[10px] text-emerald-200/60 font-bold uppercase tracking-[0.2em] mb-2 relative z-10 break-words max-w-full">{title}</p>
-      <p className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 relative z-10 drop-shadow-md group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-emerald-200 transition-all duration-500 break-words max-w-full">{value}</p>
-      <p className="text-sm text-emerald-100/70 leading-relaxed font-light relative z-10 break-words max-w-full mt-auto">{description}</p>
+      <p className="text-[10px] text-emerald-200/90 font-bold uppercase tracking-[0.2em] mb-3 relative z-10 break-words max-w-full drop-shadow-sm">{title}</p>
+      <p className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 relative z-10 drop-shadow-md tracking-tighter group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-emerald-200 transition-all duration-500 break-words max-w-full leading-none">{value}</p>
+      <p className="text-[15px] text-[#F8FAFC] leading-relaxed font-medium relative z-10 break-words max-w-full mt-auto border-t border-white/5 pt-4 drop-shadow-sm">{description}</p>
     </motion.div>
   );
 }

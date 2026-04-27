@@ -4,18 +4,18 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 const chapters = [
   {
     year: 'THẾ KỶ 18 - Hải Thượng Lãn Ông',
-    title: 'Nguyên khí của y lý nước nhà',
-    text: 'Bậc danh y đặt nền móng cho y học cổ truyền Việt Nam, người đã dành cả đời cẩn thận ghi chép lại cái hồn của thảo mộc bản địa dải đất miền Trung.',
+    title: 'Nguyên khí y lý',
+    text: 'Bậc danh y đặt nền móng y học cổ truyền, lưu giữ tinh hoa thảo mộc bản địa.',
   },
   {
     year: 'ĐỜI SỐNG QUẢNG ĐÀ',
-    title: 'Vườn thuốc nam trong hiên nhà',
-    text: 'Vài khóm tía tô, bụi sả, mớ lá lốt sau hè... thầm lặng tạo nên một "kho tàng y lý xanh" che chở sức khỏe cho biết bao thế hệ người dân phố biển.',
+    title: 'Vườn thuốc hiên nhà',
+    text: 'Tía tô, sả, lá lốt... tạo nên "kho tàng y lý xanh" che chở sức khỏe bao thế hệ.',
   },
   {
-    year: '2026 - EcoHeritage AI ra đời',
-    title: 'Nhịp cầu nối quá khứ và tương lai',
-    text: 'Di sản tuổi đời trăm năm nay được tiếp nối bằng công nghệ. Sự thông thái của người xưa kết hợp cùng nhịp đập môi trường hôm nay, tạo nên tấm khiên bảo vệ sức khỏe cho thế hệ mới.',
+    year: '2026 - EcoHeritage AI',
+    title: 'Nối tiếp tương lai',
+    text: 'Dùng AI kết hợp tri thức người xưa và dữ liệu môi trường, tạo tấm khiên bảo vệ sức khỏe.',
   },
 ];
 
@@ -87,8 +87,8 @@ export function HeritageStory() {
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-[1.1] mb-6 drop-shadow-xl break-words max-w-full">
                 Từ <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic font-bold">lá lốt sau hè</em> <br/>đến <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic font-bold">thuật toán AI</em>.
               </h2>
-              <p className="text-lg text-emerald-100/70 leading-relaxed font-light drop-shadow-sm">
-                Mỗi bài thuốc Nam là một mảnh ghép văn hóa của đất Quảng - Đà. Tại EcoHeritage, chúng tôi không để di sản ấy ngủ quên trong trang sách cũ. Bằng trí tuệ nhân tạo, những kinh nghiệm ngàn năm được 'đánh thức', hòa quyện cùng hơi thở của môi trường hiện tại để âm thầm chăm sóc sức khỏe cho bạn mỗi ngày.
+              <p className="text-lg text-[#F8FAFC]/95 leading-relaxed font-medium drop-shadow-md">
+                Bằng trí tuệ nhân tạo, những kinh nghiệm ngàn năm được "đánh thức", kết hợp cùng dữ liệu môi trường để âm thầm chăm sóc sức khỏe cho bạn mỗi ngày.
               </p>
             </motion.div>
 
@@ -115,7 +115,7 @@ export function HeritageStory() {
                       {c.year}
                     </div>
                     <div className="font-display text-xl sm:text-2xl text-white font-bold mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-amber-200 transition-colors break-words max-w-full">{c.title}</div>
-                    <p className="text-[15px] text-emerald-100/60 leading-relaxed font-light">{c.text}</p>
+                    <p className="text-[15px] text-[#F8FAFC]/90 leading-relaxed font-medium drop-shadow-sm">{c.text}</p>
                   </div>
                 </motion.div>
               ))}

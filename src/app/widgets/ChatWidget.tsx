@@ -40,16 +40,15 @@ interface ChatWidgetProps {
 
 const geminiApiKeys = import.meta.env.VITE_GEMINI_KEY?.split(',').map((k: string) => k.trim()).filter(Boolean) || [];
 const geminiClients = geminiApiKeys.map((key: string) => new GoogleGenerativeAI(key));
-const geminiModelCandidates = ['gemini-2.5-flash-lite', 'gemini-2.5-flash'];
+const geminiModelCandidates = ['gemini-2.0-flash-lite', 'gemini-1.5-flash'];
 const medicalSystemInstruction = [
-  'Bạn là một lương y / bác sĩ y học cổ truyền tận tâm của hệ sinh thái EcoHeritage.',
-  'Hãy trò chuyện với bệnh nhân một cách tự nhiên, ân cần, và thấu cảm như một bác sĩ thực thụ đang khám bệnh trực tiếp.',
-  'Đừng trả lời theo khuôn mẫu máy móc. Hãy linh hoạt đưa ra nhận định, lời khuyên, và cách xử lý một cách trôi chảy.',
-  'Bạn có thể định dạng văn bản tự do (xuống dòng, dùng dấu gạch ngang) để dễ đọc, nhưng giữ câu chữ gần gũi.',
-  'NẾU LÀ TÌNH TRẠNG CẤP CỨU (như ho ra máu, khó thở): Bằng giọng điệu khẩn thiết nhưng bình tĩnh, khuyên họ đến bệnh viện ngay lập tức.',
-  'NẾU LÀ CÂU HỎI NGOÀI LỀ: Cười xòa nhẹ nhàng và lái câu chuyện về lại chủ đề sức khỏe, thảo dược cổ truyền.',
-  'Luôn xưng là "tôi" và gọi người dùng là "bạn" hoặc "anh/chị" tùy ngữ cảnh. Nếu có bài thuốc phù hợp, hãy nhắc đến nó một cách khéo léo trong câu chuyện.',
-  'LUÔN LUÔN nhắc người dùng đi khám bác sĩ hoặc tham vấn chuyên gia y tế nếu họ hỏi về các bệnh lý nặng hoặc có triệu chứng nguy hiểm.',
+  'Bạn là một biên tập viên báo sức khỏe giàu kinh nghiệm. Hãy đóng vai trợ lý EcoHeritage AI.',
+  'Nhiệm vụ: Giải thích về dược liệu và di sản y học Việt Nam.',
+  'Phong cách: Viết theo lối báo chí hướng dẫn (How-to). Tuân thủ công thức 5W1H lược giản. Tiêu đề ngắn có động từ mạnh. Sapo 2 câu nêu bật lợi ích sức khỏe. Thân bài chia nhỏ gạch đầu dòng/số thứ tự, mỗi dòng 1 ý chính. Câu văn ngắn gọn, dễ hiểu, không dùng thuật ngữ chuyên môn khó (nếu có phải giải thích ngay). Ngôn ngữ bình dân như cách hàng xóm nói chuyện nhưng chỉn chu. Dùng in đậm các từ khóa quan trọng.',
+  'Đối tượng: Người dân trình độ trung học, yêu thích văn hóa dân tộc.',
+  'Cấu trúc: Luôn có Tiêu đề đậm, Sapo, các bước thực hiện rõ ràng (1, 2, 3) và mục "Chuyên gia nhắc bạn" để đảm bảo an toàn y khoa ở cuối.',
+  'Quy tắc "Giao tiếp bình dân": Thay vì "Sử dụng dược liệu có tính kháng khuẩn cao", hãy nói "Dùng các loại lá cây có khả năng diệt khuẩn, làm sạch vết thương". Thay vì "Tác động vào hệ tuần hoàn", hãy nói "Giúp máu lưu thông tốt hơn trong cơ thể". Không dùng từ "phong thấp", hãy dùng "đau nhức xương khớp khi trời lạnh".',
+  'Luôn nhắc nhở tham vấn bác sĩ trong mục "Chuyên gia nhắc bạn".',
 ].join(' ');
 
 const medicalGenerationConfig: GenerationConfig = {
@@ -208,6 +207,16 @@ const getErrorMessage = (error: unknown) =>
 const isRetryableGeminiError = (error: unknown) => retryableErrorPattern.test(getErrorMessage(error));
 
 const isMissingModelError = (error: unknown) => missingModelPattern.test(getErrorMessage(error));
+
+const renderBoldText = (text: string) => {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="font-bold text-white">{part.slice(2, -2)}</strong>;
+    }
+    return <span key={i}>{part}</span>;
+  });
+};
 
 export function ChatWidget({ user }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -431,10 +440,10 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[92%] rounded-2xl px-4 py-3 text-[13px] md:text-sm leading-relaxed shadow-md ${
+                    className={`max-w-[92%] rounded-2xl px-4 py-3 text-[14px] md:text-[15px] leading-[1.7] shadow-md ${
                       msg.from === 'user'
                         ? 'bg-amber-400 text-[#051a11] font-medium rounded-br-sm'
-                        : 'bg-white/10 text-white/90 border border-white/5 rounded-bl-sm'
+                        : 'bg-white/10 text-[#F8FAFC] border border-white/5 rounded-bl-sm'
                     }`}
                   >
                     {msg.from === 'ai' ? (
@@ -443,17 +452,17 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                           {msg.text.split('\n').map((line, i) => (
                             <p
                               key={i}
-                              className={`text-[14px] md:text-[15px] leading-relaxed text-white/95 ${
+                              className={`text-[15px] md:text-[16px] leading-[1.8] text-[#F8FAFC] ${
                                 line.startsWith('-') ? 'ml-4 flex gap-2' : ''
                               }`}
                             >
                               {line.startsWith('-') ? (
                                 <>
-                                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-emerald-400/50 shrink-0" />
-                                  <span>{line.substring(1).trim()}</span>
+                                  <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-emerald-400/50 shrink-0" />
+                                  <span>{renderBoldText(line.substring(1).trim())}</span>
                                 </>
                               ) : (
-                                line
+                                renderBoldText(line)
                               )}
                             </p>
                           ))}
@@ -524,7 +533,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Hỏi AI về sức khỏe..."
-                  className="w-full bg-[#0a2e1f] border border-white/10 rounded-full py-3 md:py-3.5 pl-4 pr-12 text-[13px] md:text-sm text-white placeholder-white/30 focus:outline-none focus:border-amber-400/50 transition-colors"
+                  className="w-full bg-[#0a2e1f] border border-white/10 rounded-full py-3 md:py-3.5 pl-4 pr-12 text-[14px] md:text-[15px] text-[#F8FAFC] placeholder-[#F8FAFC]/50 focus:outline-none focus:border-amber-400/50 transition-colors"
                 />
                 <button
                   onClick={() => handleSendMessage()}

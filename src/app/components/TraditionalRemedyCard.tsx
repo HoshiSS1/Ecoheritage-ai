@@ -92,14 +92,14 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
           <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-400 mb-3 flex items-center gap-2">
             <Info className="w-3.5 h-3.5" /> Công dụng
           </h4>
-          <p className="text-[14px] text-emerald-100/70 leading-relaxed font-light break-words">
+          <p className="text-[15px] text-[#F8FAFC]/95 leading-relaxed font-medium break-words drop-shadow-sm">
             {benefits}
           </p>
         </div>
 
         {/* Usage */}
         <div className="pt-6 border-t border-white/10 relative transform group-hover:translate-x-2 transition-transform duration-500 delay-150 flex-grow flex flex-col">
-          <p className="text-[15px] text-amber-100/90 italic font-display leading-relaxed relative z-10 drop-shadow-sm break-words pl-4 border-l-2 border-amber-500/50">
+          <p className="text-[15px] text-amber-50 italic font-medium leading-relaxed relative z-10 drop-shadow-md break-words pl-4 border-l-2 border-amber-500/50">
             {usage}
           </p>
           
@@ -168,7 +168,7 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
                       <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-display font-bold text-sm shadow-[0_0_15px_rgba(16,185,129,0.1)] group-hover/step:bg-emerald-500/20 group-hover/step:scale-110 transition-all">
                         {idx + 1}
                       </div>
-                      <p className="text-emerald-50/80 leading-relaxed text-[15px] pt-1">
+                      <p className="text-[#F8FAFC] leading-relaxed text-[15px] font-medium pt-1">
                         {step}
                       </p>
                     </div>

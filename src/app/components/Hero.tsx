@@ -42,18 +42,18 @@ export function Hero() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500 shadow-[0_0_10px_#fbbf24]"></span>
             </span>
-            Di sản Đà Nẵng x AI
+            Kho tàng Y lý Đà Nẵng x AI
           </motion.div>
 
           <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full overflow-hidden">
-            <span className="block text-white">Hơi thở ngàn năm</span>
+            <span className="block text-white">Sống khỏe mỗi ngày</span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic mt-2 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
-              trong lá xanh hôm nay.
+              cùng di sản thảo mộc.
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-emerald-100/80 mb-8 sm:mb-10 max-w-xl leading-relaxed font-light">
-            <strong className="font-semibold tracking-wide text-white">EcoHeritage AI</strong> — nơi dữ liệu môi trường thời gian thực hòa quyện cùng trí tuệ y học cổ truyền, dẫn lối bạn sống khỏe giữa một hành tinh đang đổi thay.
+          <p className="text-base sm:text-lg md:text-xl text-[#F8FAFC]/95 mb-8 sm:mb-10 max-w-xl leading-relaxed font-medium drop-shadow-md">
+            <strong className="font-semibold tracking-wide text-white">EcoHeritage</strong> dùng AI kết nối tri thức thảo mộc với dữ liệu môi trường, giúp bạn chủ động chăm sóc sức khỏe.
           </p>
 
           {/* SOLUTION STATEMENT - HIGHLY PROMINENT */}
@@ -69,11 +69,11 @@ export function Hero() {
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <p className="text-[10px] uppercase tracking-[0.4em] text-emerald-300 mb-4 font-bold ml-6 drop-shadow-md">
-                Tuyên ngôn sứ mệnh
+                Sứ mệnh của chúng tôi
               </p>
               <h3 className="font-display text-lg sm:text-xl md:text-2xl italic text-white leading-[1.4] drop-shadow-xl pl-6 relative break-words max-w-full">
                 <span className="absolute -left-2 -top-4 text-5xl text-amber-500/30">"</span>
-                Kết nối tinh hoa y học cổ truyền và AI hiện đại, giúp bạn sống khỏe mạnh thuận theo từng hơi thở của tự nhiên.
+                Bảo vệ sức khỏe bằng y học bản địa và công nghệ AI thông minh.
                 <span className="absolute -bottom-4 -right-0 text-5xl text-amber-500/30">"</span>
               </h3>
             </div>
@@ -159,18 +159,18 @@ export function Hero() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
               </span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-emerald-200 font-bold">Đà Nẵng · Trực tiếp</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-white font-bold drop-shadow-md">Đà Nẵng · Trực tiếp</span>
             </div>
             <div className="flex items-end justify-between mb-2">
               <div className="min-w-0">
                 <div className="font-display text-4xl sm:text-5xl font-bold tracking-tighter drop-shadow-xl text-white truncate">75</div>
-                <div className="text-[10px] sm:text-xs text-amber-300/90 font-medium uppercase tracking-widest mt-1">AQI — Trung bình</div>
+                <div className="text-[10px] sm:text-xs text-amber-300 font-bold uppercase tracking-widest mt-1 drop-shadow-md">AQI — Trung bình</div>
               </div>
               <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-3 rounded-2xl shadow-lg">
                 <Leaf className="w-8 h-8 text-white" />
               </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-white/10 text-[12px] lg:text-[13px] text-emerald-100/70 italic font-light leading-relaxed">
+            <div className="mt-4 pt-4 border-t border-white/20 text-[12px] lg:text-[13px] text-white italic font-medium leading-relaxed drop-shadow-sm">
               "Độ ẩm tốt. Hôm nay thích hợp uống trà lá sen thanh nhiệt."
             </div>
           </motion.div>
@@ -189,7 +189,7 @@ export function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 to-transparent" />
               </div>
               <div className="font-display text-lg sm:text-xl leading-tight font-bold mb-1 drop-shadow-sm">Gợi ý dược liệu</div>
-              <div className="text-[13px] font-medium text-[#051a11]/80 leading-relaxed mt-2">Siro lá lốt mật ong — giải pháp vàng cho hô hấp ngày bụi.</div>
+              <div className="text-[13px] font-semibold text-[#051a11] leading-relaxed mt-2">Siro lá lốt mật ong — giải pháp vàng cho hô hấp ngày bụi.</div>
             </div>
           </motion.div>
         </motion.div>

@@ -2,10 +2,10 @@ import { motion } from 'motion/react';
 import { Wind, Heart, Users, Sprout } from 'lucide-react';
 
 const stats = [
-  { icon: Wind, value: '75', label: 'Chỉ số AQI trung bình', color: 'text-sky-400' },
-  { icon: Heart, value: '100+', label: 'Bài thuốc dân gian (Đang cập nhật)', color: 'text-rose-400' },
-  { icon: Sprout, value: '350+', label: 'Loài dược liệu quý miền Trung', color: 'text-emerald-400' },
-  { icon: Users, value: '98.5%', label: 'Độ chính xác cá nhân hóa AI', color: 'text-amber-400' },
+  { icon: Wind, value: '75', label: 'Giám sát khí hậu trực tiếp', color: 'text-sky-400' },
+  { icon: Heart, value: '100+', label: 'Bài thuốc di sản được số hóa', color: 'text-rose-400' },
+  { icon: Sprout, value: '350+', label: 'Cơ sở dữ liệu thảo mộc bản địa', color: 'text-emerald-400' },
+  { icon: Users, value: '98.5%', label: 'Phân tích triệu chứng bằng AI', color: 'text-amber-400' },
 ];
 
 export function StatsSection() {
@@ -25,10 +25,10 @@ export function StatsSection() {
         >
           <div className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-5 py-2.5 rounded-full text-[10px] uppercase tracking-[0.4em] font-bold mb-6 sm:mb-8 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.2)]">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#10b981]" />
-            Thực trạng và Cơ hội
+            Trạm cứu hộ sức khỏe xanh
           </div>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-[1.1] font-bold drop-shadow-xl mb-6 break-words max-w-full">
-            Một <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">tương lai xanh</em> không thể <br className="hidden md:block" /> rời khỏi <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">cội nguồn</em>.
+            Di sản y học ngàn đời là <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">"tấm khiên"</em> <br className="hidden md:block" /> bảo vệ <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">tương lai</em>.
           </h2>
         </motion.div>
 

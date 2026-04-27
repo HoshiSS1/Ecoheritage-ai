@@ -43,8 +43,8 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
               transition={{ delay: 0.1 }}
               className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-tight mb-6 break-words"
             >
-              Chỉ số môi trường <br />
-              <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-300 not-italic font-bold">Đà Nẵng</em> hôm nay
+              Theo dõi <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-300 not-italic font-bold">nhịp thở</em> của <br />
+              thành phố hôm nay
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -53,7 +53,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
               transition={{ delay: 0.2 }}
               className="text-base sm:text-lg text-emerald-100/70 font-light"
             >
-              Mỗi chỉ số là một tín hiệu. Chúng tôi giúp bạn hiểu và hành động — từ chiếc khẩu trang đến ly trà lá sen.
+              Nhận cảnh báo môi trường để chủ động bồi bổ cơ thể theo y học cổ truyền.
             </motion.p>
           </div>
 
@@ -91,8 +91,8 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
               transition={{ delay: 0.1 }}
               className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-tight mb-6 break-words"
             >
-              Hai con đường, <br />
-              <em className="text-amber-400 font-bold not-italic">một sức khỏe</em>.
+              Giao thoa y học: <br />
+              <em className="text-amber-400 font-bold not-italic">Hiện đại & Cổ truyền</em>.
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -101,7 +101,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
               transition={{ delay: 0.2 }}
               className="text-base sm:text-lg text-emerald-100/70 font-light"
             >
-              Mỗi gợi ý đều đi cặp đôi — khoa học hiện đại và y học cổ truyền, để bạn lựa chọn điều phù hợp nhất.
+              Kết hợp hài hòa giữa khoa học hiện đại và y lý dân gian.
             </motion.p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 perspective-[1000px]">
@@ -134,7 +134,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
               transition={{ delay: 0.1 }}
               className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-tight mb-6 break-words"
             >
-              Di sản y học <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic font-bold">Đà Nẵng</em>.
+              Bản đồ <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic font-bold">thảo mộc</em> bản địa.
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -143,7 +143,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
               transition={{ delay: 0.2 }}
               className="text-base sm:text-lg text-emerald-100/70 font-light"
             >
-              Những bài thuốc tiêu biểu được truyền qua nhiều thế hệ, nay được số hóa và gợi ý theo từng điều kiện môi trường.
+              Số hóa tinh hoa y học dân gian để chăm sóc sức khỏe cộng đồng.
             </motion.p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-[1200px]">
@@ -173,11 +173,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
           <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: "easeOut" }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-12 md:p-20 rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
             <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-emerald-400 mb-6 drop-shadow-lg">Sẵn sàng sống xanh?</p>
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8 text-white drop-shadow-2xl break-words">
-              Mỗi hơi thở là một <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">lựa chọn</em>.<br />
-              Hãy để <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">di sản</em> đồng hành.
+              Khởi đầu lối <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">sống xanh</em> <br />
+              cùng <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">EcoHeritage</em>
             </h2>
             <p className="text-emerald-100/80 max-w-2xl mx-auto mb-10 sm:mb-12 text-base sm:text-lg font-light leading-relaxed">
-              Tạo tài khoản miễn phí và nhận gợi ý sức khỏe cá nhân hóa mỗi sáng, dựa trên thời tiết Đà Nẵng và thể trạng riêng của bạn.
+              Chủ động làm chủ sức khỏe mỗi ngày cùng Trí tuệ nhân tạo và Y học bản địa.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <button 

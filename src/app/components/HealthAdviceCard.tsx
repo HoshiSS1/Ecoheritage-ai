@@ -40,37 +40,37 @@ export function HealthAdviceCard({ icon: Icon, title, modernAdvice, traditionalA
       </div>
 
       <div className="space-y-6 relative z-10 flex flex-col flex-grow">
-        <div className="bg-white/5 border border-white/5 rounded-2xl p-5 backdrop-blur-sm group-hover:bg-white/10 group-hover:border-white/10 transition-colors duration-500 relative overflow-hidden flex-1">
+        <div className="bg-white/5 border border-white/5 rounded-2xl p-5 sm:p-7 backdrop-blur-sm group-hover:bg-white/10 group-hover:border-white/10 transition-colors duration-500 relative overflow-hidden flex-1">
           <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-sky-400 to-sky-600" />
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-sky-500/20 rounded-lg border border-sky-500/30">
               <Microscope className="w-4 h-4 text-sky-400" />
             </div>
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-sky-300">Khoa học hiện đại</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-sky-300">Khoa học hiện đại</h4>
           </div>
-          <ul className="space-y-3 pl-2">
+          <ul className="space-y-4 pl-2 mt-2">
             {modernAdvice.map((advice, i) => (
-              <li key={i} className="text-[14px] text-emerald-100/70 flex items-start gap-3 leading-relaxed font-light break-words">
-                <span className="text-sky-500 mt-1.5 text-[8px] flex-shrink-0 animate-pulse">●</span>
+              <li key={i} className="text-base sm:text-[17px] text-[#F8FAFC] flex items-start gap-4 leading-relaxed font-medium break-words drop-shadow-md">
+                <span className="text-sky-500 mt-2 text-[10px] flex-shrink-0 animate-pulse">●</span>
                 <span>{advice}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-500/5 to-emerald-500/5 border border-amber-500/10 rounded-2xl p-5 backdrop-blur-sm group-hover:border-amber-500/20 transition-colors duration-500 relative overflow-hidden flex-1">
+        <div className="bg-gradient-to-br from-amber-500/5 to-emerald-500/5 border border-amber-500/10 rounded-2xl p-5 sm:p-7 backdrop-blur-sm group-hover:border-amber-500/20 transition-colors duration-500 relative overflow-hidden flex-1">
           <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-amber-400 to-emerald-500" />
-          <div className="flex items-center gap-3 mb-4 justify-end">
-            <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] text-amber-400">Y học cổ truyền</h4>
+          <div className="flex items-center justify-end gap-3 mb-4">
+            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-amber-400 text-right">Y học cổ truyền</h4>
             <div className="p-2 bg-amber-500/20 rounded-lg border border-amber-500/30">
               <Leaf className="w-4 h-4 text-amber-400" />
             </div>
           </div>
-          <ul className="space-y-3 pr-2">
+          <ul className="space-y-4 pr-2 mt-2">
             {traditionalAdvice.map((advice, i) => (
-              <li key={i} className="text-[14px] text-amber-100/90 flex items-start justify-end gap-3 leading-relaxed text-right break-words">
+              <li key={i} className="text-base sm:text-[17px] text-amber-50 flex flex-row-reverse items-start gap-4 leading-relaxed font-medium text-right break-words drop-shadow-md">
+                <span className="text-emerald-500 mt-1.5 text-[12px] flex-shrink-0 animate-pulse">✦</span>
                 <span>{advice}</span>
-                <span className="text-emerald-500 mt-1.5 text-[10px] flex-shrink-0 animate-pulse">✦</span>
               </li>
             ))}
           </ul>
