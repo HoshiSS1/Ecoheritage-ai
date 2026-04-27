@@ -3,19 +3,19 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 
 const chapters = [
   {
-    year: 'Thế kỷ 15',
-    title: 'Hải Thượng Lãn Ông',
-    text: 'Danh y đặt nền móng cho y học cổ truyền Việt Nam, ghi chép hàng ngàn bài thuốc từ thảo mộc bản địa miền Trung.',
+    year: 'THẾ KỶ 18 - Hải Thượng Lãn Ông',
+    title: 'Nguyên khí của y lý nước nhà',
+    text: 'Bậc danh y đặt nền móng cho y học cổ truyền Việt Nam, người đã dành cả đời cẩn thận ghi chép lại cái hồn của thảo mộc bản địa dải đất miền Trung.',
   },
   {
-    year: 'Đời sống Đà Nẵng',
-    title: 'Vườn thuốc nam trong sân nhà',
-    text: 'Mỗi gia đình Quảng - Đà đều có lá lốt, tía tô, sả, lá sen — kho tàng y học xanh giữa lòng phố biển.',
+    year: 'ĐỜI SỐNG QUẢNG ĐÀ',
+    title: 'Vườn thuốc nam trong hiên nhà',
+    text: 'Vài khóm tía tô, bụi sả, mớ lá lốt sau hè... thầm lặng tạo nên một "kho tàng y lý xanh" che chở sức khỏe cho biết bao thế hệ người dân phố biển.',
   },
   {
-    year: '2026',
-    title: 'EcoHeritage AI ra đời',
-    text: 'Chúng tôi số hóa di sản ấy và kết hợp AI với dữ liệu môi trường thời gian thực để bảo vệ thế hệ hôm nay.',
+    year: '2026 - EcoHeritage AI ra đời',
+    title: 'Nhịp cầu nối quá khứ và tương lai',
+    text: 'Di sản tuổi đời trăm năm nay được tiếp nối bằng công nghệ. Sự thông thái của người xưa kết hợp cùng nhịp đập môi trường hôm nay, tạo nên tấm khiên bảo vệ sức khỏe cho thế hệ mới.',
   },
 ];
 
@@ -88,7 +88,7 @@ export function HeritageStory() {
                 Từ <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic font-bold">lá lốt sau hè</em> <br/>đến <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic font-bold">thuật toán AI</em>.
               </h2>
               <p className="text-lg text-emerald-100/70 leading-relaxed font-light drop-shadow-sm">
-                Mỗi bài thuốc là một mảnh ghép lịch sử của vùng đất Quảng - Đà. Chúng tôi không chỉ lưu giữ, mà còn "số hóa" chúng thành những giải pháp cá nhân hóa, đồng bộ với nhịp thở của tự nhiên hiện tại.
+                Mỗi bài thuốc Nam là một mảnh ghép văn hóa của đất Quảng - Đà. Tại EcoHeritage, chúng tôi không để di sản ấy ngủ quên trong trang sách cũ. Bằng trí tuệ nhân tạo, những kinh nghiệm ngàn năm được 'đánh thức', hòa quyện cùng hơi thở của môi trường hiện tại để âm thầm chăm sóc sức khỏe cho bạn mỗi ngày.
               </p>
             </motion.div>
 
