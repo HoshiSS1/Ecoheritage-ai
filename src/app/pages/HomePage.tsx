@@ -19,14 +19,14 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
       <Hero />
       <StatsSection />
 
-      <section id="environment" className="py-20 sm:py-32 relative bg-[#051a11] overflow-hidden scroll-mt-20">
+      <section id="environment" className="py-14 sm:py-20 md:py-32 relative bg-[#051a11] overflow-hidden scroll-mt-20">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-emerald-600/20 blur-[120px] mix-blend-screen animate-pulse" />
           <div className="absolute bottom-[20%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-amber-600/10 blur-[150px] mix-blend-screen" style={{ animation: "pulse 8s infinite alternate" }} />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-          <div className="text-center mb-20 max-w-3xl mx-auto">
+          <div className="text-center mb-12 sm:mb-20 max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -57,7 +57,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 perspective-[1000px]">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16 perspective-[1000px]">
             {environmentData.map((d, i) => (
               <EnvironmentCard key={d.title} {...d} index={i} />
             ))}
@@ -67,14 +67,14 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
         </div>
       </section>
 
-      <section id="health" className="py-20 sm:py-32 relative bg-gradient-to-b from-[#051a11] to-[#0a2e1f] overflow-hidden scroll-mt-20">
+      <section id="health" className="py-14 sm:py-20 md:py-32 relative bg-gradient-to-b from-[#051a11] to-[#0a2e1f] overflow-hidden scroll-mt-20">
         <div className="absolute inset-0 pointer-events-none opacity-20">
           <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-emerald-400 to-transparent" />
           <div className="absolute top-0 right-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-amber-400 to-transparent" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-          <div className="text-center mb-20 max-w-3xl mx-auto">
+          <div className="text-center mb-12 sm:mb-20 max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -104,7 +104,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
               Kết hợp hài hòa giữa khoa học hiện đại và y lý dân gian.
             </motion.p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 perspective-[1000px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 perspective-[1000px]">
             {healthAdvices.map((a, i) => (
               <HealthAdviceCard key={a.title} {...a} index={i} />
             ))}
@@ -114,11 +114,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
 
       <HeritageStory />
 
-      <section id="heritage-featured" className="py-20 sm:py-32 relative bg-[#0a2e1f] overflow-hidden scroll-mt-20">
+      <section id="heritage-featured" className="py-14 sm:py-20 md:py-32 relative bg-[#0a2e1f] overflow-hidden scroll-mt-20">
         <div className="absolute inset-0 opacity-[0.03] bg-[url('/textures/cubes.png')]" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-          <div className="text-center mb-20 max-w-3xl mx-auto">
+          <div className="text-center mb-12 sm:mb-20 max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -164,13 +164,13 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
       </section>
 
       {/* CTA */}
-      <section className="py-20 sm:py-32 relative bg-[#051a11] overflow-hidden flex items-center justify-center min-h-[60vh] sm:min-h-[70vh]">
+      <section className="py-14 sm:py-20 md:py-32 relative bg-[#051a11] overflow-hidden flex items-center justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-gradient-to-tr from-emerald-600/30 to-amber-500/30 blur-[100px] rounded-full animate-pulse mix-blend-screen" />
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: "easeOut" }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-12 md:p-20 rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
+          <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: "easeOut" }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-8 sm:p-12 md:p-20 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
             <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-emerald-400 mb-6 drop-shadow-lg">Sẵn sàng sống xanh?</p>
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8 text-white drop-shadow-2xl break-words">
               Khởi đầu lối <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">sống xanh</em> <br />

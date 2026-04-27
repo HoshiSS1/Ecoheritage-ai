@@ -25,18 +25,18 @@ export function HealthAdviceCard({ icon: Icon, title, modernAdvice, traditionalA
       whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ delay: index * 0.15, duration: 0.8, type: "spring", bounce: 0.4 }}
-      className="group relative flex flex-col h-full bg-[#051a11]/80 backdrop-blur-xl rounded-[2.5rem] p-8 border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] transition-all duration-500 overflow-hidden transform-style-3d"
+      className="group relative flex flex-col h-full bg-[#051a11]/80 backdrop-blur-xl rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-8 border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] transition-all duration-500 overflow-hidden transform-style-3d"
     >
       {/* 3D Ambient Glow */}
       <div className={`absolute -top-32 -right-32 w-64 h-64 rounded-full bg-gradient-to-br ${c.grad} blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-700`} />
       <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-      <div className="flex items-center gap-5 mb-8 relative z-10">
+      <div className="flex items-center gap-4 sm:gap-5 mb-6 sm:mb-8 relative z-10">
         <div className={`bg-gradient-to-br ${c.grad} p-4 rounded-2xl shadow-[0_0_20px_${c.ring}] transform group-hover:rotate-12 transition-transform duration-500 relative overflow-hidden`}>
           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
           <Icon className="w-7 h-7 text-white relative z-10" />
         </div>
-        <h3 className="font-display text-2xl sm:text-3xl text-white font-bold tracking-tight drop-shadow-md break-words max-w-full">{title}</h3>
+        <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-white font-bold tracking-tight drop-shadow-md break-words max-w-full">{title}</h3>
       </div>
 
       <div className="space-y-6 relative z-10 flex flex-col flex-grow">

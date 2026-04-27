@@ -319,12 +319,12 @@ export default function App() {
         </Routes>
       </Suspense>
 
-      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-24 pb-12 border-t border-emerald-900/30 relative overflow-hidden">
+      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-16 sm:pt-24 pb-8 sm:pb-12 border-t border-emerald-900/30 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('/textures/stardust.png')] mix-blend-overlay" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[50vw] h-[1px] bg-gradient-to-r from-transparent via-amber-400/50 to-transparent opacity-50" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16 pb-16 border-b border-white/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-8 mb-12 sm:mb-16 pb-12 sm:pb-16 border-b border-white/10">
             <div className="lg:col-span-1">
               <div className="flex items-center gap-3 mb-6">
                 <div className="relative bg-gradient-to-br from-emerald-500 to-emerald-700 p-3 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)]">

@@ -106,8 +106,8 @@ export function Hero() {
           <div className="grid grid-cols-3 gap-4 sm:gap-8 mt-12 sm:mt-16 pt-6 sm:pt-8 relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             {[
-              { num: '100+', label: 'Bài thuốc', sub: 'Dữ liệu gốc' },
-              { num: '24/7', label: 'Giám sát', sub: 'Thời gian thực' },
+              { num: '25+', label: 'Bài thuốc', sub: 'Di sản số hóa' },
+              { num: '75', label: 'AQI Đà Nẵng', sub: 'Trực tiếp 24/7' },
               { num: '98.5%', label: 'Cá nhân hóa', sub: 'Thuật toán AI' },
             ].map((s, i) => (
               <motion.div

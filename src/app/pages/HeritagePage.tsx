@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef } from 'react';
+import { useState, useLayoutEffect, useRef, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Search, Filter, Leaf } from 'lucide-react';
 import { TraditionalRemedyCard } from '../components/TraditionalRemedyCard';
@@ -33,14 +33,21 @@ export function HeritagePage() {
 
   const categories = ['Tất cả', ...Array.from(new Set(traditionalRemedies.map(r => r.category)))];
 
-  const filteredRemedies = traditionalRemedies.filter(remedy => {
-    const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = remedy.name.toLowerCase().includes(searchLower) || 
-                          remedy.benefits.toLowerCase().includes(searchLower) ||
-                          (remedy.keywords && remedy.keywords.some(kw => kw.toLowerCase().includes(searchLower)));
-    const matchesFilter = activeFilter === 'Tất cả' || remedy.category === activeFilter;
-    return matchesSearch && matchesFilter;
-  });
+  // Nâng cấp độ nhạy: Tìm kiếm thông minh không dấu (Accent-insensitive)
+  const normalize = (str: string) => 
+    str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+  const filteredRemedies = useMemo(() => {
+    const searchNormalized = normalize(searchTerm);
+    return traditionalRemedies.filter(remedy => {
+      const matchesSearch = 
+        normalize(remedy.name).includes(searchNormalized) || 
+        normalize(remedy.benefits).includes(searchNormalized) ||
+        (remedy.keywords && remedy.keywords.some(kw => normalize(kw).includes(searchNormalized)));
+      const matchesFilter = activeFilter === 'Tất cả' || remedy.category === activeFilter;
+      return matchesSearch && matchesFilter;
+    });
+  }, [searchTerm, activeFilter]);
 
   // Reset page when filter or search changes
   useLayoutEffect(() => {
@@ -54,12 +61,12 @@ export function HeritagePage() {
   );
 
   return (
-    <div ref={topRef} className="min-h-screen bg-[#051a11] pt-32 pb-20">
+    <div ref={topRef} className="min-h-screen bg-[#051a11] pt-24 sm:pt-32 pb-12 sm:pb-20">
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[url('/textures/cubes.png')]" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-emerald-600/10 blur-[120px] mix-blend-screen pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-        <div className="text-center mb-16 max-w-3xl mx-auto">
+        <div className="text-center mb-10 sm:mb-16 max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -72,7 +79,7 @@ export function HeritagePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-tight mb-6"
+            className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-4 sm:mb-6"
           >
             Tinh hoa <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic font-bold">Y học cổ truyền</em>
           </motion.h1>
@@ -80,14 +87,14 @@ export function HeritagePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-emerald-100/70 font-light"
+            className="text-base sm:text-lg text-emerald-100/70 font-light px-2"
           >
             Khám phá kho tàng bài thuốc dân gian quý giá được đúc kết qua hàng trăm năm, nay được phân tích dưới góc nhìn khoa học hiện đại.
           </motion.p>
         </div>
 
         {/* Search & Filter */}
-        <div className="mb-12 space-y-6">
+        <div className="mb-8 sm:mb-12 space-y-4 sm:space-y-6">
           <div className="relative max-w-xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
             <input
@@ -99,7 +106,7 @@ export function HeritagePage() {
             />
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 px-1">
             <div className="flex items-center gap-2 mr-2 text-white/60 text-sm font-medium">
               <Filter className="w-4 h-4" /> Bộ lọc:
             </div>
@@ -107,7 +114,7 @@ export function HeritagePage() {
               <button
                 key={cat}
                 onClick={() => setActiveFilter(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
                   activeFilter === cat
                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50'
                     : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white'
@@ -122,7 +129,7 @@ export function HeritagePage() {
         {/* Results Grid */}
         {filteredRemedies.length > 0 ? (
           <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 perspective-[1500px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 perspective-[1500px]">
               {currentRemedies.map((remedy, idx) => (
                 <TraditionalRemedyCard key={remedy.name} {...remedy} index={idx} />
               ))}

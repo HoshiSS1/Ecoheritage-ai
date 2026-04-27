@@ -27,13 +27,13 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
       viewport={{ once: true, margin: "-50px" }}
       transition={{ delay: index * 0.15, duration: 1, type: "spring", bounce: 0.4 }}
       whileHover={{ y: -15, scale: 1.02 }}
-      className="group flex flex-col h-full relative bg-[#0a2e1f]/40 backdrop-blur-2xl rounded-[3rem] overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.8)] hover:shadow-[0_40px_80px_-20px_rgba(251,191,36,0.25)] transition-all duration-700 border border-white/10 transform-style-3d will-change-transform scroll-mt-32"
+      className="group flex flex-col h-full relative bg-[#0a2e1f]/40 backdrop-blur-2xl rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.8)] hover:shadow-[0_40px_80px_-20px_rgba(251,191,36,0.25)] transition-all duration-700 border border-white/10 transform-style-3d will-change-transform scroll-mt-32"
     >
       {/* Glow Effect on Hover */}
       <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/0 via-amber-500/0 to-emerald-500/0 group-hover:from-emerald-500/10 group-hover:via-amber-500/10 group-hover:to-emerald-500/10 transition-colors duration-1000 z-20 pointer-events-none" />
       
       {/* Image Section */}
-      <div className="relative aspect-[4/3] overflow-hidden rounded-b-[3rem] shadow-2xl">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-b-[1.5rem] sm:rounded-b-[2.5rem] shadow-2xl">
         {imageUrl ? (
           <ImageWithFallback
             src={imageUrl}
@@ -64,14 +64,14 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
             <Sparkles className="w-3 h-3 text-amber-400" />
             {category}
           </div>
-          <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)] font-bold break-words">
+          <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-white leading-tight drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)] font-bold break-words">
             {name}
           </h3>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="p-8 relative bg-transparent z-10 flex flex-col flex-grow">
+      <div className="p-5 sm:p-8 relative bg-transparent z-10 flex flex-col flex-grow">
         
         {/* Ingredients */}
         <div className="mb-6 transform group-hover:translate-x-2 transition-transform duration-500 delay-75">
@@ -134,11 +134,11 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#0a2e1f]/90 backdrop-blur-2xl rounded-[2rem] border border-white/10 shadow-[0_0_50px_rgba(16,185,129,0.15)] overflow-hidden max-h-[85vh] flex flex-col"
+              className="relative w-full max-w-2xl bg-[#0a2e1f]/90 backdrop-blur-2xl rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 shadow-[0_0_50px_rgba(16,185,129,0.15)] overflow-hidden max-h-[85vh] flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="p-6 sm:p-8 border-b border-white/5 flex items-start justify-between bg-gradient-to-br from-white/5 to-transparent">
+              <div className="p-4 sm:p-8 border-b border-white/5 flex items-start justify-between bg-gradient-to-br from-white/5 to-transparent">
                 <div>
                   <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-amber-300">
                     <Sparkles className="w-3 h-3 text-amber-400" />
@@ -157,7 +157,7 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
               </div>
 
               {/* Body */}
-              <div className="p-6 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
+              <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
                 <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400 mb-6 flex items-center gap-2">
                   <Leaf className="w-4 h-4" /> Các bước thực hiện
                 </h4>

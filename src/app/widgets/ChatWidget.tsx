@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router';
-import { Send, Leaf, Sparkles, Loader2, MessageCircle, X, RotateCcw } from 'lucide-react';
-import { GoogleGenerativeAI, type GenerationConfig, type Content } from '@google/generative-ai';
+import { Send, Leaf, Sparkles, Loader2, MessageCircle, X, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
+import { GoogleGenerativeAI, type GenerationConfig, type Content, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { toast } from 'sonner';
 import { traditionalRemedies } from '../data';
 
@@ -15,14 +15,14 @@ type HeritageSuggestion = {
 
 type ChatMessage =
   | {
-      from: 'user';
-      text: string;
-    }
+    from: 'user';
+    text: string;
+  }
   | {
-      from: 'ai';
-      text: string;
-      relatedHeritage?: HeritageSuggestion[];
-    };
+    from: 'ai';
+    text: string;
+    relatedHeritage?: HeritageSuggestion[];
+  };
 
 const defaultInitialMessages: ChatMessage[] = [
   {
@@ -40,21 +40,27 @@ interface ChatWidgetProps {
 
 const geminiApiKeys = import.meta.env.VITE_GEMINI_KEY?.split(',').map((k: string) => k.trim()).filter(Boolean) || [];
 const geminiClients = geminiApiKeys.map((key: string) => new GoogleGenerativeAI(key));
-const geminiModelCandidates = ['gemini-2.0-flash', 'gemini-1.5-flash-latest'];
+const geminiModelCandidates = ['gemini-3-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
 const medicalSystemInstruction = [
-  'Bạn là một biên tập viên báo sức khỏe giàu kinh nghiệm. Hãy đóng vai trợ lý EcoHeritage AI.',
-  'Nhiệm vụ: Giải thích về dược liệu và di sản y học Việt Nam.',
-  'Phong cách: Viết theo lối báo chí hướng dẫn (How-to). Tuân thủ công thức 5W1H lược giản. Tiêu đề ngắn có động từ mạnh. Sapo 2 câu nêu bật lợi ích sức khỏe. Thân bài chia nhỏ gạch đầu dòng/số thứ tự, mỗi dòng 1 ý chính. Câu văn ngắn gọn, dễ hiểu, không dùng thuật ngữ chuyên môn khó (nếu có phải giải thích ngay). Ngôn ngữ bình dân như cách hàng xóm nói chuyện nhưng chỉn chu. Dùng in đậm các từ khóa quan trọng.',
-  'Đối tượng: Người dân trình độ trung học, yêu thích văn hóa dân tộc.',
-  'Cấu trúc: Luôn có Tiêu đề đậm, Sapo, các bước thực hiện rõ ràng (1, 2, 3) và mục "Chuyên gia nhắc bạn" để đảm bảo an toàn y khoa ở cuối.',
-  'Quy tắc "Giao tiếp bình dân": Thay vì "Sử dụng dược liệu có tính kháng khuẩn cao", hãy nói "Dùng các loại lá cây có khả năng diệt khuẩn, làm sạch vết thương". Thay vì "Tác động vào hệ tuần hoàn", hãy nói "Giúp máu lưu thông tốt hơn trong cơ thể". Không dùng từ "phong thấp", hãy dùng "đau nhức xương khớp khi trời lạnh".',
-  'Luôn nhắc nhở tham vấn bác sĩ trong mục "Chuyên gia nhắc bạn".',
+  'VAI TRÒ: Bạn là EcoHeritage AI - Người giữ lửa di sản y học Việt Nam. Bạn nói chuyện như một người bác sĩ gia đình ở miền quê: am hiểu sâu sắc nhưng mộc mạc, coi người bệnh như người thân.',
+  'QUY TẮC CHUYÊN GIA: CHỈ hỗ trợ các chủ đề: Sức khỏe, cây thuốc nam, bài thuốc dân gian và môi trường sống. Từ chối khéo các chủ đề khác.',
+  'NGÔN NGỮ BÌNH DÂN: Tuyệt đối không dùng từ robot hay cuốn từ điển. Thay "Hỗ trợ điều trị" bằng "Giúp cải thiện đáng kể"; Thay "Triệu chứng" bằng "Biểu hiện khó chịu".',
+  'CÂU MỞ ĐẦU THẤU CẢM (BẮT BUỘC): Phải bắt đầu bằng một câu phân tích mang tính thấu hiểu (Ví dụ: "Tôi hiểu cảm giác của bạn, cái chứng đau lưng này thường hay hành mỗi khi trái gió trở trời...").',
+  'ĐỊNH DẠNG TRÌNH BÀY (BẮT BUỘC):',
+  '1. **[TIÊU ĐỀ: MỘT LỜI KHUYÊN MẠNH MẼ, VIẾT HOA]**',
+  '2. *Lời mở đầu:* Viết 1-2 câu chia sẻ về tình trạng của người dùng bằng giọng văn ấm áp, thấu hiểu.',
+  '3. --- (Dùng dấu gạch ngang phân cách)',
+  '4. 🌿 **Mẹo hay từ thảo mộc:**',
+  '- **[Tên bài thuốc]**: Nguyên liệu kèm định lượng dân dã (ví dụ: 1 nắm, 2 đốt ngón tay).',
+  '- **[Cách làm]**: Mô tả ngắn gọn, dễ thực hiện nhất tại bếp nhà.',
+  '5. 💡 **Dặn riêng cho bạn:** Đưa ra một lưu ý thực tế về lối sống hoặc thời gian sử dụng bài thuốc sao cho hiệu quả nhất.',
+  '6. ⚠️ *Lưu ý: Các bài thuốc dân gian mang tính chất hỗ trợ. Hãy hỏi ý kiến bác sĩ nếu tình trạng kéo dài.*',
 ].join(' ');
 
 const medicalGenerationConfig: GenerationConfig = {
-  temperature: 0.6,
-  topP: 0.9,
-  maxOutputTokens: 1024,
+  temperature: 0.4,
+  topP: 0.95,
+  maxOutputTokens: 4096,
 };
 
 const normalizeSearchText = (value: string) =>
@@ -221,6 +227,7 @@ const renderBoldText = (text: string) => {
 export function ChatWidget({ user }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>(defaultInitialMessages);
   const [inputMessage, setInputMessage] = useState('');
@@ -270,6 +277,12 @@ export function ChatWidget({ user }: ChatWidgetProps) {
             model: modelName,
             systemInstruction: medicalSystemInstruction,
             generationConfig: medicalGenerationConfig,
+            safetySettings: [
+              { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+              { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+              { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+              { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+            ],
           });
           const result = await model.generateContent({ contents });
           return result.response.text();
@@ -310,12 +323,17 @@ export function ChatWidget({ user }: ChatWidgetProps) {
 
       const heritageMatches = findRelatedHeritage(promptText);
       const currentPrompt = buildPrompt(promptText, heritageMatches);
-      
-      const historyContents: Content[] = messages.slice(1).map(msg => ({
-        role: msg.from === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      }));
-      
+
+      // Siết chặt token: Chỉ ghi nhớ 2 tin nhắn gần nhất (1 lượt hỏi đáp) để tiết kiệm tối đa
+      const MAX_HISTORY = 2;
+      const historyContents: Content[] = messages
+        .slice(1) // Bỏ tin nhắn chào mừng mặc định
+        .slice(-MAX_HISTORY) // Chỉ lấy 2 tin gần nhất
+        .map(msg => ({
+          role: msg.from === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.text }]
+        }));
+
       const contents: Content[] = [
         ...historyContents,
         { role: 'user', parts: [{ text: currentPrompt }] }
@@ -340,8 +358,8 @@ export function ChatWidget({ user }: ChatWidgetProps) {
           lastError = error;
 
           const shouldTryNextModel =
-            isRetryableGeminiError(error) ||
-            isMissingModelError(error);
+            isMissingModelError(error) || 
+            (isRetryableGeminiError(error) && !getErrorMessage(error).includes('429') && !getErrorMessage(error).includes('Quota'));
 
           if (!shouldTryNextModel) {
             throw error;
@@ -356,7 +374,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
 
       let fallbackText = 'Xin lỗi, hiện tại tôi đang quá tải kết nối. Bạn hãy thử gửi lại sau vài giây để tôi hỗ trợ chính xác hơn nhé.';
       let toastMessage = `Lỗi kết nối AI: ${message}`;
-      
+
       if (message.includes('429') || message.includes('Quota') || message.includes('RESOURCE_EXHAUSTED')) {
         fallbackText = 'Thật xin lỗi, hiện tại phòng khám đang có quá nhiều người truy cập (vượt giới hạn API miễn phí). Bạn vui lòng chờ khoảng 1 phút rồi thử lại nhé!';
         toastMessage = 'Phòng khám đang quá tải (Hết lượt API miễn phí). Vui lòng thử lại sau 1 phút!';
@@ -378,9 +396,8 @@ export function ChatWidget({ user }: ChatWidgetProps) {
     <>
       <button
         onClick={handleOpen}
-        className={`fixed bottom-6 right-6 z-[100] p-4 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)] hover:scale-110 transition-all duration-300 ${
-          isOpen && !isMinimized ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
-        }`}
+        className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] p-4 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)] hover:scale-110 transition-all duration-300 ${isOpen && !isMinimized ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
+          }`}
       >
         <MessageCircle className="w-6 h-6 md:w-7 md:h-7 text-[#051a11]" />
         <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -396,7 +413,10 @@ export function ChatWidget({ user }: ChatWidgetProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="fixed bottom-6 right-6 w-[90vw] max-w-[400px] sm:w-full h-[550px] max-h-[85vh] z-[101] bg-[#0a1913]/95 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+            className={`fixed z-[101] bg-[#0a1913]/95 backdrop-blur-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isExpanded
+                ? 'inset-0 md:bottom-6 md:right-6 md:left-auto md:top-auto md:w-[80vw] md:max-w-[1200px] md:h-[85vh] rounded-none md:rounded-3xl'
+                : 'bottom-4 right-4 left-4 w-auto h-[600px] max-h-[80vh] md:bottom-6 md:right-6 md:left-auto md:w-[400px] md:max-h-[85vh] rounded-3xl'
+              }`}
           >
             <div className="bg-[#051a11] px-5 py-4 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -415,9 +435,19 @@ export function ChatWidget({ user }: ChatWidgetProps) {
               </div>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={() => setMessages(defaultInitialMessages)}
+                  onClick={() => setIsExpanded(!isExpanded)}
                   className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-                  title="Làm mới trò chuyện"
+                  title={isExpanded ? "Thu nhỏ khung chat" : "Phóng to khung chat"}
+                >
+                  {isExpanded ? <Minimize2 className="w-4 h-4 md:w-5 md:h-5" /> : <Maximize2 className="w-4 h-4 md:w-5 md:h-5" />}
+                </button>
+                <button
+                  onClick={() => {
+                    setMessages(defaultInitialMessages);
+                    toast.success('Đã làm mới cuộc trò chuyện');
+                  }}
+                  className="p-2 text-white/50 hover:text-amber-400 hover:bg-white/10 rounded-full transition-colors"
+                  title="Làm mới cuộc trò chuyện"
                 >
                   <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
@@ -440,11 +470,10 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[92%] rounded-2xl px-4 py-3 text-[14px] md:text-[15px] leading-[1.7] shadow-md ${
-                      msg.from === 'user'
-                        ? 'bg-amber-400 text-[#051a11] font-medium rounded-br-sm'
-                        : 'bg-white/10 text-[#F8FAFC] border border-white/5 rounded-bl-sm'
-                    }`}
+                    className={`max-w-[92%] rounded-2xl px-4 py-3 text-[14px] md:text-[15px] leading-[1.7] shadow-md ${msg.from === 'user'
+                      ? 'bg-amber-400 text-[#051a11] font-medium rounded-br-sm'
+                      : 'bg-white/10 text-[#F8FAFC] border border-white/5 rounded-bl-sm'
+                      }`}
                   >
                     {msg.from === 'ai' ? (
                       <div className="space-y-4">
@@ -452,9 +481,8 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                           {msg.text.split('\n').map((line, i) => (
                             <p
                               key={i}
-                              className={`text-[15px] md:text-[16px] leading-[1.8] text-[#F8FAFC] ${
-                                line.startsWith('-') ? 'ml-4 flex gap-2' : ''
-                              }`}
+                              className={`text-[15px] md:text-[16px] leading-[1.8] text-[#F8FAFC] ${line.startsWith('-') ? 'ml-4 flex gap-2' : ''
+                                }`}
                             >
                               {line.startsWith('-') ? (
                                 <>
