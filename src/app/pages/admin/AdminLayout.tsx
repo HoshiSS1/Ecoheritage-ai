@@ -13,14 +13,12 @@ import {
 import { DashboardSection } from "@/app/pages/admin/DashboardSection";
 import { HeritageCMS } from "@/app/pages/admin/HeritageCMS";
 import { FeedbackSection } from "@/app/pages/admin/FeedbackSection";
-import { ApiConfigSection } from "@/app/pages/admin/ApiConfigSection";
 import { UsersSection } from "@/app/pages/admin/UsersSection";
 
 const sectionMeta: { id: AdminSectionId; label: string; hint: string; icon: typeof BarChart3 }[] = [
   { id: "overview", label: "Dashboard", hint: "Tổng quan vận hành", icon: BarChart3 },
   { id: "heritage", label: "Heritage CMS", hint: "Quản lý bài thuốc", icon: Database },
   { id: "feedback", label: "Tương tác", hint: "Feedback & review", icon: MessageSquareQuote },
-  { id: "climate", label: "Cấu hình API", hint: "Khóa và đồng bộ", icon: KeyRound },
   { id: "users", label: "Người dùng", hint: "Quản lý tài khoản", icon: Users },
 ];
 
@@ -147,7 +145,6 @@ export function AdminLayout() {
       case "overview": return <DashboardSection />;
       case "heritage": return <HeritageCMS />;
       case "feedback": return <FeedbackSection onPendingChange={pollPending} />;
-      case "climate": return <ApiConfigSection />;
       case "users": return <UsersSection />;
       default: return <DashboardSection />;
     }

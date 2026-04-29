@@ -76,7 +76,6 @@ export interface ClimateSnapshot {
 export const ADMIN_SESSION_KEY = "ecoheritage_admin_session";
 export const REMEDIES_STORAGE_KEY = "ecoheritage_admin_remedies";
 export const FEEDBACK_STORAGE_KEY = "ecoheritage_admin_feedback";
-export const CLIMATE_SETTINGS_STORAGE_KEY = "ecoheritage_admin_climate_settings";
 export const CLIMATE_CACHE_STORAGE_KEY = "ecoheritage_admin_climate_cache";
 
 export const ADMIN_USERNAME =
@@ -228,10 +227,10 @@ export function loadAdminSession(): boolean {
 export function getDefaultClimateSettings(): ClimateSettings {
   return {
     provider: "openweather",
-    openWeatherKey: DEFAULT_OPENWEATHER_KEY,
+    openWeatherKey: import.meta.env.VITE_OPENWEATHER_API_KEY || DEFAULT_OPENWEATHER_KEY,
     iqAirKey: "",
-    lat: DEFAULT_LAT,
-    lon: DEFAULT_LON,
+    lat: import.meta.env.VITE_OPENWEATHER_LAT || DEFAULT_LAT,
+    lon: import.meta.env.VITE_OPENWEATHER_LON || DEFAULT_LON,
   };
 }
 

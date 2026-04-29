@@ -1,6 +1,6 @@
-const API_KEY = "ad985e6b3d6f0c414479a1e1873d9c7c";
-const DEFAULT_LAT = "16.0544"; // Đà Nẵng
-const DEFAULT_LON = "108.2022";
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "ad985e6b3d6f0c414479a1e1873d9c7c";
+const DEFAULT_LAT = import.meta.env.VITE_OPENWEATHER_LAT || "16.0544"; // Đà Nẵng
+const DEFAULT_LON = import.meta.env.VITE_OPENWEATHER_LON || "108.2022";
 
 export interface AirQualityData {
   aqi: number;

@@ -5,7 +5,7 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import {
   shellCardClass, loadStoredState, formatDateTime, formatHourLabel,
   getStatusFromAqi, buildClimateAdvice, DEFAULT_AQI_API_URL,
-  REMEDIES_STORAGE_KEY, CLIMATE_CACHE_STORAGE_KEY, CLIMATE_SETTINGS_STORAGE_KEY,
+  REMEDIES_STORAGE_KEY, CLIMATE_CACHE_STORAGE_KEY,
   ClimateSnapshot, ClimateSettings, ClimateTrendPoint,
   createFallbackClimateSnapshot, getDefaultClimateSettings,
 } from "./adminUtils";
@@ -43,7 +43,13 @@ export function DashboardSection() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [climateError, setClimateError] = useState<string | null>(null);
 
-  const settings: ClimateSettings = loadStoredState(CLIMATE_SETTINGS_STORAGE_KEY, getDefaultClimateSettings());
+  const settings: ClimateSettings = {
+    provider: "openweather",
+    openWeatherKey: import.meta.env.VITE_OPENWEATHER_API_KEY || "ad985e6b3d6f0c414479a1e1873d9c7c",
+    iqAirKey: "",
+    lat: import.meta.env.VITE_OPENWEATHER_LAT || "16.0544",
+    lon: import.meta.env.VITE_OPENWEATHER_LON || "108.2022",
+  };
 
   async function syncClimate(showToast: boolean) {
     setIsSyncing(true);
