@@ -24,8 +24,8 @@ import {
 } from './remedyImages';
 
 export const environmentData = [
-  { icon: Cloud, title: 'Chất lượng không khí (AQI)', value: 75, status: 'moderate' as const, description: 'Trời hơi bụi. Hạn chế ra ngoài lâu và uống thêm trà gừng ấm để bảo vệ họng.' },
-  { icon: Sun, title: 'Chỉ số UV', value: 8, status: 'unhealthy' as const, description: 'Nắng gắt dễ say nắng. Nhớ che chắn kỹ và uống nước sâm đất hoặc râu ngô.' },
+  { icon: Cloud, title: 'Chất lượng không khí (AQI)', value: 40, status: 'good' as const, description: 'Chất lượng không khí rất tốt. Hãy hít thở sâu và tận hưởng ngày mới trong lành.' },
+  { icon: Sun, title: 'Chỉ số UV', value: 8, status: 'unhealthy' as const, description: 'Chỉ số UV rất cao. Nhớ che chắn kỹ, bôi kem chống nắng và bổ sung nước sâm đất.' },
   { icon: Droplets, title: 'Độ ẩm không khí', value: '65%', status: 'good' as const, description: 'Độ ẩm lý tưởng. Rất tốt để máu huyết lưu thông và giúp bạn ngủ ngon.' },
   { icon: Wind, title: 'Chất lượng gió', value: 'Tốt', status: 'good' as const, description: 'Gió biển trong lành. Rất thích hợp để đi dạo, tập thể dục buổi sáng.' },
 ];

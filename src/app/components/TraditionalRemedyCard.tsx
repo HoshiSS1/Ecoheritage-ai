@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Sparkles, Leaf, Info, X, ChevronRight, BookOpen } from 'lucide-react';
+import { ReviewSystem } from './ReviewSystem';
 
 interface TraditionalRemedyCardProps {
   id: string;
@@ -173,6 +174,11 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
                       </p>
                     </div>
                   ))}
+                </div>
+
+                {/* Rating & Review Section */}
+                <div className="mt-10 pt-8 border-t border-white/10">
+                  <ReviewSystem remedyId={id} remedyName={name} />
                 </div>
               </div>
 

@@ -1,14 +1,18 @@
 import { motion } from 'motion/react';
 import { Wind, Heart, Users, Sprout } from 'lucide-react';
 
-const stats = [
-  { icon: Wind, value: '75', label: 'Giám sát khí hậu trực tiếp', color: 'text-sky-400' },
-  { icon: Heart, value: '25+', label: 'Bài thuốc di sản được số hóa', color: 'text-rose-400' },
-  { icon: Sprout, value: '50+', label: 'Cơ sở dữ liệu thảo mộc bản địa', color: 'text-emerald-400' },
-  { icon: Users, value: '98.5%', label: 'Phân tích triệu chứng bằng AI', color: 'text-amber-400' },
-];
+import { useAirQuality } from '../utils/useAirQuality';
 
 export function StatsSection() {
+  const { data: aqiData } = useAirQuality();
+  
+  const stats = [
+    { icon: Wind, value: aqiData ? String(aqiData.aqi) : '75', label: 'Chỉ số chất lượng khí (AQI)', color: 'text-sky-400' },
+    { icon: Heart, value: '25+', label: 'Bài thuốc di sản được số hóa', color: 'text-rose-400' },
+    { icon: Sprout, value: '50+', label: 'Cơ sở dữ liệu thảo mộc bản địa', color: 'text-emerald-400' },
+    { icon: Users, value: '98.5%', label: 'Phân tích triệu chứng bằng AI', color: 'text-amber-400' },
+  ];
+
   return (
     <section className="bg-gradient-to-b from-[#020b07] to-[#051a11] py-14 sm:py-20 md:py-32 relative overflow-hidden border-y border-white/5">
       {/* 3D Grid Floor */}

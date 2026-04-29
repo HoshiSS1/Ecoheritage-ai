@@ -8,9 +8,54 @@ import { TraditionalRemedyCard } from '../components/TraditionalRemedyCard';
 import { Hero } from '../components/Hero';
 import { StatsSection } from '../components/StatsSection';
 import { HeritageStory } from '../components/HeritageStory';
+import { TestimonialsSection } from '../components/TestimonialsSection';
 import { environmentData, healthAdvices, traditionalRemedies } from '../data';
+import { useAirQuality } from '../utils/useAirQuality';
+import { Cloud, Sun, Droplets, Wind } from 'lucide-react';
 
 export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => void }) {
+  const { data: aqiData } = useAirQuality();
+
+  // Cập nhật environmentData với dữ liệu AQI thực tế
+  const dynamicEnvironmentData = environmentData.map(item => {
+    if (!aqiData) return item;
+
+    if (item.title.includes('AQI')) {
+      const scaledScore = aqiData.aqi * 20;
+      return {
+        ...item,
+        value: scaledScore,
+        status: aqiData.status as any,
+        description: aqiData.description
+      };
+    }
+    
+    if (item.title.includes('Độ ẩm')) {
+      let hStatus: 'good' | 'moderate' | 'unhealthy' = 'good';
+      if (aqiData.humidity > 80) hStatus = 'unhealthy';
+      else if (aqiData.humidity > 70) hStatus = 'moderate';
+      
+      return {
+        ...item,
+        value: `${aqiData.humidity}%`,
+        status: hStatus as 'good' | 'moderate' | 'unhealthy' | 'hazardous',
+        description: aqiData.humidity > 80 ? "Độ ẩm rất cao (nồm ẩm). Nên bật máy hút ẩm và hạn chế mở cửa." : item.description
+      };
+    }
+
+    if (item.title.includes('Gió')) {
+      const isStrong = aqiData.windSpeed > 10;
+      return {
+        ...item,
+        value: isStrong ? "Mạnh" : "Tốt",
+        status: (isStrong ? 'moderate' : 'good') as 'good' | 'moderate' | 'unhealthy' | 'hazardous',
+        description: isStrong ? "Gió đang thổi mạnh. Cẩn thận khi di chuyển ngoài trời, đặc biệt khu vực gần biển." : item.description
+      };
+    }
+
+    return item;
+  });
+
   // Chỉ lấy 3 bài thuốc tiêu biểu cho trang chủ
   const featuredRemedies = traditionalRemedies.slice(0, 3);
 
@@ -58,7 +103,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16 perspective-[1000px]">
-            {environmentData.map((d, i) => (
+            {dynamicEnvironmentData.map((d, i) => (
               <EnvironmentCard key={d.title} {...d} index={i} />
             ))}
           </div>
@@ -162,6 +207,9 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
           </div>
         </div>
       </section>
+
+      {/* Testimonials */}
+      <TestimonialsSection />
 
       {/* CTA */}
       <section className="py-14 sm:py-20 md:py-32 relative bg-[#051a11] overflow-hidden flex items-center justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]">

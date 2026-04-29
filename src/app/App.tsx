@@ -1,10 +1,12 @@
 import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Leaf, Menu, X, MapPin, Mail, Phone, Facebook, Instagram, Youtube, Activity, LogOut, User } from 'lucide-react';
+import { Leaf, Menu, X, MapPin, Mail, Phone, Facebook, Instagram, Youtube, Activity, LogOut, User, ShieldCheck } from 'lucide-react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { AuthModal } from './components/AuthModal';
 import { ChatWidget } from './widgets/ChatWidget';
+import { createSeedFeedback, createSeedUsers } from './pages/admin/adminData';
+import { FEEDBACK_STORAGE_KEY } from './pages/admin/adminUtils';
 
 // Disable browser's automatic scroll restoration
 if (typeof window !== 'undefined') {
@@ -14,6 +16,7 @@ if (typeof window !== 'undefined') {
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
 const HeritagePage = lazy(() => import('./pages/HeritagePage').then(m => ({ default: m.HeritagePage })));
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
+const AdminPortalPage = lazy(() => import('./pages/AdminPortalPage').then(m => ({ default: m.AdminPortalPage })));
 
 // Component cuộn lên đầu trang chuyên dụng
 function ScrollToTop() {
@@ -38,6 +41,23 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  // ─── ĐẢM BẢO ĐỒNG NHẤT DỮ LIỆU TRÊN MÁY MỚI ───
+  useEffect(() => {
+    // 1. Khởi tạo Feedback
+    if (!localStorage.getItem(FEEDBACK_STORAGE_KEY)) {
+      const initialSeeds = createSeedFeedback();
+      localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(initialSeeds));
+      console.log("EcoHeritage: Khởi tạo dữ liệu mẫu thành công.");
+    }
+
+    // 2. Khởi tạo Users (Khắc phục lỗi mất tài khoản khi sang máy khác)
+    if (!localStorage.getItem('ecoheritage_users')) {
+      const seedUsers = createSeedUsers();
+      localStorage.setItem('ecoheritage_users', JSON.stringify(seedUsers));
+      console.log("EcoHeritage: Khởi tạo danh sách người dùng mẫu thành công.");
+    }
+  }, []);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [now, setNow] = useState(new Date());
@@ -49,6 +69,7 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const isAdminRoute = location.pathname.startsWith('/admin-portal');
 
   useEffect(() => {
     const activeUser = sessionStorage.getItem('ecoheritage_active_user');
@@ -98,6 +119,26 @@ export default function App() {
     { name: 'Di sản', path: '/heritage' },
     { name: 'Liên hệ', path: '#contact' }
   ];
+
+  const suspenseFallback = (
+    <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-4">
+      <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin shadow-[0_0_20px_rgba(16,185,129,0.3)]"></div>
+      <p className="text-emerald-400/60 text-sm font-medium animate-pulse tracking-widest uppercase">Äang táº£i dá»¯ liá»‡u...</p>
+    </div>
+  );
+
+  if (isAdminRoute) {
+    return (
+      <>
+        <ScrollToTop />
+        <Suspense fallback={suspenseFallback}>
+          <Routes>
+            <Route path="/admin-portal" element={<AdminPortalPage />} />
+          </Routes>
+        </Suspense>
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#051a11] text-emerald-50 selection:bg-amber-400/30 selection:text-white font-body overflow-x-hidden relative">
@@ -411,6 +452,10 @@ export default function App() {
               <span className="hover:text-white cursor-pointer transition-colors">Bảo mật</span>
               <span className="w-1 h-1 rounded-full bg-white/20"></span>
               <span className="flex items-center gap-1"><Activity className="w-3 h-3 text-emerald-500" /> Cập nhật: {now.toLocaleTimeString('vi-VN')}</span>
+              <span className="w-1 h-1 rounded-full bg-white/20"></span>
+              <Link to="/admin-portal" className="flex items-center gap-1 hover:text-emerald-400 transition-colors font-medium">
+                <ShieldCheck className="w-3 h-3 text-amber-500" /> Cổng Admin
+              </Link>
             </div>
           </div>
         </div>

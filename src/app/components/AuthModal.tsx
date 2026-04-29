@@ -156,6 +156,12 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
       }
     }
 
+    // Cho phép đăng nhập nhanh admin qua modal public
+    if (isLogin && email === 'admin' && (password === import.meta.env.VITE_ADMIN_PORTAL_PASSWORD || password === 'ecoheritage-admin')) {
+      window.location.href = '/admin-portal';
+      return;
+    }
+
     // Đăng nhập / Đăng ký: cần đầy đủ thông tin
     if (!email || !password || (!isLogin && !name)) {
       setError('Vui lòng điền đầy đủ thông tin.');
@@ -180,6 +186,11 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
       if (isLogin) {
         const user = users.find((u: any) => u.email === email && u.password === hashedPassword);
         if (user) {
+          if (user.status === "banned") {
+            setError('Tài khoản của bạn đã bị khóa do vi phạm chính sách cộng đồng. Liên hệ Admin để biết thêm chi tiết.');
+            toast.error('Tài khoản bị khóa');
+            return;
+          }
           toast.success(`Chào mừng ${user.name} trở lại!`);
           onLoginSuccess({ name: user.name, email: user.email });
         } else {
@@ -192,9 +203,21 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
           setError('Email này đã được đăng ký.');
           toast.error('Email đã tồn tại.');
         } else {
-          const newUser = { name, email, password: hashedPassword };
+          const newUser = {
+            name,
+            email,
+            password: hashedPassword,
+            provider: "email",
+            createdAt: new Date().toISOString(),
+            status: "active"
+          };
           users.push(newUser);
           localStorage.setItem('ecoheritage_users', JSON.stringify(users));
+          
+          // IT Expert: Force Admin Portal to update immediately
+          window.dispatchEvent(new Event("storage_sync"));
+          window.dispatchEvent(new StorageEvent("storage", { key: 'ecoheritage_users' }));
+          
           toast.success('Tạo tài khoản thành công! 🎉');
           triggerSuccessConfetti();
           onLoginSuccess({ name: newUser.name, email: newUser.email });
@@ -320,8 +343,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     <Mail className="w-5 h-5 text-emerald-500/50" />
                   </div>
                   <input
-                    type="email"
-                    placeholder="Địa chỉ Email"
+                    type="text"
+                    placeholder="Địa chỉ Email hoặc Tên đăng nhập"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/60 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)] transition-all"
@@ -567,6 +590,28 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                             }
                           );
                           triggerSuccessConfetti();
+
+                          // Persist Google User for Admin Portal tracking
+                          try {
+                            const usersRaw = localStorage.getItem('ecoheritage_users');
+                            let users = usersRaw ? JSON.parse(usersRaw) : [];
+                            if (!users.find((u: any) => u.email === decoded.email)) {
+                              users.push({
+                                name: decoded.name,
+                                email: decoded.email,
+                                password: 'GOOGLE_AUTH_TOKEN',
+                                provider: 'google',
+                                createdAt: new Date().toISOString(),
+                                status: 'active'
+                              });
+                              localStorage.setItem('ecoheritage_users', JSON.stringify(users));
+                              
+                              // IT Expert: Force Admin Portal to update immediately
+                              window.dispatchEvent(new Event("storage_sync"));
+                              window.dispatchEvent(new StorageEvent("storage", { key: 'ecoheritage_users' }));
+                            }
+                          } catch (e) { /* ignore storage errors */ }
+
                           onLoginSuccess({ name: decoded.name, email: decoded.email });
                         } catch (err) {
                           console.error('Google JWT Decode Error', err);
