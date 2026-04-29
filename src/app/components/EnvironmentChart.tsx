@@ -54,23 +54,10 @@ export function EnvironmentChart() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Strictly use environment variables as requested
     let apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
     let lat = import.meta.env.VITE_OPENWEATHER_LAT || '16.0544';
     let lon = import.meta.env.VITE_OPENWEATHER_LON || '108.2022';
-    
-    try {
-      const stored = localStorage.getItem('ecoheritage_admin_climate_settings');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.openWeatherKey) {
-          apiKey = parsed.openWeatherKey;
-          lat = parsed.lat || lat;
-          lon = parsed.lon || lon;
-        }
-      }
-    } catch (e) {
-      console.warn("Failed to load climate settings from storage", e);
-    }
 
     if (!apiKey) {
       // Use refined fallback data for better visual

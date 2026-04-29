@@ -1,6 +1,7 @@
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "ad985e6b3d6f0c414479a1e1873d9c7c";
-const DEFAULT_LAT = import.meta.env.VITE_OPENWEATHER_LAT || "16.0544"; // Đà Nẵng
+const DEFAULT_LAT = import.meta.env.VITE_OPENWEATHER_LAT || "16.0544"; 
 const DEFAULT_LON = import.meta.env.VITE_OPENWEATHER_LON || "108.2022";
+const BASE_URL = import.meta.env.VITE_AQI_API_URL || "https://api.openweathermap.org/data/2.5";
 
 export interface AirQualityData {
   aqi: number;
@@ -16,12 +17,12 @@ export async function fetchAirQuality(): Promise<AirQualityData> {
   try {
     // 1. Fetch Pollution
     const pollRes = await fetch(
-      `https://api.openweathermap.org/data/2.5/air_pollution?lat=${DEFAULT_LAT}&lon=${DEFAULT_LON}&appid=${API_KEY}`
+      `${BASE_URL}/air_pollution?lat=${DEFAULT_LAT}&lon=${DEFAULT_LON}&appid=${API_KEY}`
     );
     
     // 2. Fetch Weather (Humidity, Wind)
     const weatherRes = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${DEFAULT_LAT}&lon=${DEFAULT_LON}&units=metric&appid=${API_KEY}`
+      `${BASE_URL}/weather?lat=${DEFAULT_LAT}&lon=${DEFAULT_LON}&units=metric&appid=${API_KEY}`
     );
 
     const pollData = await pollRes.json();
