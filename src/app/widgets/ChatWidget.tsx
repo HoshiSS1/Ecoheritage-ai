@@ -413,7 +413,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className={`fixed z-[101] bg-[#0a1913]/95 backdrop-blur-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isExpanded
+            className={`fixed z-[101] bg-[#0a1913]/98 border border-white/10 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isExpanded
                 ? 'inset-0 md:bottom-6 md:right-6 md:left-auto md:top-auto md:w-[80vw] md:max-w-[1200px] md:h-[85vh] rounded-none md:rounded-3xl'
                 : 'bottom-4 right-4 left-4 w-auto h-[600px] max-h-[80vh] md:bottom-6 md:right-6 md:left-auto md:w-[400px] md:max-h-[85vh] rounded-3xl'
               }`}

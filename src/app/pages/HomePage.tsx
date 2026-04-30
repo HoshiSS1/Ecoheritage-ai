@@ -66,8 +66,8 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
 
       <section id="environment" className="py-14 sm:py-20 md:py-32 relative bg-[#051a11] overflow-hidden scroll-mt-20">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-emerald-600/20 blur-[120px] mix-blend-screen animate-pulse" />
-          <div className="absolute bottom-[20%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-amber-600/10 blur-[150px] mix-blend-screen" style={{ animation: "pulse 8s infinite alternate" }} />
+          <div className="absolute top-[10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-emerald-600/10 blur-[100px] mix-blend-screen animate-pulse" />
+          <div className="absolute bottom-[20%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-amber-600/5 blur-[120px] mix-blend-screen" style={{ animation: "pulse 8s infinite alternate" }} />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
@@ -214,7 +214,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
       {/* CTA */}
       <section className="py-14 sm:py-20 md:py-32 relative bg-[#051a11] overflow-hidden flex items-center justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]">
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-gradient-to-tr from-emerald-600/30 to-amber-500/30 blur-[100px] rounded-full animate-pulse mix-blend-screen" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-gradient-to-tr from-emerald-600/20 to-amber-500/20 blur-[80px] rounded-full animate-pulse mix-blend-screen" />
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">

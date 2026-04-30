@@ -1,6 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Leaf, Menu, X, MapPin, Mail, Phone, Facebook, Instagram, Youtube, Activity, LogOut, User, ShieldCheck } from 'lucide-react';
+import { Leaf, Menu, X, MapPin, Mail, Phone, Facebook, Instagram, Youtube, Activity, LogOut, User, ShieldCheck, MessageSquareQuote } from 'lucide-react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { AuthModal } from './components/AuthModal';
@@ -115,9 +115,9 @@ export default function App() {
 
   const navLinks = [
     { name: 'Môi trường', path: '/#environment' },
-    { name: 'Sức khỏe', path: '/#health' },
-    { name: 'Di sản', path: '/heritage' },
-    { name: 'Liên hệ', path: '#contact' }
+    { name: 'Sức Khỏe', path: '/#health' },
+    { name: 'Kho tàng Bài thuốc', path: '/heritage' },
+    { name: 'Tư vấn', path: '#contact' }
   ];
 
   const suspenseFallback = (
@@ -201,16 +201,17 @@ export default function App() {
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full border border-white/20 backdrop-blur-md transition-all"
+                  className="flex items-center gap-3 glass-premium hover:bg-white/10 px-4 py-2 rounded-2xl border-emerald-500/20 transition-all group/user shadow-[0_0_20px_rgba(16,185,129,0.1)] hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-sm shadow-lg overflow-hidden">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 flex items-center justify-center border border-emerald-500/30 group-hover/user:scale-110 transition-transform duration-500 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-emerald-500/10 animate-pulse" />
                     {userAvatar ? (
-                      <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover relative z-10" />
                     ) : (
-                      user.name.charAt(0).toUpperCase()
+                      <User className="w-5 h-5 text-emerald-400 relative z-10" />
                     )}
                   </div>
-                  <span className="text-sm font-medium text-white">{user.name}</span>
+                  <span className="text-sm font-bold text-white tracking-tight">{user.name}</span>
                 </button>
 
                 <AnimatePresence>
@@ -360,36 +361,60 @@ export default function App() {
         </Routes>
       </Suspense>
 
-      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-16 sm:pt-24 pb-8 sm:pb-12 border-t border-emerald-900/30 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('/textures/stardust.png')] mix-blend-overlay" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[50vw] h-[1px] bg-gradient-to-r from-transparent via-amber-400/50 to-transparent opacity-50" />
+      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-24 pb-12 border-t border-emerald-500/10 relative overflow-hidden">
+        {/* Decorative background elements - enhanced glow */}
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-8 mb-12 sm:mb-16 pb-12 sm:pb-16 border-b border-white/10">
-            <div className="lg:col-span-1">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="relative bg-gradient-to-br from-emerald-500 to-emerald-700 p-3 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                  <div className="absolute -inset-1 bg-emerald-400/15 rounded-xl blur-md" />
-                  <Leaf className="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-                </div>
-                <div>
-                  <div className="font-display text-2xl font-bold text-white tracking-tight">EcoHeritage</div>
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-semibold text-amber-400">Đà Nẵng</div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16 mb-20 items-stretch">
+            {/* Brand Column */}
+            <div className="lg:col-span-4 flex flex-col justify-between space-y-8">
+              <div className="space-y-6">
+                <Link to="/" className="flex items-center gap-4 group">
+                  <div className="relative bg-gradient-to-br from-emerald-500 to-emerald-700 p-3.5 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-transform duration-500">
+                    <Leaf className="w-8 h-8 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                  </div>
+                  <div>
+                    <div className="font-display text-3xl font-bold text-white tracking-tight">EcoHeritage</div>
+                    <div className="text-[10px] uppercase tracking-[0.4em] font-bold text-amber-400 mt-1">AI · Đà Nẵng</div>
+                  </div>
+                </Link>
+                <p className="text-emerald-100/60 leading-relaxed text-lg font-medium max-w-[320px]">
+                  Tiên phong kết hợp trí tuệ nhân tạo với di sản y học dân tộc để mang lại giải pháp chăm sóc sức khỏe xanh bền vững.
+                </p>
               </div>
-              <p className="text-base leading-relaxed text-emerald-100/60 pr-4">
-                Trợ lý sức khỏe xanh kết hợp di sản y học Việt Nam và trí tuệ nhân tạo. Chăm sóc bạn từ những điều nhỏ nhất.
-              </p>
+              <div className="flex gap-4">
+                {[
+                  { icon: Facebook, href: "https://facebook.com/vku.udn.vn" },
+                  { icon: Instagram, href: "https://instagram.com/vku.udn.vn" },
+                  { icon: Youtube, href: "https://youtube.com/@vku.udn.vn" }
+                ].map((social, i) => (
+                  <a
+                    key={i}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-11 h-11 rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center justify-center hover:!bg-emerald-500 hover:!text-[#051a11] hover:border-emerald-400 hover:-translate-y-1.5 transition-all duration-500 shadow-lg group/social"
+                  >
+                    <social.icon className="w-5 h-5 transition-transform group-hover/social:scale-110" />
+                  </a>
+                ))}
+              </div>
             </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 text-base uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Khám phá
+            {/* Discovery Links Column */}
+            <div className="lg:col-span-2">
+              <h4 className="text-white font-bold mb-8 text-sm uppercase tracking-[0.2em] flex items-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                <span className="text-premium-gradient">Khám phá</span>
               </h4>
-              <ul className="space-y-3 text-base">
+              <ul className="space-y-4">
                 {navLinks.filter(l => l.path !== '#contact').map((l) => (
                   <li key={l.name}>
-                    <Link to={l.path} className="text-emerald-100/60 hover:text-amber-400 hover:translate-x-1 transition-all inline-block">
+                    <Link to={l.path} className="text-emerald-100/70 hover:text-emerald-400 font-bold transition-all flex items-center gap-3 group/link text-base">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/20 group-hover/link:bg-emerald-500 group-hover/link:scale-125 transition-all" />
                       {l.name}
                     </Link>
                   </li>
@@ -397,64 +422,71 @@ export default function App() {
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 text-base uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Liên hệ
+            {/* Consultant Column */}
+            <div className="lg:col-span-3">
+              <h4 className="text-white font-bold mb-8 text-sm uppercase tracking-[0.2em] flex items-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
+                <span className="text-premium-gradient">Tư vấn</span>
               </h4>
-              <ul className="space-y-4 text-base text-emerald-100/60">
-                <li className="flex items-start gap-3 hover:text-white transition-colors cursor-pointer">
-                  <MapPin className="w-4 h-4 mt-0.5 text-amber-400 shrink-0" />
-                  <a href="https://www.google.com/maps/search/?api=1&query=Vietnam+Korea+University+of+Information+and+Communication+Technology" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">
-                    BestStudent VKU, Ngũ Hành Sơn, Đà Nẵng
-                  </a>
-                </li>
-                <li className="flex items-start gap-3 hover:text-white transition-colors cursor-pointer">
-                  <Mail className="w-4 h-4 mt-0.5 text-amber-400 shrink-0" />
-                  <a href="mailto:EcoHeritage@gmail.com" className="hover:text-amber-400 transition-colors">EcoHeritage@gmail.com</a>
-                </li>
-                <li className="flex items-start gap-3 hover:text-white transition-colors cursor-pointer">
-                  <Phone className="w-4 h-4 mt-0.5 text-amber-400 shrink-0" />
-                  <a href="tel:+842368880101" className="hover:text-amber-400 transition-colors">+84 236 888 0101</a>
-                </li>
+              <ul className="space-y-5">
+                {[
+                  { icon: MapPin, text: "BestStudent VKU, Đà Nẵng", href: "#" },
+                  { icon: Mail, text: "EcoHeritage@gmail.com", href: "mailto:EcoHeritage@gmail.com" },
+                  { icon: Phone, text: "+84 236 888 0101", href: "tel:+842368880101" }
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-4 group/contact">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 group-hover/contact:scale-110 transition-transform shrink-0 shadow-[0_0_10px_rgba(251,191,36,0.1)] group-hover/contact:bg-amber-500/20">
+                      <item.icon className="w-5 h-5 text-amber-400 group-hover/contact:text-amber-300 transition-colors" />
+                    </div>
+                    <a href={item.href} className="text-emerald-100/80 hover:text-white font-semibold transition-colors text-[15px] leading-relaxed break-all">
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 text-base uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Kết nối
-              </h4>
-              <div className="flex gap-4 mb-8">
-                <a href="https://www.facebook.com/vku.udn.vn" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-amber-400 hover:border-amber-400 hover:text-[#0a2e1f] hover:-translate-y-1 flex items-center justify-center transition-all duration-300" title="Facebook VKU">
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a href="https://www.instagram.com/vku.udn.vn/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-amber-400 hover:border-amber-400 hover:text-[#0a2e1f] hover:-translate-y-1 flex items-center justify-center transition-all duration-300" title="Instagram">
-                  <Instagram className="w-4 h-4" />
-                </a>
-                <a href="https://www.youtube.com/@vku.udn.vn" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-amber-400 hover:border-amber-400 hover:text-[#0a2e1f] hover:-translate-y-1 flex items-center justify-center transition-all duration-300" title="Youtube VKU">
-                  <Youtube className="w-4 h-4" />
-                </a>
-              </div>
-              <div className="bg-[#051a11] border border-white/5 p-5 rounded-xl relative overflow-hidden group shadow-lg">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <p className="text-base md:text-lg italic font-display text-amber-200/90 leading-relaxed relative z-10">
-                  "Nam dược trị Nam nhân" <br/>
-                  <span className="text-sm text-emerald-400/80 mt-2 block not-italic font-medium">— Tuệ Tĩnh</span>
-                </p>
+            {/* Quote Column */}
+            <div className="lg:col-span-3">
+              <div className="glass-premium rounded-[2rem] p-7 relative overflow-hidden group h-full flex flex-col justify-center border-white/5 hover:border-emerald-500/20 transition-all duration-700 shadow-2xl">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-700" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-amber-500/20 transition-all duration-700" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-5 opacity-40">
+                    <MessageSquareQuote className="w-6 h-6 text-emerald-400" />
+                    <div className="h-[1px] w-10 bg-emerald-500/30" />
+                  </div>
+                  
+                  <p className="text-xl italic font-display text-white leading-tight mb-6 drop-shadow-md">
+                    "Nam dược trị <br/>
+                    <span className="text-2xl not-italic font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-amber-200">Nam nhân</span>"
+                  </p>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] text-emerald-400/80 uppercase tracking-[0.4em] font-black">Tuệ Tĩnh</span>
+                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-transform duration-500">
+                      <Leaf className="w-3.5 h-3.5 text-emerald-500/50" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-emerald-50/40 gap-4">
-            <p className="font-medium">© 2026 EcoHeritage AI · Mọi quyền được bảo lưu</p>
-            <div className="flex items-center gap-4">
-              <span className="hover:text-white cursor-pointer transition-colors">Điều khoản</span>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <span className="hover:text-white cursor-pointer transition-colors">Bảo mật</span>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <span className="flex items-center gap-1"><Activity className="w-3 h-3 text-emerald-500" /> Cập nhật: {now.toLocaleTimeString('vi-VN')}</span>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <Link to="/admin-portal" className="flex items-center gap-1 hover:text-emerald-400 transition-colors font-medium">
-                <ShieldCheck className="w-3 h-3 text-amber-500" /> Cổng Admin
+          {/* Bottom Bar */}
+          <div className="pt-10 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-white/30">
+            <p>© 2026 EcoHeritage AI · Mọi quyền được bảo lưu</p>
+            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+              <span className="hover:text-emerald-400 cursor-pointer transition-colors">Điều khoản</span>
+              <span className="hover:text-emerald-400 cursor-pointer transition-colors">Bảo mật</span>
+              <span className="flex items-center gap-2 bg-white/5 px-2.5 py-1 rounded-full border border-white/5 text-[10px]">
+                <Activity className="w-3 h-3 text-emerald-500 animate-pulse" />
+                {now.toLocaleTimeString('vi-VN')}
+              </span>
+              <Link to="/admin-portal" className="flex items-center gap-2 hover:text-amber-400 transition-colors group/admin">
+                <ShieldCheck className="w-4 h-4 text-amber-500 group-hover:rotate-12 transition-transform" />
+                Cổng Admin
               </Link>
             </div>
           </div>
