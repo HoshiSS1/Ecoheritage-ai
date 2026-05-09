@@ -316,7 +316,7 @@ export function DashboardSection() {
                     <div className="w-12 h-12 rounded-2xl p-[2px] bg-gradient-to-tr from-amber-500 to-amber-600 shadow-sm transition-transform group-hover/avatar:-rotate-6">
                       <div className="w-full h-full rounded-[14px] bg-white p-[1px] overflow-hidden">
                         <img 
-                          src={getAvatarUrl(u.name)} 
+                          src={localStorage.getItem(`avatar_${u.email}`) || getAvatarUrl(u.name)} 
                           alt={u.name} 
                           className="w-full h-full object-cover grayscale-[0.1] contrast-125"
                         />
