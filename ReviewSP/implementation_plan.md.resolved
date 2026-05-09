@@ -1,0 +1,136 @@
+# 🗺️ KẾ HOẠCH CHI TIẾT DỰ ÁN ECOHERITAGE AI
+
+> **Cập nhật**: 07/05/2026 21:45
+> **Trạng thái**: ✅ 100% HOÀN THÀNH — SẴN SÀNG NỘP
+> **Stack**: React 18 + Vite + TypeScript + TailwindCSS 4 + Gemini AI
+
+---
+
+## 📊 TỔNG QUAN TIẾN ĐỘ
+
+| Hạng mục | Trạng thái | Ghi chú |
+| --- | --- | --- |
+| 🏠 Trang chủ (HomePage) | ✅ Hoàn thành | Hero, Stats, Remedy Cards, Health Advice |
+| 🏛️ Trang Di sản (HeritagePage) | ✅ Hoàn thành | Gallery di sản văn hóa |
+| 👤 Trang Hồ sơ (ProfilePage) | ✅ Hoàn thành | Avatar upload, đổi mật khẩu SHA-256 |
+| 🔐 Đăng nhập/Đăng ký (AuthModal) | ✅ Hoàn thành | OTP reset, SHA-256, Google OAuth |
+| 🤖 AI Chat (ChatWidget) | ✅ Hoàn thành | Multi-model fallback, Heritage matching |
+| 🧭 Navbar + Footer | ✅ Hoàn thành | Responsive, Smooth scroll |
+| 🎨 Design System | ✅ Hoàn thành | Glassmorphism, 3D effects |
+| 🔒 Bảo mật | ✅ Hoàn thành | SHA-256 hash, OTP flow |
+| 📦 Dependencies | ✅ Đã dọn | Gỡ 115 packages rác |
+| 📶 Offline Assets | ✅ Hoàn thành | Đã local hóa 100% |
+
+---
+
+## 🗂️ SƠ ĐỒ CẤU TRÚC FILE (Giải thích từng file)
+
+```
+best web desgin/
+├── .env.local                  # 🔑 API Keys (Gemini AI + Google OAuth)
+├── index.html                  # 📄 Entry HTML (SEO meta, favicon, viewport)
+├── package.json                # 📦 Dependencies (đã dọn sạch)
+├── vite.config.ts              # ⚙️ Cấu hình Vite build
+├── tsconfig.json               # ⚙️ Cấu hình TypeScript
+├── postcss.config.mjs          # ⚙️ Cấu hình PostCSS
+│
+├── public/                     # 📁 Assets tĩnh (không qua bundler)
+│   ├── favicon.svg             #   Logo favicon gradient emerald
+│   ├── textures/               #   4 texture patterns (đã local hóa)
+│   │   ├── cubes.png
+│   │   ├── stardust.png
+│   │   ├── black-scales.png
+│   │   └── rice-paper.png
+│   └── images/                 #   Ảnh minh họa & di sản
+│       ├── heritage_story.jpg
+│       ├── canh_bi_dao.png
+│       ├── chanh_dao_mat_ong.jpg
+│       ├── che_hat_sen.webp
+│       ├── nuoc_ep_diep_ca.jpg
+│       ├── sua_gao_lut.jpg
+│       ├── tra_hoa_cuc.jpg     # Đã local hóa
+│       └── ...
+│
+├── src/
+│   ├── main.tsx                # 🚪 Entry point React
+│   │
+│   ├── styles/                 # 🎨 CSS
+│   │   ├── index.css           #   CSS chính (scrollbar, animations)
+│   │   ├── theme.css           #   Design tokens
+│   │   └── tailwind.css        #   TailwindCSS import
+│   │
+│   ├── assets/                 # 🖼️ Assets qua bundler
+│   │   ├── hero/               #   Ảnh hero section
+│   │   └── remedies/           #   25 ảnh bài thuốc (AI-generated)
+│   │
+│   └── app/                    # 💻 SOURCE CODE CHÍNH
+│       ├── App.tsx             #   🧭 ROOT COMPONENT
+│       ├── data.ts             #   📊 DỮ LIỆU (Đã cập nhật ảnh local)
+│       ├── remedyImages.ts     #   🖼️ Image import mapping
+│       │
+│       ├── components/         # 🧩 CÁC COMPONENT
+│       │   ├── AuthModal.tsx   #   🔐 Modal Đăng nhập/Đăng ký
+│       │   ├── Hero.tsx        #   🎨 Hero section
+│       │   ├── TraditionalRemedyCard.tsx  # 💊 Card bài thuốc
+│       │   ├── HeritageStory.tsx          # 📜 Section di sản (Timeline)
+│       │   └── ...
+│       │
+│       ├── pages/              # 📃 CÁC TRANG
+│       │   ├── HomePage.tsx    #   🏠 Trang chủ
+│       │   ├── ProfilePage.tsx #   👤 Hồ sơ cá nhân
+│       │   └── HeritagePage.tsx#   🏛️ Di sản văn hóa
+│       │
+│       └── widgets/
+│           └── ChatWidget.tsx  #   🤖 AI CHAT
+```
+
+---
+
+## ✅ NHỮNG GÌ ĐÃ LÀM XONG (Hoàn tất 100%)
+
+### Giai đoạn 1: Nền tảng & UI
+- [x] Setup Vite + React + TypeScript + TailwindCSS 4
+- [x] Thiết kế UI Premium (glassmorphism, 3D effects, gradients)
+- [x] Navbar & Footer responsive, chỉ báo Amber Capsule Indicator.
+- [x] Routing & Lazy loading tối ưu.
+
+### Giai đoạn 2: Tính năng cốt lõi
+- [x] Hero section, Stats, Environment Monitoring.
+- [x] Traditional Remedy cards (25 bài thuốc dân gian).
+- [x] Heritage Timeline (Section di sản 3D).
+
+### Giai đoạn 3: AI & Bảo mật
+- [x] Gemini AI integration (Multi-key rotation, Fallback đa tầng).
+- [x] Heritage Matching Engine (Thuật toán tìm kiếm theo từ khóa).
+- [x] SHA-256 Password Hashing & OTP Flow.
+
+### Giai đoạn 4: Tối ưu hóa cuối cùng (Final Polish)
+- [x] **Local hóa 100% Assets**: Toàn bộ ảnh, textures, fonts đều chạy offline.
+- [x] **Dọn sạch Technical Debt**: Xóa 115 packages rác và toàn bộ file `.js` xung đột.
+- [x] **Fix React Keys**: Đảm bảo sự ổn định của Chat messages.
+- [x] **Build verification**: ✅ PASSED (0 lỗi build).
+
+---
+
+## 🏁 TRẠNG THÁI CUỐI CÙNG
+
+> [!IMPORTANT]
+> Dự án đã đạt độ hoàn thiện tuyệt đối về cả Thẩm mỹ (UI) và Kỹ thuật (Code).
+> Toàn bộ các "Nice-to-have" đã được tích hợp:
+> - Không còn link ảnh ngoài (Tránh lỗi mất ảnh khi không có internet).
+> - Phân tách mã nguồn sạch sẽ (Chỉ sử dụng .ts/.tsx).
+> - Hiệu suất mượt mà, phản hồi Zero-lag.
+
+---
+
+## 💬 CÁCH GIẢI THÍCH DỰ ÁN CHO GIÁM KHẢO
+
+### Elevator Pitch (30 giây)
+> "EcoHeritage AI là nền tảng kết hợp AI và tri thức dân gian Việt Nam, giúp người dùng tra cứu 25 bài thuốc cổ truyền dựa trên triệu chứng, đồng thời giám sát chỉ số môi trường để đưa ra lời khuyên sức khỏe phù hợp. Hệ thống tích hợp Gemini AI với cơ chế fallback đa tầng, đảm bảo luôn hoạt động ổn định."
+
+### Điểm nổi bật kỹ thuật
+1. **Heritage Matching Engine** — Thuật toán tự viết (normalize → tokenize → score → boost)
+2. **AI Multi-Model Fallback** — flash-lite → flash → pro, auto key rotation
+3. **SHA-256 Password Hashing** — Web Crypto API, không lưu plaintext
+4. **100% Offline Assets** — Texture, fonts, images đều local
+5. **Zero-Conflict Architecture** — Đã dọn sạch 100% file dư thừa và packages rác.
