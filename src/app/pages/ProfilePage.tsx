@@ -207,15 +207,15 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
             <div className="absolute inset-0 h-[65%] bg-gradient-to-t from-[#020b07] via-[#051a11]/20 to-transparent opacity-60 z-10 pointer-events-none" />
             
             {/* User Info Glass Container */}
-            <div className="absolute bottom-6 sm:bottom-12 left-6 sm:left-12 z-20 flex flex-col sm:flex-row items-end sm:items-center gap-6 sm:gap-10 bg-black/60 backdrop-blur-3xl p-8 sm:p-10 rounded-[3rem] border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] min-w-[300px] sm:min-w-[500px]">
-               <div className="relative group/avatar cursor-pointer">
+            <div className="absolute bottom-4 sm:bottom-12 left-4 right-4 sm:right-auto sm:left-12 z-20 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-10 bg-black/60 backdrop-blur-3xl p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:min-w-[500px]">
+               <div className="relative group/avatar cursor-pointer shrink-0">
                   <div className="absolute -inset-2 bg-emerald-500/20 blur-xl rounded-full opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-500" />
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white/10 overflow-hidden relative shadow-2xl">
+                  <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full border-4 border-white/10 overflow-hidden relative shadow-2xl">
                      {avatarPreview ? (
                         <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                      ) : (
                         <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-                           <User className="w-12 h-12 text-white/50" />
+                           <User className="w-10 h-10 sm:w-12 sm:h-12 text-white/50" />
                         </div>
                      )}
                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm" onClick={() => avatarInputRef.current?.click()}>
@@ -225,14 +225,14 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                   <input type="file" ref={avatarInputRef} onChange={(e) => handleImageUpload(e, 'avatar')} accept="image/*" className="hidden" />
                </div>
 
-               <div className="text-left">
-                  <div className="flex items-center gap-3 mb-2">
-                     <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-md">{user.name}</h2>
+               <div className="text-center sm:text-left">
+                  <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 mb-3 sm:mb-2">
+                     <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white drop-shadow-md">{user.name}</h2>
                      <span className="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[9px] px-3 py-1 rounded-full uppercase tracking-widest font-black shadow-inner">
                         {user.email === 'admin@ecoheritage.com' ? 'Super Admin' : 'Thành viên'}
                      </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-4 text-[11px] font-bold text-white/60 uppercase tracking-widest">
+                  <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-[10px] sm:text-[11px] font-bold text-white/60 uppercase tracking-widest">
                      <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> {user.email}</div>
                      <div className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {address || 'Đà Nẵng, Việt Nam'}</div>
                   </div>

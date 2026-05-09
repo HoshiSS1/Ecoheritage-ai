@@ -164,7 +164,7 @@ export function HeritageMapPage() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -500, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 80 }}
-              className="w-[calc(100%-40px)] md:w-[380px] h-full flex flex-col pointer-events-auto"
+              className="w-full md:w-[380px] h-full flex flex-col pointer-events-auto"
             >
               <div className="bg-[#051a11]/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden h-full flex flex-col relative">
                 {/* Search Pill */}
