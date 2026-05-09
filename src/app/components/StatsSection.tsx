@@ -1,21 +1,19 @@
 import { motion } from 'motion/react';
-import { Wind, Heart, Users, Sprout } from 'lucide-react';
-
+import { Droplets, Gauge, Sun, Wind } from 'lucide-react';
 import { useAirQuality } from '../utils/useAirQuality';
 
 export function StatsSection() {
   const { data: aqiData } = useAirQuality();
-  
+
   const stats = [
-    { icon: Wind, value: aqiData ? String(aqiData.aqi) : '75', label: 'Chỉ số chất lượng khí (AQI)', color: 'text-sky-400' },
-    { icon: Heart, value: '25+', label: 'Bài thuốc di sản được số hóa', color: 'text-rose-400' },
-    { icon: Sprout, value: '50+', label: 'Cơ sở dữ liệu thảo mộc bản địa', color: 'text-emerald-400' },
-    { icon: Users, value: '98.5%', label: 'Phân tích triệu chứng bằng AI', color: 'text-amber-400' },
+    { icon: Gauge, value: aqiData ? String(aqiData.aqi) : '0', label: 'US AQI Đà Nẵng', color: 'text-sky-400' },
+    { icon: Wind, value: aqiData ? `${aqiData.pm25}` : '0', label: 'PM2.5 (µg/m³)', color: 'text-rose-400' },
+    { icon: Sun, value: aqiData ? String(aqiData.uvIndex) : '0', label: 'Chỉ số UV hiện tại', color: 'text-amber-400' },
+    { icon: Droplets, value: aqiData ? `${aqiData.humidity}%` : '0%', label: 'Độ ẩm không khí', color: 'text-emerald-400' },
   ];
 
   return (
     <section className="bg-gradient-to-b from-[#020b07] to-[#051a11] py-14 sm:py-20 md:py-32 relative overflow-hidden border-y border-white/5">
-      {/* 3D Grid Floor */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute bottom-0 left-0 w-full h-[50%] bg-gradient-to-t from-emerald-500/20 to-transparent" style={{ backgroundImage: 'linear-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px', transform: 'perspective(500px) rotateX(60deg)', transformOrigin: 'bottom' }} />
       </div>
@@ -27,12 +25,19 @@ export function StatsSection() {
           viewport={{ once: true }}
           className="text-center mb-8 sm:mb-12 md:mb-16 max-w-4xl mx-auto"
         >
-          <div className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-5 py-2.5 rounded-full text-[10px] uppercase tracking-[0.4em] font-bold mb-6 sm:mb-8 backdrop-blur-md shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#10b981]" />
-            Trạm cứu hộ sức khỏe xanh
+          <div className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-6 py-3 rounded-full text-[12px] uppercase tracking-[0.4em] font-black mb-8 sm:mb-10 backdrop-blur-md shadow-[0_0_25px_rgba(16,185,129,0.25)]">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_#10b981]" />
+            Trạm dữ liệu môi trường
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-[1.1] font-bold drop-shadow-xl mb-6 break-words max-w-full">
-            Di sản y học ngàn đời là <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">"tấm khiên"</em> <br className="hidden md:block" /> bảo vệ <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">tương lai</em>.
+          <h2 className="relative inline-block pb-8 font-display text-4xl sm:text-5xl md:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-6 break-words max-w-full">
+            Theo dõi chất lượng môi trường <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">theo thời gian thực</em>
+            <motion.div 
+              initial={{ width: 0, opacity: 0 }}
+              whileInView={{ width: "16rem", opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_20px_rgba(251,191,36,0.4)] rounded-full" 
+            />
           </h2>
         </motion.div>
 
@@ -52,7 +57,7 @@ export function StatsSection() {
               
               <s.icon className={`w-8 h-8 sm:w-10 sm:h-10 mb-4 sm:mb-6 drop-shadow-[0_0_15px_currentColor] transition-transform duration-500 group-hover:scale-110 ${s.color}`} />
               <div className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 drop-shadow-lg tracking-tighter truncate">{s.value}</div>
-              <div className="text-[9px] sm:text-[11px] md:text-[13px] text-emerald-100/70 leading-relaxed font-light group-hover:text-emerald-50 transition-colors uppercase tracking-widest break-words">{s.label}</div>
+              <div className="text-[11px] sm:text-[12px] md:text-[14px] text-emerald-100/70 leading-relaxed font-bold group-hover:text-emerald-50 transition-colors uppercase tracking-[0.15em] break-words">{s.label}</div>
             </motion.div>
           ))}
         </div>

@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Plus, Save, SquarePen, Trash2, X, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { Plus, Save, SquarePen, Trash2, X, Upload, Image as ImageIcon, Loader2, Search, Database } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -20,25 +20,34 @@ traditionalRemedies.forEach((r) => {
 
 // On first load, enrich seed remedies with actual images
 function getEnrichedRemedies(): RemedyRecord[] {
-  const stored = loadStoredState<RemedyRecord[] | null>(REMEDIES_STORAGE_KEY, null);
-  if (stored) {
-    // Enrich existing records with images from data.ts if missing
-    return stored.map((r) => {
-      if (!r.imageBase64 && remedyImageMap[r.id]) {
-        return { ...r, imageBase64: remedyImageMap[r.id] };
-      }
-      return r;
-    });
+  try {
+    const stored = loadStoredState<RemedyRecord[] | null>(REMEDIES_STORAGE_KEY, null);
+    if (stored && Array.isArray(stored)) {
+      // Enrich existing records with images from data.ts if missing
+      return stored.map((r) => {
+        if (r && !r.imageBase64 && remedyImageMap[r.id]) {
+          return { ...r, imageBase64: remedyImageMap[r.id] };
+        }
+        return r;
+      });
+    }
+    // First time: create seed with images
+    const seeds = createSeedRemedies();
+    if (!Array.isArray(seeds)) return [];
+    
+    return seeds.map((r) => ({
+      ...r,
+      imageBase64: remedyImageMap[r.id] || "",
+    }));
+  } catch (e) {
+    console.error("Critical error in getEnrichedRemedies:", e);
+    return [];
   }
-  // First time: create seed with images
-  return createSeedRemedies().map((r) => ({
-    ...r,
-    imageBase64: remedyImageMap[r.id] || "",
-  }));
 }
 
 export function HeritageCMS() {
   const [remedies, setRemedies] = useState<RemedyRecord[]>(getEnrichedRemedies);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isSlideOpen, setIsSlideOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -123,6 +132,17 @@ export function HeritageCMS() {
     toast.success("Đã xóa bài thuốc.", { style: { borderLeft: "4px solid #f59e0b" } });
   };
 
+  const filteredRemedies = useMemo(() => {
+    const normalized = searchTerm.trim().toLowerCase();
+    if (!normalized) return remedies;
+    return remedies.filter((remedy) =>
+      remedy.name.toLowerCase().includes(normalized) ||
+      remedy.ingredients.toLowerCase().includes(normalized) ||
+      remedy.doctorNote.toLowerCase().includes(normalized) ||
+      remedy.method.toLowerCase().includes(normalized)
+    );
+  }, [remedies, searchTerm]);
+
   // Resolve image source: either base64 or bundled import URL
   const getImageSrc = (r: RemedyRecord): string | undefined => {
     if (r.imageBase64) return r.imageBase64;
@@ -132,67 +152,83 @@ export function HeritageCMS() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#007BFF]">Module 2</p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Quản lý Di sản (Heritage CMS)</h2>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">Quản lý bài thuốc truyền thống. Bấm "Thêm mới" hoặc icon ✏️ để mở bảng chỉnh sửa.</p>
+      <div className="mb-10">
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#007BFF] mb-2">Module 2</p>
+        <h2 className="text-3xl font-black tracking-tighter text-[#1E293B] sm:text-4xl leading-tight">Quản lý Kho Bài thuốc</h2>
+        <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-500 font-medium italic">
+          Số hóa và bảo tồn tri thức y học cổ truyền Việt Nam. Quản lý toàn diện các bản ghi di sản, thành phần và phương pháp chế biến dược liệu trong hệ thống.
+        </p>
       </div>
 
       {/* Table */}
-      <div className={`${shellCardClass} overflow-hidden`}>
-        <div className="flex items-center justify-between gap-3 border-b border-slate-200/80 px-5 py-4 sm:px-6">
-          <div>
-            <h3 className="text-lg font-semibold tracking-tight text-slate-950">Danh sách bài thuốc</h3>
-            <p className="text-sm text-slate-500">{remedies.length} bản ghi</p>
+      <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
+        <div className="flex flex-col gap-4 border-b border-slate-100 px-6 py-8 sm:flex-row sm:items-center sm:justify-between bg-slate-50/50">
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 border border-emerald-500/20"><Database className="h-7 w-7" /></div>
+            <div>
+              <h3 className="text-xl font-bold tracking-tight text-slate-900 uppercase tracking-wider">Danh mục bài thuốc</h3>
+              <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{filteredRemedies.length} bản ghi số hóa</p>
+            </div>
           </div>
-          <button onClick={openAdd} className="inline-flex items-center gap-2 rounded-2xl bg-[#007BFF] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#0064D1] shadow-[0_8px_20px_-8px_rgba(0,123,255,0.4)]">
-            <Plus className="h-4 w-4" /> Thêm mới
-          </button>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-96">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Tìm bài thuốc, thành phần..."
+                className="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-12 pr-4 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 placeholder:text-slate-400"
+              />
+            </div>
+            <button onClick={openAdd} className="inline-flex items-center justify-center gap-3 rounded-2xl bg-amber-400 px-8 py-4 text-[11px] font-black uppercase tracking-widest text-[#051a11] transition hover:bg-amber-300 shadow-xl shadow-amber-400/10">
+              <Plus className="h-5 w-5" /> Thêm bài thuốc
+            </button>
+          </div>
         </div>
 
         {remedies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="mb-4 rounded-full bg-slate-50 p-6"><ImageIcon className="h-12 w-12 text-slate-300" /></div>
-            <h4 className="text-lg font-semibold text-slate-600">Chưa có bài thuốc nào</h4>
-            <p className="mt-2 text-sm text-slate-500 text-center max-w-sm">Bấm "Thêm mới" để bắt đầu số hóa di sản y học truyền thống.</p>
+          <div className="flex flex-col items-center justify-center py-24 px-4">
+            <div className="mb-6 rounded-full bg-slate-50 p-8 shadow-inner"><ImageIcon className="h-16 w-16 text-slate-200" /></div>
+            <h4 className="text-lg font-semibold text-slate-400">Không tìm thấy di sản nào</h4>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left">
-              <thead className="bg-slate-50">
-                <tr className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-                  <th className="px-5 py-4 sm:px-6">Bài thuốc</th>
-                  <th className="px-5 py-4">Ảnh</th>
-                  <th className="px-5 py-4">Thành phần</th>
-                  <th className="px-5 py-4">Cập nhật</th>
-                  <th className="px-5 py-4 text-right sm:px-6">Thao tác</th>
+            <table className="min-w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 border-b border-slate-100">
+                  <th className="px-6 py-6 text-left">Bài thuốc / Di sản</th>
+                  <th className="px-5 py-6 text-left">Hình ảnh</th>
+                  <th className="px-5 py-6 text-left">Dược liệu chính</th>
+                  <th className="px-5 py-6 text-center">Cập nhật</th>
+                  <th className="px-6 py-6 text-right">Thao tác</th>
                 </tr>
               </thead>
-              <tbody>
-                {remedies.slice(0, 25).map((remedy) => {
+              <tbody className="divide-y divide-slate-100">
+                {filteredRemedies.slice(0, 25).map((remedy) => {
                   const imgSrc = getImageSrc(remedy);
                   return (
-                    <tr key={remedy.id} className="border-t border-slate-200/70 align-top hover:bg-slate-50/50 transition-colors">
-                      <td className="px-5 py-4 sm:px-6">
-                        <p className="font-medium text-slate-950">{remedy.name}</p>
-                        <p className="mt-1 line-clamp-1 max-w-sm text-sm text-slate-500">{remedy.doctorNote}</p>
+                    <tr key={remedy.id} className="group hover:bg-slate-50/80 transition-all duration-300">
+                      <td className="px-6 py-6">
+                        <p className="font-bold text-slate-900 text-[15px] group-hover:text-emerald-600 transition-colors">{remedy.name}</p>
+                        <p className="mt-1 line-clamp-1 max-w-sm text-[11px] text-slate-400 font-medium italic">"{remedy.doctorNote}"</p>
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-6">
                         {imgSrc ? (
-                          <img src={imgSrc} alt={remedy.name} className="h-11 w-11 rounded-xl object-cover border border-slate-200 shadow-sm" />
+                          <img src={imgSrc} alt={remedy.name} className="h-14 w-14 rounded-2xl object-cover border border-slate-200 shadow-md group-hover:scale-110 transition-transform duration-500" />
                         ) : (
-                          <div className="h-11 w-11 rounded-xl bg-slate-100 flex items-center justify-center"><ImageIcon className="h-4 w-4 text-slate-400" /></div>
+                          <div className="h-14 w-14 rounded-2xl bg-slate-100 flex items-center justify-center border border-slate-200"><ImageIcon className="h-5 w-5 text-slate-300" /></div>
                         )}
                       </td>
-                      <td className="px-5 py-4"><p className="line-clamp-2 max-w-md text-sm text-slate-600">{remedy.ingredients}</p></td>
-                      <td className="px-5 py-4 text-sm text-slate-500">{formatDateTime(remedy.updatedAt)}</td>
-                      <td className="px-5 py-4 sm:px-6">
-                        <div className="flex justify-end gap-2">
-                          <button onClick={() => openEdit(remedy)} className="rounded-xl border border-slate-200 p-2 text-slate-600 transition hover:border-[#007BFF] hover:text-[#007BFF]" title="Sửa">
-                            <SquarePen className="h-4 w-4" />
+                      <td className="px-5 py-6"><p className="line-clamp-2 max-w-md text-sm text-slate-600 font-medium leading-relaxed">{remedy.ingredients}</p></td>
+                      <td className="px-5 py-6 text-[10px] text-slate-400 font-black uppercase tracking-[0.15em]">{formatDateTime(remedy.updatedAt)}</td>
+                      <td className="px-6 py-6 text-right">
+                        <div className="flex justify-end gap-3">
+                          <button onClick={() => openEdit(remedy)} className="rounded-xl bg-white border border-slate-200 p-3 text-emerald-600 transition hover:bg-emerald-50 hover:border-emerald-200 shadow-sm active:scale-95" title="Sửa">
+                            <SquarePen className="h-5 w-5" />
                           </button>
-                          <button onClick={() => setDeleteTarget({ id: remedy.id, name: remedy.name })} className="rounded-xl border border-slate-200 p-2 text-rose-600 transition hover:border-rose-300 hover:bg-rose-50" title="Xóa">
-                            <Trash2 className="h-4 w-4" />
+                          <button onClick={() => setDeleteTarget({ id: remedy.id, name: remedy.name })} className="rounded-xl bg-white border border-rose-100 p-3 text-rose-500 transition hover:bg-rose-50 hover:border-rose-200 shadow-sm active:scale-95" title="Xóa">
+                            <Trash2 className="h-5 w-5" />
                           </button>
                         </div>
                       </td>
@@ -212,74 +248,80 @@ export function HeritageCMS() {
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setIsSlideOpen(false)}
-              className="fixed inset-0 z-40 bg-slate-950/30 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-sm"
             />
             <motion.div
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 h-full w-full max-w-lg bg-white shadow-2xl flex flex-col"
+              transition={{ type: "spring", damping: 35, stiffness: 300 }}
+              className="fixed right-0 top-0 z-50 h-full w-full max-w-xl bg-white border-l border-slate-200 shadow-2xl flex flex-col"
             >
-              <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+              <div className="flex items-center justify-between border-b border-slate-100 px-10 py-8 bg-slate-50/50">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#007BFF]">Heritage CMS</p>
-                  <h3 className="mt-1 text-lg font-semibold text-slate-950">{editingId ? "Chỉnh sửa bài thuốc" : "Thêm bài thuốc mới"}</h3>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-600">Di sản Editor</p>
+                  <h3 className="mt-1 text-2xl font-black text-slate-900 uppercase tracking-tight">{editingId ? "Cập nhật dữ liệu" : "Thêm mới di sản"}</h3>
                 </div>
-                <button onClick={() => setIsSlideOpen(false)} className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition">
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
+                  <button onClick={() => setIsSlideOpen(false)} className="rounded-2xl border border-slate-200 p-3 text-slate-400 hover:bg-white hover:text-slate-600 transition-all shadow-sm">
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
 
-              <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Ảnh thảo mộc</label>
+                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-10 py-10 space-y-8 custom-scrollbar bg-white">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Hình ảnh minh họa</label>
                   <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} className="hidden" />
                   {form.imageBase64 ? (
-                    <div className="relative group">
-                      <img src={form.imageBase64} alt="Preview" className="w-full h-48 object-cover rounded-2xl border border-slate-200" />
-                      <button type="button" onClick={() => setForm(prev => ({ ...prev, imageBase64: "" }))}
-                        className="absolute top-2 right-2 bg-rose-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-                        <X className="h-3 w-3" />
-                      </button>
+                    <div className="relative group overflow-hidden rounded-[32px] border border-slate-200 shadow-xl">
+                      <img src={form.imageBase64} alt="Preview" className="w-full h-64 object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                        <button type="button" onClick={() => fileInputRef.current?.click()} className="bg-white text-slate-900 px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest mr-2 hover:bg-amber-400 transition-colors shadow-2xl">Thay đổi</button>
+                        <button type="button" onClick={() => setForm(prev => ({ ...prev, imageBase64: "" }))} className="bg-rose-500 text-white p-4 rounded-full hover:bg-rose-600 transition-colors shadow-2xl"><Trash2 className="h-5 w-5" /></button>
+                      </div>
                     </div>
                   ) : (
                     <button type="button" onClick={() => fileInputRef.current?.click()}
-                      className="w-full h-32 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-500 hover:border-[#007BFF] hover:text-[#007BFF] hover:bg-[#F3F8FF] transition-all">
-                      <Upload className="h-6 w-6" />
-                      <span className="text-sm font-medium">Kéo thả hoặc bấm để chọn ảnh</span>
-                      <span className="text-xs text-slate-400">Tối đa 5MB · Tự nén về 600×600</span>
+                      className="w-full h-56 border-2 border-dashed border-slate-200 rounded-[32px] bg-slate-50 flex flex-col items-center justify-center gap-4 text-slate-400 hover:border-emerald-400/50 hover:bg-emerald-50 hover:text-emerald-600 transition-all group shadow-inner">
+                      <div className="bg-white p-6 rounded-2xl shadow-sm group-hover:scale-110 transition-transform"><Upload className="h-8 w-8" /></div>
+                      <div className="text-center">
+                        <span className="block text-sm font-bold">Chọn ảnh từ thiết bị</span>
+                        <span className="text-[10px] uppercase font-black tracking-widest opacity-40">Tối đa 5MB · Auto-compressed</span>
+                      </div>
                     </button>
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Tên bài thuốc <span className="text-rose-400">*</span></label>
-                  <input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#007BFF] focus:bg-white" placeholder="Ví dụ: Trà Gừng Mật Ong" />
+                <div className="space-y-4">
+                  <label htmlFor="remedy-name" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Tên di sản y lý <span className="text-rose-500">*</span></label>
+                  <input id="remedy-name" value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none transition-all font-black" placeholder="Ví dụ: Cao Atisô Đà Lạt" />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Thành phần <span className="text-rose-400">*</span></label>
-                  <textarea value={form.ingredients} onChange={e => setForm(prev => ({ ...prev, ingredients: e.target.value }))}
-                    rows={3} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#007BFF] focus:bg-white" />
+                <div className="space-y-4">
+                  <label htmlFor="remedy-ingredients" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Thành phần dược liệu <span className="text-rose-500">*</span></label>
+                  <textarea id="remedy-ingredients" value={form.ingredients} onChange={e => setForm(prev => ({ ...prev, ingredients: e.target.value }))}
+                    rows={3} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5 text-slate-900 font-medium outline-none transition focus:border-emerald-500 focus:bg-white placeholder:text-slate-300" placeholder="Danh sách các loại thảo mộc..." />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Cách làm</label>
-                  <textarea value={form.method} onChange={e => setForm(prev => ({ ...prev, method: e.target.value }))}
-                    rows={4} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#007BFF] focus:bg-white" />
+                <div className="grid grid-cols-1 gap-8">
+                  <div className="space-y-4">
+                    <label htmlFor="remedy-method" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Quy trình bào chế</label>
+                    <textarea id="remedy-method" value={form.method} onChange={e => setForm(prev => ({ ...prev, method: e.target.value }))}
+                      rows={5} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5 text-slate-900 text-sm outline-none transition focus:border-emerald-500 focus:bg-white placeholder:text-slate-300" placeholder="Mô tả các bước thực hiện..." />
+                  </div>
+ 
+                  <div className="space-y-4">
+                    <label htmlFor="remedy-doctor-note" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Khuyến nghị chuyên gia</label>
+                    <textarea id="remedy-doctor-note" value={form.doctorNote} onChange={e => setForm(prev => ({ ...prev, doctorNote: e.target.value }))}
+                      rows={3} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5 text-slate-900 text-sm italic outline-none transition focus:border-emerald-500 focus:bg-white placeholder:text-slate-300" placeholder="Lời dặn hoặc lưu ý khi sử dụng..." />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">Lời dặn thầy thuốc</label>
-                  <textarea value={form.doctorNote} onChange={e => setForm(prev => ({ ...prev, doctorNote: e.target.value }))}
-                    rows={3} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-[#007BFF] focus:bg-white" />
+                <div className="pt-6 pb-4">
+                  <button type="submit" disabled={isSaving}
+                    className="w-full inline-flex items-center justify-center gap-4 rounded-[32px] bg-amber-400 px-6 py-6 text-[#051a11] text-sm font-black uppercase tracking-widest transition hover:bg-amber-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_20px_50px_rgba(251,191,36,0.2)]">
+                    {isSaving ? <Loader2 className="h-6 w-6 animate-spin" /> : <Save className="h-6 w-6" />}
+                    {isSaving ? "Đang lưu dữ liệu..." : editingId ? "Cập nhật di sản" : "Lưu vào kho di sản"}
+                  </button>
                 </div>
-
-                <button type="submit" disabled={isSaving}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3.5 text-white font-medium transition hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_8px_24px_-8px_rgba(15,23,42,0.3)]">
-                  {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                  {isSaving ? "Đang lưu..." : editingId ? "Lưu chỉnh sửa" : "Thêm vào CMS"}
-                </button>
               </form>
             </motion.div>
           </>

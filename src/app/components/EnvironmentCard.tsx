@@ -49,7 +49,7 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
         <div className="flex-1 flex flex-col justify-center">
           <p className="text-[10px] text-emerald-200/90 font-bold uppercase tracking-[0.2em] mb-2 drop-shadow-sm">{title}</p>
           <p className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tighter group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-emerald-200 transition-all duration-500 leading-none">
-            {value || '--'}
+            {typeof value === 'number' ? value : (value || '0')}
           </p>
         </div>
       </div>

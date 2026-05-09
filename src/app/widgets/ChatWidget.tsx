@@ -413,7 +413,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className={`fixed z-[101] bg-[#0a1913]/95 backdrop-blur-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isExpanded
+            className={`fixed z-[101] bg-[#0a1913]/98 border border-white/10 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isExpanded
                 ? 'inset-0 md:bottom-6 md:right-6 md:left-auto md:top-auto md:w-[80vw] md:max-w-[1200px] md:h-[85vh] rounded-none md:rounded-3xl'
                 : 'bottom-4 right-4 left-4 w-auto h-[600px] max-h-[80vh] md:bottom-6 md:right-6 md:left-auto md:w-[400px] md:max-h-[85vh] rounded-3xl'
               }`}
@@ -464,7 +464,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
             <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
               {messages.map((msg, idx) => (
                 <motion.div
-                  key={idx}
+                  key={`${msg.from}-${idx}`}
                   initial={{ opacity: 0, x: msg.from === 'user' ? 20 : -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -566,12 +566,12 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!inputMessage.trim() || isTyping}
-                  className="absolute right-1.5 p-2 bg-amber-400 text-[#051a11] rounded-full hover:bg-amber-300 disabled:opacity-50 disabled:hover:bg-amber-400 transition-colors"
+                  className="absolute right-1.5 p-2 bg-amber-600 text-white rounded-full hover:bg-amber-500 disabled:opacity-50 disabled:hover:bg-amber-600 transition-colors shadow-lg active:scale-95"
                 >
                   {isTyping ? <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" /> : <Send className="w-4 h-4 md:w-5 md:h-5" />}
                 </button>
               </div>
-              <p className="mt-3 text-[10px] md:text-[11px] text-white/40 italic text-center leading-tight">
+              <p className="mt-6 text-[10px] md:text-[11px] text-white/40 italic text-center leading-tight px-4">
                 ⚠️ Lưu ý: EcoHeritage AI là trợ lý cung cấp thông tin tham khảo từ di sản dân gian. Vui lòng tham vấn ý kiến chuyên gia y tế trước khi sử dụng bài thuốc.
               </p>
             </div>

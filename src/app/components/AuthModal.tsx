@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 
 import { hashPassword } from '../utils/crypto';
+import { ADMIN_SESSION_KEY } from '../pages/admin/adminUtils';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -34,11 +35,11 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
 
   // Tính toán độ mạnh mật khẩu (1-4: Yếu, 5-6: Trung bình, 7+: Mạnh)
   const getPasswordStrength = (pass: string) => {
-    if (!pass) return { score: 0, label: '', barColor: 'transparent', textColor: 'transparent' };
+    if (!pass) return { score: 0, label: '', barClass: 'bg-transparent', textClass: 'text-transparent' };
     const len = pass.length;
-    if (len >= 7) return { score: 3, label: 'Mạnh', barColor: '#34d399', textColor: '#34d399' };
-    if (len >= 5) return { score: 2, label: 'Trung bình', barColor: '#fbbf24', textColor: '#fbbf24' };
-    return { score: 1, label: 'Yếu', barColor: '#fb7185', textColor: '#fb7185' };
+    if (len >= 7) return { score: 3, label: 'Mạnh', barClass: 'bg-emerald-400', textClass: 'text-emerald-400' };
+    if (len >= 5) return { score: 2, label: 'Trung bình', barClass: 'bg-amber-400', textClass: 'text-amber-400' };
+    return { score: 1, label: 'Yếu', barClass: 'bg-rose-400', textClass: 'text-rose-400' };
   };
 
   const strength = getPasswordStrength(isForgotPassword && forgotPasswordStep === 'reset' ? newPassword : password);
@@ -158,6 +159,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
 
     // Cho phép đăng nhập nhanh admin qua modal public
     if (isLogin && email === 'admin' && (password === import.meta.env.VITE_ADMIN_PORTAL_PASSWORD || password === 'ecoheritage-admin')) {
+      sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({ authenticated: true, authenticatedAt: new Date().toISOString() }));
       window.location.href = '/admin-portal';
       return;
     }
@@ -247,8 +249,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 30 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-md bg-[#0a1913]/95 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_0_80px_-15px_rgba(52,211,153,0.3)] border border-white/10 max-h-[90vh] flex flex-col"
-          style={{ isolation: 'isolate' }}
+          className="relative w-full max-w-md bg-[#0a1913]/95 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_0_80px_-15px_rgba(52,211,153,0.3)] border border-white/10 max-h-[90vh] flex flex-col isolate"
         >
           {/* Decorative background shapes */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/15 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0" />
@@ -258,6 +259,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); onClose(); }}
+            aria-label="Đóng"
+            title="Đóng"
             className="absolute top-5 right-5 p-2.5 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all z-50 cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -394,6 +397,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
+                      aria-label={showNewPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                      title={showNewPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                       className="absolute inset-y-0 right-0 pr-4 flex items-center text-white/40 hover:text-white transition-colors"
                     >
                       {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -403,12 +408,12 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                   {/* Password Strength Meter for New Password */}
                   <div className="px-1 mt-1 mb-4">
                     <div className="flex gap-1 h-1.5 w-full rounded-full overflow-hidden bg-white/5">
-                      <div className="h-full transition-all duration-500 rounded-full w-1/3" style={{ backgroundColor: newPassword.length > 0 ? strength.barColor : 'transparent' }} />
-                      <div className="h-full transition-all duration-500 rounded-full w-1/3" style={{ backgroundColor: strength.score >= 2 ? strength.barColor : 'transparent' }} />
-                      <div className="h-full transition-all duration-500 rounded-full w-1/3" style={{ backgroundColor: strength.score >= 3 ? strength.barColor : 'transparent' }} />
+                      <div className={`h-full transition-all duration-500 rounded-full w-1/3 ${newPassword.length > 0 ? strength.barClass : 'bg-transparent'}`} />
+                      <div className={`h-full transition-all duration-500 rounded-full w-1/3 ${strength.score >= 2 ? strength.barClass : 'bg-transparent'}`} />
+                      <div className={`h-full transition-all duration-500 rounded-full w-1/3 ${strength.score >= 3 ? strength.barClass : 'bg-transparent'}`} />
                     </div>
                     {newPassword.length > 0 && (
-                      <p className="text-[10px] mt-2 flex items-center gap-1 font-medium tracking-wider uppercase" style={{ color: strength.textColor }}>
+                      <p className={`text-[10px] mt-2 flex items-center gap-1 font-medium tracking-wider uppercase ${strength.textClass}`}>
                         <ShieldCheck className="w-3 h-3" /> {strength.label}
                       </p>
                     )}
@@ -454,6 +459,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                      title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                       className="absolute inset-y-0 right-0 pr-4 flex items-center text-white/40 hover:text-white transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -472,12 +479,12 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     {/* Password Strength Meter */}
                     <div className="px-1 mt-1 mb-4">
                       <div className="flex gap-1 h-1.5 w-full rounded-full overflow-hidden bg-white/5">
-                        <div className="h-full transition-all duration-500 rounded-full w-1/3" style={{ backgroundColor: password.length > 0 ? strength.barColor : 'transparent' }} />
-                        <div className="h-full transition-all duration-500 rounded-full w-1/3" style={{ backgroundColor: strength.score >= 2 ? strength.barColor : 'transparent' }} />
-                        <div className="h-full transition-all duration-500 rounded-full w-1/3" style={{ backgroundColor: strength.score >= 3 ? strength.barColor : 'transparent' }} />
+                        <div className={`h-full transition-all duration-500 rounded-full w-1/3 ${password.length > 0 ? strength.barClass : 'bg-transparent'}`} />
+                        <div className={`h-full transition-all duration-500 rounded-full w-1/3 ${strength.score >= 2 ? strength.barClass : 'bg-transparent'}`} />
+                        <div className={`h-full transition-all duration-500 rounded-full w-1/3 ${strength.score >= 3 ? strength.barClass : 'bg-transparent'}`} />
                       </div>
                       {password.length > 0 && (
-                        <p className="text-[10px] mt-2 flex items-center gap-1 font-medium tracking-wider uppercase" style={{ color: strength.textColor }}>
+                        <p className={`text-[10px] mt-2 flex items-center gap-1 font-medium tracking-wider uppercase ${strength.textClass}`}>
                           <ShieldCheck className="w-3 h-3" /> {strength.label}
                         </p>
                       )}

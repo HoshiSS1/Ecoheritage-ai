@@ -34,45 +34,47 @@ export function ConfirmDialog({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onCancel}
-          className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+          className="absolute inset-0 bg-[#051a11]/80 backdrop-blur-md"
         />
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           transition={{ type: "spring", damping: 25, stiffness: 350 }}
-          className="relative w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl"
+          className="relative w-full max-w-md rounded-[2.5rem] bg-[#0a2e1f] border border-white/10 p-10 shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-hidden"
         >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-[60px] rounded-full" />
+          
           {/* Close */}
           <button
             onClick={onCancel}
-            className="absolute right-4 top-4 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            className="absolute right-6 top-6 rounded-2xl border border-white/5 p-2.5 text-emerald-100/30 hover:bg-white/5 hover:text-white transition-all shadow-lg"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4.5 w-4.5" />
           </button>
 
           {/* Icon */}
-          <div className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full ${isDanger ? "bg-rose-50" : "bg-amber-50"}`}>
+          <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl shadow-2xl border ${isDanger ? "bg-rose-500/10 border-rose-500/20" : "bg-amber-500/10 border-amber-500/20"}`}>
             {isDanger ? (
-              <Trash2 className="h-7 w-7 text-rose-500" />
+              <Trash2 className="h-9 w-9 text-rose-400" />
             ) : (
-              <AlertTriangle className="h-7 w-7 text-amber-500" />
+              <AlertTriangle className="h-9 w-9 text-amber-400" />
             )}
           </div>
 
           {/* Content */}
-          <h3 className="text-center text-xl font-semibold text-slate-900 tracking-tight">
+          <h3 className="text-center text-2xl font-black text-white tracking-tighter uppercase">
             {title}
           </h3>
-          <p className="mt-3 text-center text-sm leading-6 text-slate-600">
+          <p className="mt-4 text-center text-sm leading-relaxed text-emerald-100/50 font-medium">
             {message}
           </p>
 
           {/* Actions */}
-          <div className="mt-8 flex gap-3">
+          <div className="mt-10 flex gap-4">
             <button
               onClick={onCancel}
-              className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              className="flex-1 rounded-[1.5rem] border border-white/10 bg-white/5 px-6 py-4 text-xs font-black uppercase tracking-widest text-emerald-100/60 transition hover:bg-white/10 hover:text-white shadow-lg"
             >
               {cancelLabel}
             </button>
@@ -81,10 +83,10 @@ export function ConfirmDialog({
                 onConfirm();
                 onCancel();
               }}
-              className={`flex-1 rounded-2xl px-4 py-3 text-sm font-medium text-white transition ${
+              className={`flex-1 rounded-[1.5rem] px-6 py-4 text-xs font-black uppercase tracking-widest text-[#051a11] transition shadow-2xl ${
                 isDanger
-                  ? "bg-rose-500 hover:bg-rose-600 shadow-[0_8px_24px_-8px_rgba(244,63,94,0.5)]"
-                  : "bg-amber-500 hover:bg-amber-600 shadow-[0_8px_24px_-8px_rgba(245,158,11,0.5)]"
+                  ? "bg-rose-500 hover:bg-rose-400 shadow-[0_15px_30px_rgba(244,63,94,0.3)]"
+                  : "bg-emerald-500 hover:bg-emerald-400 shadow-[0_15px_30px_rgba(16,185,129,0.3)]"
               }`}
             >
               {confirmLabel}

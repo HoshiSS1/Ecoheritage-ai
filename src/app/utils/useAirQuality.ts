@@ -7,24 +7,31 @@ export function useAirQuality() {
 
   const updateAQI = async () => {
     setLoading(true);
-    const freshData = await fetchAirQuality();
-    setData(freshData);
-    setLoading(false);
-    localStorage.setItem('ecoheritage_aqi_cache_v2', JSON.stringify({
-      data: freshData,
-      timestamp: Date.now()
-    }));
+    try {
+      const freshData = await fetchAirQuality();
+      setData(freshData);
+      localStorage.setItem('ecoheritage_aqi_cache_v3', JSON.stringify({
+        data: freshData,
+        timestamp: Date.now()
+      }));
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const cached = localStorage.getItem('ecoheritage_aqi_cache_v2');
-    if (cached) {
-      const { data: cachedData, timestamp } = JSON.parse(cached);
-      if (Date.now() - timestamp < 30 * 60 * 1000) {
-        setData(cachedData);
-        setLoading(false);
-        return;
+    try {
+      const cached = localStorage.getItem('ecoheritage_aqi_cache_v3');
+      if (cached) {
+        const { data: cachedData, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < 15 * 60 * 1000) {
+          setData(cachedData);
+          setLoading(false);
+          return;
+        }
       }
+    } catch {
+      localStorage.removeItem('ecoheritage_aqi_cache_v3');
     }
     updateAQI();
   }, []);

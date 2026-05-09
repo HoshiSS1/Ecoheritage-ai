@@ -14,8 +14,8 @@ import {
 export type AdminSectionId =
   | "overview"
   | "heritage"
+  | "locations"
   | "feedback"
-  | "climate"
   | "users";
 
 export type ApiProvider = "openweather" | "iqair";
@@ -25,9 +25,13 @@ export type FeedbackStatus = "published" | "pending";
 export interface RemedyRecord {
   id: string;
   name: string;
+  category: string;
   ingredients: string;
   method: string;
   doctorNote: string;
+  benefits: string;
+  description: string;
+  status: "published" | "draft";
   imageBase64?: string;
   updatedAt: string;
 }
@@ -72,10 +76,32 @@ export interface ClimateSnapshot {
   trend: ClimateTrendPoint[];
 }
 
+export interface LocationRecord {
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lon: number;
+  status: string;
+  level: string;
+  herbs: string;
+  regulations: string;
+  type: string;
+  color: string;
+  imageBase64?: string;
+  image?: string;
+  isVisible?: boolean;
+  history?: string;
+  bestTime?: string;
+  contact?: string;
+  updatedAt: string;
+}
+
 // ─── Constants ───────────────────────────────────────────
 export const ADMIN_SESSION_KEY = "ecoheritage_admin_session";
 export const REMEDIES_STORAGE_KEY = "ecoheritage_admin_remedies";
 export const FEEDBACK_STORAGE_KEY = "ecoheritage_admin_feedback";
+export const LOCATIONS_STORAGE_KEY = "ecoheritage_admin_locations";
 export const CLIMATE_CACHE_STORAGE_KEY = "ecoheritage_admin_climate_cache";
 
 export const ADMIN_USERNAME =
@@ -85,14 +111,14 @@ export const ADMIN_PASSWORD =
 export const DEFAULT_AQI_API_URL =
   import.meta.env.VITE_AQI_API_URL || "https://api.openweathermap.org/data/2.5";
 export const DEFAULT_OPENWEATHER_KEY =
-  import.meta.env.VITE_OPENWEATHER_API_KEY || "ad985e6b3d6f0c414479a1e1873d9c7c";
+  import.meta.env.VITE_OPENWEATHER_API_KEY || "";
 export const DEFAULT_LAT =
   import.meta.env.VITE_OPENWEATHER_LAT || "16.0544";
 export const DEFAULT_LON =
   import.meta.env.VITE_OPENWEATHER_LON || "108.2022";
 
 export const shellCardClass =
-  "rounded-3xl border border-slate-200/60 bg-white shadow-[0_20px_50px_-20px_rgba(15,23,42,0.12)] hover:shadow-[0_30px_70px_-25px_rgba(15,23,42,0.18)] transition-all duration-500";
+  "rounded-3xl border border-slate-200 bg-white shadow-[0_12px_40px_-12px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] transition-all duration-500 overflow-hidden relative group/card";
 
 // ─── Utility Functions ───────────────────────────────────
 export function createId(prefix: string) {
@@ -124,17 +150,24 @@ export function getStatusFromAqi(aqi: number) {
   if (aqi <= 50) return { label: "Tốt", tone: "bg-emerald-50 text-emerald-700 ring-emerald-200", key: 'good' };
   if (aqi <= 100) return { label: "Trung bình", tone: "bg-amber-50 text-amber-700 ring-amber-200", key: 'moderate' };
   if (aqi <= 150) return { label: "Kém", tone: "bg-orange-50 text-orange-700 ring-orange-200", key: 'unhealthy' };
-  return { label: "Nguy hại", tone: "bg-rose-50 text-rose-700 ring-rose-200", key: 'hazardous' };
+  if (aqi <= 200) return { label: "Rất kém", tone: "bg-rose-50 text-rose-700 ring-rose-200", key: 'very_unhealthy' };
+  return { label: "Nguy hại", tone: "bg-purple-50 text-purple-700 ring-purple-200", key: 'hazardous' };
 }
 
 export function buildClimateAdvice(aqi: number, pm25: number) {
+  if (aqi > 200 || pm25 >= 75) {
+    return "Chất lượng không khí Nguy hại. Khẩn cấp: Không nên ra ngoài. Sử dụng máy lọc không khí và uống nước lá Sen thanh lọc phổi.";
+  }
   if (aqi > 150 || pm25 >= 55) {
-    return "Chất lượng không khí đang ở mức đáng lo ngại. Khuyến nghị người dân hạn chế ra ngoài và đeo khẩu trang N95 khi di chuyển. Uống trà atiso đỏ để thanh lọc.";
+    return "Không khí Rất kém. Khuyến nghị người dân hạn chế ra ngoài, đeo khẩu trang chuyên dụng. Bổ sung trà Atiso đỏ để hỗ trợ hô hấp.";
   }
-  if (aqi > 50 || pm25 >= 25) {
-    return "Không khí ở mức trung bình. Những người nhạy cảm nên hạn chế hoạt động ngoài trời kéo dài. Bổ sung vitamin C và trà gừng mật ong.";
+  if (aqi > 100 || pm25 >= 35) {
+    return "Không khí Kém. Nhóm người nhạy cảm nên ở trong nhà. Khuyên dùng trà Gừng mật ong để làm ấm và sạch đường hô hấp.";
   }
-  return "Không khí rất tốt! Đây là thời điểm lý tưởng để hoạt động ngoài trời, tập yoga hoặc thiền định giữa thiên nhiên. Tận hưởng bầu không khí Đà Nẵng.";
+  if (aqi > 50 || pm25 >= 15) {
+    return "Không khí Trung bình. Những người nhạy cảm nên hạn chế hoạt động mạnh ngoài trời. Bổ sung vitamin C từ cam, bưởi.";
+  }
+  return "Không khí Tuyệt vời! Đây là thời điểm lý tưởng để tập luyện dưỡng sinh và hít thở sâu giữa thiên nhiên Đà Nẵng.";
 }
 
 export function loadStoredState<T>(key: string, fallback: T): T {
@@ -239,12 +272,12 @@ export function createFallbackClimateSnapshot(): ClimateSnapshot {
   const trend: ClimateTrendPoint[] = Array.from({ length: 8 }, (_, i) => ({
     label: formatHourLabel(Math.floor(now / 1000) - (7 - i) * 3600),
     pm25: 12 + Math.random() * 6,
-    aqi: 1,
+    aqi: 40,
     timestamp: Math.floor(now / 1000) - (7 - i) * 3600,
   }));
 
   return {
-    aqi: 1,
+    aqi: 40,
     pm25: 14.2,
     source: "fallback",
     updatedAt: new Date().toISOString(),

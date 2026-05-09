@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, MessageSquareQuote, User, Send, Heart } from 'lucide-react';
+import { Star, MessageSquareQuote, User, Send, Heart, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { saveAdminFeedback } from '../pages/admin/adminUtils';
+import { getAvatarUrl } from '../utils/avatarUtils';
 
 interface Review {
   id: string;
@@ -78,8 +79,8 @@ export function TestimonialsSection() {
   return (
     <section className="py-20 sm:py-32 relative bg-[#051a11] overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
@@ -105,17 +106,18 @@ export function TestimonialsSection() {
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-4 bg-gradient-to-br from-[#0a2e1f] to-[#051a11] border border-emerald-500/20 rounded-[2rem] p-8 shadow-[0_0_50px_rgba(16,185,129,0.1)] relative overflow-hidden"
+            className="lg:col-span-4 glass-premium rounded-[2.5rem] p-8 relative overflow-hidden group"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[50px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-amber-500/20 transition-colors duration-700" />
             
-            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-              <Heart className="w-5 h-5 text-rose-400 fill-rose-400" /> Gửi góp ý của bạn
+            <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+              <Heart className="w-6 h-6 text-rose-400 fill-rose-400 animate-pulse" /> 
+              <span className="text-premium-gradient">Gửi góp ý</span>
             </h3>
-            <p className="text-emerald-100/60 text-sm mb-6">Ý kiến của bạn giúp EcoHeritage hoàn thiện mỗi ngày.</p>
+            <p className="text-emerald-100/60 text-sm mb-8">Ý kiến của bạn giúp EcoHeritage hoàn thiện mỗi ngày.</p>
 
-            <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
-              <div className="flex items-center gap-1.5 mb-2">
+            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+              <div className="flex items-center gap-2 mb-4 bg-white/5 p-3 rounded-2xl border border-white/5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -123,43 +125,48 @@ export function TestimonialsSection() {
                     onMouseEnter={() => setHoveredStar(star)}
                     onMouseLeave={() => setHoveredStar(null)}
                     onClick={() => setRating(star)}
-                    className="transition-transform hover:scale-110 focus:outline-none"
+                    className="transition-transform hover:scale-125 focus:outline-none"
                   >
                     <Star
                       className={`w-7 h-7 ${
                         (hoveredStar !== null ? star <= hoveredStar : star <= rating)
-                          ? 'text-amber-400 fill-amber-400'
+                          ? 'text-amber-400 fill-amber-400 filter drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
                           : 'text-white/20'
-                      } transition-colors`}
+                      } transition-all duration-300`}
                     />
                   </button>
                 ))}
               </div>
 
-              <input
-                type="text"
-                placeholder="Tên của bạn"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500/50 transition-colors"
-              />
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Tên của bạn"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full input-premium"
+                />
 
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Chia sẻ cảm nhận về trải nghiệm của bạn..."
-                className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500/50 min-h-[120px] transition-colors resize-none"
-              />
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Chia sẻ cảm nhận về trải nghiệm của bạn..."
+                  className="w-full input-premium min-h-[140px] resize-none"
+                />
+              </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-[#051a11] font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all group"
+                className="w-full btn-premium flex items-center justify-center gap-3 group/btn"
               >
                 {isSubmitting ? (
                   <div className="w-5 h-5 border-2 border-[#051a11]/20 border-t-[#051a11] rounded-full animate-spin" />
                 ) : (
-                  <>Gửi Đánh Giá <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /></>
+                  <>
+                    <span className="uppercase tracking-[0.2em] text-sm">Gửi Đánh Giá</span>
+                    <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </>
                 )}
               </button>
             </form>
@@ -174,32 +181,42 @@ export function TestimonialsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 sm:p-8 shadow-xl hover:bg-white/10 transition-colors duration-300 relative group flex flex-col h-full"
+                className="glass-premium rounded-[2.5rem] p-6 sm:p-8 hover:bg-white/[0.08] transition-all duration-500 relative group flex flex-col h-full card-glow-hover"
               >
-                <MessageSquareQuote className="absolute top-6 right-6 w-12 h-12 text-white/5 transform group-hover:scale-110 group-hover:text-amber-400/5 transition-all duration-500" />
+                <MessageSquareQuote className="absolute top-6 right-6 w-16 h-16 text-white/[0.03] transform group-hover:scale-110 group-hover:text-emerald-500/[0.05] transition-all duration-700" />
                 
-                <div className="flex gap-1 mb-4">
+                <div className="flex gap-1 mb-6 relative z-10">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${i < review.rating ? 'text-amber-400 fill-amber-400' : 'text-white/20'}`}
+                      className={`w-4 h-4 ${i < review.rating ? 'text-amber-400 fill-amber-400' : 'text-white/10'} drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]`}
                     />
                   ))}
                 </div>
                 
-                <p className="text-white/80 text-base leading-relaxed font-medium mb-8 relative z-10 flex-grow">
+                <p className="text-emerald-50/90 text-base leading-relaxed font-medium mb-10 relative z-10 flex-grow pl-4 border-l-2 border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
                   "{review.content}"
                 </p>
                 
-                <div className="flex items-center gap-3 mt-auto">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-amber-500 p-[2px]">
-                    <div className="w-full h-full rounded-full bg-[#0a2e1f] flex items-center justify-center">
-                      <User className="w-4 h-4 text-emerald-400" />
+                <div className="flex items-center gap-4 mt-auto relative z-10">
+                  <div className="relative group/avatar">
+                    <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                      <div className="w-full h-full rounded-full bg-[#051a11] p-[2px]">
+                        <img 
+                          src={getAvatarUrl(review.author)} 
+                          alt={review.author} 
+                          className="w-full h-full rounded-full object-cover grayscale-[0.2] contrast-125"
+                        />
+                      </div>
+                    </div>
+                    {/* Verified Badge */}
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-[#051a11] flex items-center justify-center shadow-lg">
+                      <ShieldCheck className="w-3 h-3 text-white" />
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-sm">{review.author}</h4>
-                    <p className="text-emerald-400/80 text-[10px] uppercase tracking-wider mt-0.5 font-semibold">
+                    <h4 className="text-white font-bold text-sm tracking-tight">{review.author}</h4>
+                    <p className="text-emerald-400/80 text-[9px] uppercase tracking-[0.2em] mt-1 font-bold">
                       Thành viên EcoHeritage
                     </p>
                   </div>

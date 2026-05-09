@@ -1,9 +1,21 @@
 import { motion } from 'motion/react';
 import { Sparkles, Leaf, ArrowRight, Play } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { useAirQuality } from '../utils/useAirQuality';
 import heroImage from '../../assets/hero/vietnamese_herbs_ai_hero_1777022882110.png';
 
 export function Hero() {
+  const { data: aqiData } = useAirQuality();
+  const currentAqi = aqiData?.aqi ?? 40;
+  const currentHumidity = aqiData?.humidity ?? 75;
+  const currentUv = aqiData?.uvIndex ?? 0;
+  const currentStatus = aqiData?.statusLabel ?? 'Đang cập nhật';
+  const heroStats = [
+    { num: '25+', label: 'Bài thuốc', sub: 'Di sản số hóa' },
+    { num: String(currentAqi), label: 'US AQI Đà Nẵng', sub: aqiData?.source === 'live' ? 'Dữ liệu trực tiếp' : 'Dữ liệu dự phòng' },
+    { num: `${currentHumidity}%`, label: 'Độ ẩm', sub: `UV ${currentUv}` },
+  ];
+
   return (
     <section className="relative overflow-hidden bg-[#051a11] text-white min-h-[90vh] flex items-center pt-20 md:pt-28">
       {/* Immersive 3D Background */}
@@ -45,7 +57,7 @@ export function Hero() {
             Kho tàng Y lý Đà Nẵng x AI
           </motion.div>
 
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full overflow-hidden">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full">
             <span className="block text-white">Sống khỏe mỗi ngày</span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic mt-2 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
               cùng di sản thảo mộc.
@@ -68,7 +80,7 @@ export function Hero() {
               <div className="absolute -top-5 -left-5 bg-gradient-to-br from-emerald-400 to-emerald-600 border-[3px] border-[#051a11] p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
-              <p className="text-[10px] uppercase tracking-[0.4em] text-emerald-300 mb-4 font-bold ml-6 drop-shadow-md">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-emerald-300 mb-4 font-black ml-6 drop-shadow-md">
                 Sứ mệnh của chúng tôi
               </p>
               <h3 className="font-display text-lg sm:text-xl md:text-2xl italic text-white leading-[1.4] drop-shadow-xl pl-6 relative break-words max-w-full">
@@ -105,11 +117,7 @@ export function Hero() {
           {/* 3D Floating Mini Stats */}
           <div className="grid grid-cols-3 gap-4 sm:gap-8 mt-12 sm:mt-16 pt-6 sm:pt-8 relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            {[
-              { num: '25+', label: 'Bài thuốc', sub: 'Di sản số hóa' },
-              { num: '75', label: 'AQI Đà Nẵng', sub: 'Trực tiếp 24/7' },
-              { num: '98.5%', label: 'Cá nhân hóa', sub: 'Thuật toán AI' },
-            ].map((s, i) => (
+            {heroStats.map((s, i) => (
               <motion.div
                 key={s.label}
                 initial={{ opacity: 0, y: 30 }}
@@ -118,8 +126,8 @@ export function Hero() {
                 className="relative group"
               >
                 <div className="font-display text-2xl sm:text-3xl lg:text-4xl text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{s.num}</div>
-                <div className="text-[10px] sm:text-[11px] text-amber-300 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-bold mb-0.5">{s.label}</div>
-                <div className="text-[9px] sm:text-[10px] text-emerald-200/60 uppercase tracking-widest">{s.sub}</div>
+                <div className="text-[11px] sm:text-[12px] text-amber-300 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black mb-0.5">{s.label}</div>
+                <div className="text-[11px] sm:text-[11px] text-emerald-200/60 uppercase tracking-widest font-bold">{s.sub}</div>
               </motion.div>
             ))}
           </div>
@@ -163,15 +171,15 @@ export function Hero() {
             </div>
             <div className="flex items-end justify-between mb-2">
               <div className="min-w-0">
-                <div className="font-display text-4xl sm:text-5xl font-bold tracking-tighter drop-shadow-xl text-white truncate">75</div>
-                <div className="text-[10px] sm:text-xs text-amber-300 font-bold uppercase tracking-widest mt-1 drop-shadow-md">AQI — Trung bình</div>
+                <div className="font-display text-4xl sm:text-5xl font-bold tracking-tighter drop-shadow-xl text-white truncate">{currentAqi}</div>
+                <div className="text-[10px] sm:text-xs text-amber-300 font-bold uppercase tracking-widest mt-1 drop-shadow-md">US AQI — {currentStatus}</div>
               </div>
               <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-3 rounded-2xl shadow-lg">
                 <Leaf className="w-8 h-8 text-white" />
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-white/20 text-[12px] lg:text-[13px] text-white italic font-medium leading-relaxed drop-shadow-sm">
-              "Độ ẩm tốt. Hôm nay thích hợp uống trà lá sen thanh nhiệt."
+              Độ ẩm {currentHumidity}%, UV {currentUv}. Gợi ý chăm sóc thay đổi theo dữ liệu môi trường thật.
             </div>
           </motion.div>
 
@@ -189,7 +197,7 @@ export function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 to-transparent" />
               </div>
               <div className="font-display text-lg sm:text-xl leading-tight font-bold mb-1 drop-shadow-sm">Gợi ý dược liệu</div>
-              <div className="text-[13px] font-semibold text-[#051a11] leading-relaxed mt-2">Siro lá lốt mật ong — giải pháp vàng cho hô hấp ngày bụi.</div>
+              <div className="text-[13px] font-semibold text-[#051a11] leading-relaxed mt-2">Siro lá lốt mật ong — giải pháp vàng cho họng hắt hơi ngày bụi.</div>
             </div>
           </motion.div>
         </motion.div>

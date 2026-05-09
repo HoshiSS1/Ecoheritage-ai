@@ -36,7 +36,10 @@ export function HealthAdviceCard({ icon: Icon, title, modernAdvice, traditionalA
           <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
           <Icon className="w-7 h-7 text-white relative z-10" />
         </div>
-        <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-white font-bold tracking-tight drop-shadow-md break-words max-w-full">{title}</h3>
+        <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-white font-bold tracking-tight drop-shadow-md break-words max-w-full relative group-hover:text-amber-400 transition-colors duration-500 pb-2">
+          {title}
+          <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-amber-400 opacity-0 group-hover:w-full group-hover:opacity-100 transition-all duration-700 shadow-[0_0_15px_rgba(251,191,36,0.6)]" />
+        </h3>
       </div>
 
       <div className="space-y-6 relative z-10 flex flex-col flex-grow">

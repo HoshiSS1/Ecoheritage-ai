@@ -1,10 +1,15 @@
 import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Leaf, Menu, X, MapPin, Mail, Phone, Facebook, Instagram, Youtube, Activity, LogOut, User, ShieldCheck } from 'lucide-react';
+import { 
+  Leaf, Menu, X, MapPin, Mail, Phone, Facebook, Instagram, Youtube, 
+  Activity, LogOut, User, ShieldCheck, MessageSquareQuote, Heart, 
+  BookOpen, Map as MapIcon, ArrowUp, ArrowRight, ChevronDown 
+} from 'lucide-react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { AuthModal } from './components/AuthModal';
 import { ChatWidget } from './widgets/ChatWidget';
+import { AQIAlertPopup } from './components/AQIAlertPopup';
 import { createSeedFeedback, createSeedUsers } from './pages/admin/adminData';
 import { FEEDBACK_STORAGE_KEY } from './pages/admin/adminUtils';
 
@@ -15,29 +20,66 @@ if (typeof window !== 'undefined') {
 
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
 const HeritagePage = lazy(() => import('./pages/HeritagePage').then(m => ({ default: m.HeritagePage })));
+const HeritageMapPage = lazy(() => import('./pages/HeritageMapPage').then(m => ({ default: m.HeritageMapPage })));
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
-const AdminPortalPage = lazy(() => import('./pages/AdminPortalPage').then(m => ({ default: m.AdminPortalPage })));
+const AdminPortalPage = lazy(() => import('./pages/AdminPortalPage'));
 
 // Component cuộn lên đầu trang chuyên dụng
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
   
   useLayoutEffect(() => {
+    const scroll = () => {
+      window.scrollTo(0, 0);
+      document.body.scrollTo(0, 0);
+      document.documentElement.scrollTo(0, 0);
+    };
+
     if (hash) {
-      // Handle hash navigation
       const element = document.getElementById(hash.replace('#', ''));
       if (element) {
-        setTimeout(() => element.scrollIntoView({ behavior: 'smooth' }), 100);
+        const t = setTimeout(() => element.scrollIntoView({ behavior: 'smooth' }), 100);
+        return () => clearTimeout(t);
       }
     } else {
-      // Handle page navigation
-      window.scrollTo(0, 0);
-      const t = setTimeout(() => window.scrollTo(0, 0), 0);
-      return () => clearTimeout(t);
+      scroll();
+      // Multiple attempts for async/lazy-loaded content
+      const t1 = setTimeout(scroll, 10);
+      const t2 = setTimeout(scroll, 100);
+      const t3 = setTimeout(scroll, 300);
+      const t4 = setTimeout(scroll, 600);
+      const t5 = setTimeout(scroll, 1000);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+        clearTimeout(t4);
+        clearTimeout(t5);
+      };
     }
   }, [pathname, hash]);
 
   return null;
+}
+
+function BackToTop({ visible }: { visible: boolean }) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, y: 18, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 18, scale: 0.9 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Lên đầu trang"
+          className="fixed bottom-24 right-4 z-[85] inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/30 bg-[#0a2e1f]/90 text-emerald-100 shadow-[0_18px_45px_rgba(0,0,0,0.35)] backdrop-blur-xl transition hover:border-amber-300/60 hover:bg-amber-400 hover:text-[#051a11] sm:bottom-8 sm:right-8"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
 }
 
 export default function App() {
@@ -72,12 +114,16 @@ export default function App() {
   const isAdminRoute = location.pathname.startsWith('/admin-portal');
 
   useEffect(() => {
-    const activeUser = sessionStorage.getItem('ecoheritage_active_user');
-    if (activeUser) {
-      const parsed = JSON.parse(activeUser);
-      setUser(parsed);
-      const savedAvatar = localStorage.getItem(`avatar_${parsed.email}`);
-      if (savedAvatar) setUserAvatar(savedAvatar);
+    try {
+      const activeUser = sessionStorage.getItem('ecoheritage_active_user');
+      if (activeUser) {
+        const parsed = JSON.parse(activeUser);
+        setUser(parsed);
+        const savedAvatar = localStorage.getItem(`avatar_${parsed.email}`);
+        if (savedAvatar) setUserAvatar(savedAvatar);
+      }
+    } catch (e) {
+      console.warn("Active user parse error:", e);
     }
     const s = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', s);
@@ -115,15 +161,22 @@ export default function App() {
 
   const navLinks = [
     { name: 'Môi trường', path: '/#environment' },
-    { name: 'Sức khỏe', path: '/#health' },
-    { name: 'Di sản', path: '/heritage' },
-    { name: 'Liên hệ', path: '#contact' }
+    { name: 'Sức Khỏe', path: '/#health' },
+    { 
+      name: 'Thư Viện Di Sản', 
+      path: '/heritage', 
+      subItems: [
+        { name: 'Y Lý Cổ Truyền', path: '/heritage', icon: BookOpen },
+        { name: 'Chỉ Dẫn Địa Lý', path: '/heritage/map', icon: MapIcon },
+      ]
+    },
+    { name: 'Tư vấn', path: '#contact' }
   ];
 
   const suspenseFallback = (
     <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-4">
       <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin shadow-[0_0_20px_rgba(16,185,129,0.3)]"></div>
-      <p className="text-emerald-400/60 text-sm font-medium animate-pulse tracking-widest uppercase">Äang táº£i dá»¯ liá»‡u...</p>
+      <p className="text-emerald-400/60 text-sm font-medium animate-pulse tracking-widest uppercase">Đang tải dữ liệu...</p>
     </div>
   );
 
@@ -133,7 +186,7 @@ export default function App() {
         <ScrollToTop />
         <Suspense fallback={suspenseFallback}>
           <Routes>
-            <Route path="/admin-portal" element={<AdminPortalPage />} />
+            <Route path="/admin-portal/*" element={<AdminPortalPage />} />
           </Routes>
         </Suspense>
       </>
@@ -165,35 +218,83 @@ export default function App() {
           </Link>
 
           <div className="hidden lg:flex flex-1 items-center justify-center gap-10">
-            {navLinks.map((l) => (
-              l.path.startsWith('/#') || l.path.startsWith('#') ? (
-                <a 
-                  key={l.name} 
-                  href={l.path}
-                  onClick={(e) => {
-                    if (location.pathname === '/' && l.path.startsWith('/#')) {
-                      e.preventDefault();
-                      document.getElementById(l.path.replace('/#', ''))?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="text-[16px] font-bold tracking-tight hover:text-amber-400 transition-all relative group text-white drop-shadow-sm"
-                >
-                  {l.name}
-                  <span className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-amber-400 transition-all duration-300 group-hover:w-full" />
-                </a>
-              ) : (
-                <Link 
-                  key={l.name} 
-                  to={l.path} 
-                  className={`text-[16px] font-bold tracking-tight transition-all relative group drop-shadow-sm ${
-                    location.pathname === l.path ? 'text-amber-400' : 'text-white hover:text-amber-400'
-                  }`}
-                >
-                  {l.name}
-                  <span className={`absolute -bottom-1.5 left-0 h-0.5 bg-amber-400 transition-all duration-300 ${location.pathname === l.path ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-                </Link>
-              )
-            ))}
+            {navLinks.map((l) => {
+              const isActive = location.pathname === l.path || (l.subItems && l.subItems.some(si => location.pathname === si.path));
+              const isSection = l.path.startsWith('/#') || l.path.startsWith('#');
+              
+              return (
+                <div key={l.name} className="relative group px-1 py-2">
+                  {isSection ? (
+                    <Link 
+                      to={l.path}
+                      className={`relative text-[16px] font-bold transition-all duration-500 hover:text-amber-400 group/navitem ${
+                        isActive ? 'text-white' : 'text-white/70'
+                      }`}
+                    >
+                      {l.name}
+                      <span className={`absolute -bottom-1 left-0 h-[2px] bg-amber-400 transition-all duration-500 ${
+                        isActive ? 'w-full opacity-100 shadow-[0_0_10px_rgba(251,191,36,0.8)]' : 'w-0 opacity-0 group-hover/navitem:w-full group-hover/navitem:opacity-100'
+                      }`} />
+                    </Link>
+                  ) : (
+                    <div className="relative group/sub">
+                      <Link 
+                        to={l.path}
+                        className={`relative text-[16px] font-bold transition-all duration-500 hover:text-amber-400 flex items-center gap-1.5 group/navitem ${
+                          isActive ? 'text-white' : 'text-white/70'
+                        }`}
+                      >
+                        {l.name}
+                        {l.subItems && <ChevronDown className="w-4 h-4 opacity-50 group-hover/sub:rotate-180 transition-transform duration-500" />}
+                        <span className={`absolute -bottom-1 left-0 h-[2px] bg-amber-400 transition-all duration-500 ${
+                          isActive ? 'w-full opacity-100 shadow-[0_0_10px_rgba(251,191,36,0.8)]' : 'w-0 opacity-0 group-hover/navitem:w-full group-hover/navitem:opacity-100'
+                        }`} />
+                      </Link>
+
+                      {/* Premium Dropdown Menu - Luxury Bento Upgrade */}
+                      {l.subItems && (
+                        <div className="absolute top-full -left-6 pt-6 opacity-0 translate-y-3 invisible group-hover/sub:opacity-100 group-hover/sub:translate-y-0 group-hover/sub:visible transition-all duration-500 z-50">
+                          <div className="bg-[#0a1913]/95 border border-emerald-500/20 rounded-3xl shadow-2xl overflow-hidden min-w-[280px] backdrop-blur-xl p-2 relative">
+                            {/* Decorative background effects */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-[40px] rounded-full pointer-events-none" />
+                            
+                            <div className="grid gap-1">
+                              {l.subItems.map((sub) => (
+                                <Link
+                                  key={sub.name}
+                                  to={sub.path}
+                                  className="flex items-center gap-4 px-5 py-4 rounded-2xl bg-transparent hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300 group/item relative overflow-hidden"
+                                >
+                                  {/* Hover background glow */}
+                                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-500" />
+                                  
+                                  <div className="relative z-10 w-10 h-10 shrink-0 rounded-xl bg-[#0a1f16] border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover/item:scale-110 group-hover/item:bg-emerald-500 group-hover/item:text-[#051a11] transition-all duration-500 shadow-lg">
+                                    <sub.icon className="w-5 h-5" />
+                                  </div>
+                                  
+                                  <div className="relative z-10 flex-1">
+                                    <span className="block text-sm font-black uppercase tracking-wider text-white group-hover/item:text-amber-300 transition-colors duration-300">
+                                      {sub.name}
+                                    </span>
+                                    <span className="text-[9px] text-emerald-100/50 font-bold uppercase tracking-widest mt-1 block group-hover/item:text-white/80 transition-colors duration-300">
+                                      {sub.name === 'Y Lý Cổ Truyền' ? 'Tinh hoa dược liệu' : 'Hệ sinh thái số'}
+                                    </span>
+                                  </div>
+                                  
+                                  <div className="relative z-10 opacity-0 -translate-x-2 group-hover/item:opacity-60 group-hover/item:translate-x-0 transition-all duration-500">
+                                    <ArrowRight className="w-4 h-4 text-white" />
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
             
           <div className="hidden lg:flex items-center">
@@ -201,16 +302,17 @@ export default function App() {
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-3 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full border border-white/20 backdrop-blur-md transition-all"
+                  className="flex items-center gap-3 glass-premium hover:bg-white/10 px-4 py-2 rounded-2xl border-emerald-500/20 transition-all group/user shadow-[0_0_20px_rgba(16,185,129,0.1)] hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-sm shadow-lg overflow-hidden">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 flex items-center justify-center border border-emerald-500/30 group-hover/user:scale-110 transition-transform duration-500 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-emerald-500/10 animate-pulse" />
                     {userAvatar ? (
-                      <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover relative z-10" />
                     ) : (
-                      user.name.charAt(0).toUpperCase()
+                      <User className="w-5 h-5 text-emerald-400 relative z-10" />
                     )}
                   </div>
-                  <span className="text-sm font-medium text-white">{user.name}</span>
+                  <span className="text-sm font-bold text-white tracking-tight">{user.name}</span>
                 </button>
 
                 <AnimatePresence>
@@ -261,46 +363,78 @@ export default function App() {
         </div>
 
         {menuOpen && (
-          <motion.div initial={{ opacity: 0, y: -20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="lg:hidden absolute top-full left-4 right-4 mt-2 bg-[#0a2e1f]/95 backdrop-blur-2xl shadow-2xl rounded-3xl border border-white/10 overflow-hidden">
-            <div className="px-6 py-6 flex flex-col gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: -20, scale: 0.95 }} 
+            animate={{ opacity: 1, y: 0, scale: 1 }} 
+            className="lg:hidden absolute top-full left-4 right-4 mt-4 bg-[#0a2e1f]/98 backdrop-blur-2xl shadow-[0_40px_80px_rgba(0,0,0,1)] rounded-[2.5rem] border border-emerald-500/20 overflow-hidden z-[100]"
+          >
+            <div className="px-6 py-10 flex flex-col gap-2 relative">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-[50px] rounded-full" />
+              
               {navLinks.map((l) => (
-                l.path.startsWith('/#') || l.path.startsWith('#') ? (
-                  <a
-                    key={l.name}
-                    href={l.path}
-                    onClick={(e) => {
-                      setMenuOpen(false);
-                      if (location.pathname === '/') {
-                        e.preventDefault();
-                        const id = l.path.replace('/#', '').replace('#', '');
-                        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }}
-                    className="text-white/80 hover:text-amber-400 font-medium text-lg py-3 border-b border-white/5 last:border-none transition-colors"
-                  >
-                    {l.name}
-                  </a>
-                ) : (
-                  <Link
-                    key={l.name}
-                    to={l.path}
-                    onClick={() => setMenuOpen(false)}
-                    className="text-white/80 hover:text-amber-400 font-medium text-lg py-3 border-b border-white/5 last:border-none transition-colors"
-                  >
-                    {l.name}
-                  </Link>
-                )
+                <div key={l.name} className="flex flex-col">
+                  {l.subItems ? (
+                    <div className="space-y-1 mb-2">
+                      <div className="text-emerald-400/40 text-[10px] font-black uppercase tracking-[0.4em] px-4 mb-3">{l.name}</div>
+                      {l.subItems.map(sub => (
+                        <Link
+                          key={sub.name}
+                          to={sub.path}
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-5 text-white/90 hover:text-white hover:bg-emerald-500/10 font-bold text-lg px-5 py-5 rounded-[1.5rem] transition-all group"
+                        >
+                          <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                            <sub.icon className="w-5 h-5" />
+                          </div>
+                          <span className="text-sm font-black uppercase tracking-widest">{sub.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    l.path.startsWith('/#') || l.path.startsWith('#') ? (
+                      <a
+                        href={l.path}
+                        onClick={(e) => {
+                          setMenuOpen(false);
+                          if (location.pathname === '/') {
+                            e.preventDefault();
+                            const id = l.path.replace('/#', '').replace('#', '');
+                            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }}
+                        className="text-white/90 hover:text-amber-400 font-bold text-[15px] uppercase tracking-widest px-6 py-5 rounded-[1.5rem] hover:bg-white/5 transition-all"
+                      >
+                        {l.name}
+                      </a>
+                    ) : (
+                      <Link
+                        to={l.path}
+                        onClick={() => setMenuOpen(false)}
+                        className="text-white/90 hover:text-amber-400 font-bold text-[15px] uppercase tracking-widest px-6 py-5 rounded-[1.5rem] hover:bg-white/5 transition-all"
+                      >
+                        {l.name}
+                      </Link>
+                    )
+                  )}
+                  <div className="h-[1px] bg-white/5 mx-6 my-2 last:hidden" />
+                </div>
               ))}
-              {user ? (
-                <>
-                  <Link to="/profile" onClick={() => setMenuOpen(false)} className="w-full text-center bg-white/10 hover:bg-white/20 text-white py-4 rounded-2xl font-bold transition-colors">Hồ sơ của tôi</Link>
-                  <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="w-full flex items-center justify-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 py-4 rounded-2xl font-bold transition-colors border border-rose-500/20">
-                    <LogOut className="w-4 h-4" /> Đăng xuất
-                  </button>
-                </>
-              ) : (
-                <button onClick={() => { setIsAuthOpen(true); setMenuOpen(false); }} className="w-full bg-amber-400 text-[#0a2e1f] py-4 rounded-2xl font-bold">Đăng nhập ngay</button>
-              )}
+
+              <div className="mt-6 pt-8 border-t border-white/10 space-y-4">
+                {user ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white py-5 rounded-3xl font-bold transition-all border border-white/10 text-xs uppercase tracking-widest">
+                      <User className="w-4 h-4 text-emerald-400" />
+                      Hồ sơ
+                    </Link>
+                    <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="flex items-center justify-center gap-3 bg-rose-500/5 hover:bg-rose-500/10 text-rose-400 py-5 rounded-3xl font-bold transition-all border border-rose-500/10 text-xs uppercase tracking-widest">
+                      <LogOut className="w-4 h-4" /> Thoát
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => { setIsAuthOpen(true); setMenuOpen(false); }} className="w-full bg-gradient-to-r from-amber-500 to-amber-300 text-[#0a2e1f] py-6 rounded-[2rem] font-black uppercase tracking-[0.25em] text-xs shadow-2xl shadow-amber-500/40 active:scale-95 transition-all">Đăng nhập</button>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -329,26 +463,20 @@ export default function App() {
       {/* Tích hợp Widget Chat AI */}
       {/* Truyền user vào ChatWidget để lưu lịch sử chat */}
       <ChatWidget user={user} />
+      <AQIAlertPopup />
+      <BackToTop visible={scrolled} />
 
       {/* ROUTES */}
-      <Suspense fallback={
-        <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin shadow-[0_0_20px_rgba(16,185,129,0.3)]"></div>
-          <p className="text-emerald-400/60 text-sm font-medium animate-pulse tracking-widest uppercase">Đang tải dữ liệu...</p>
-        </div>
-      }>
+      <Suspense fallback={suspenseFallback}>
         <Routes>
           <Route path="/" element={<HomePage setIsAuthOpen={setIsAuthOpen} />} />
           <Route path="/heritage" element={<HeritagePage />} />
+          <Route path="/heritage/map" element={<HeritageMapPage />} />
           <Route path="/profile" element={
             user ? (
               <ProfilePage 
                 user={user} 
-                onLogout={() => {
-                  setUser(null);
-                  setUserAvatar(null);
-                  sessionStorage.removeItem('ecoheritage_active_user');
-                }}
+                onLogout={handleLogout} 
                 onAvatarChange={(newAvatar: string) => setUserAvatar(newAvatar)}
               />
             ) : (
@@ -360,36 +488,62 @@ export default function App() {
         </Routes>
       </Suspense>
 
-      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-16 sm:pt-24 pb-8 sm:pb-12 border-t border-emerald-900/30 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-20 bg-[url('/textures/stardust.png')] mix-blend-overlay" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[50vw] h-[1px] bg-gradient-to-r from-transparent via-amber-400/50 to-transparent opacity-50" />
+      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-24 pb-12 border-t border-emerald-500/10 relative overflow-hidden">
+        {/* Decorative background elements - enhanced glow */}
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-8 mb-12 sm:mb-16 pb-12 sm:pb-16 border-b border-white/10">
-            <div className="lg:col-span-1">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="relative bg-gradient-to-br from-emerald-500 to-emerald-700 p-3 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                  <div className="absolute -inset-1 bg-emerald-400/15 rounded-xl blur-md" />
-                  <Leaf className="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
-                </div>
-                <div>
-                  <div className="font-display text-2xl font-bold text-white tracking-tight">EcoHeritage</div>
-                  <div className="text-[10px] uppercase tracking-[0.3em] font-semibold text-amber-400">Đà Nẵng</div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16 mb-20 items-stretch">
+            {/* Brand Column */}
+            <div className="lg:col-span-4 flex flex-col justify-between space-y-8">
+              <div className="space-y-6">
+                <Link to="/" aria-label="Về trang chủ" title="Về trang chủ" className="flex items-center gap-4 group">
+                  <div className="relative bg-gradient-to-br from-emerald-500 to-emerald-700 p-3.5 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-transform duration-500">
+                    <Leaf className="w-8 h-8 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                  </div>
+                  <div>
+                    <div className="font-display text-3xl font-bold text-white tracking-tight">EcoHeritage</div>
+                    <div className="text-[10px] uppercase tracking-[0.4em] font-bold text-amber-400 mt-1">AI · Đà Nẵng</div>
+                  </div>
+                </Link>
+                <p className="text-emerald-100/60 leading-relaxed text-lg font-medium max-w-[320px]">
+                  Tiên phong kết hợp trí tuệ nhân tạo với di sản y học dân tộc để mang lại giải pháp chăm sóc sức khỏe xanh bền vững.
+                </p>
               </div>
-              <p className="text-base leading-relaxed text-emerald-100/60 pr-4">
-                Trợ lý sức khỏe xanh kết hợp di sản y học Việt Nam và trí tuệ nhân tạo. Chăm sóc bạn từ những điều nhỏ nhất.
-              </p>
+              <div className="flex gap-4">
+                {[
+                  { icon: Facebook, href: "https://facebook.com/vku.udn.vn", label: 'Facebook' },
+                  { icon: Instagram, href: "https://instagram.com/vku.udn.vn", label: 'Instagram' },
+                  { icon: Youtube, href: "https://youtube.com/@vku.udn.vn", label: 'YouTube' }
+                ].map((social, i) => (
+                  <a
+                    key={i}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={social.label}
+                    aria-label={social.label}
+                    className="w-11 h-11 rounded-xl bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center justify-center hover:!bg-emerald-500 hover:!text-[#051a11] hover:border-emerald-400 hover:-translate-y-1.5 transition-all duration-500 shadow-lg group/social"
+                  >
+                    <social.icon className="w-5 h-5 transition-transform group-hover/social:scale-110" />
+                  </a>
+                ))}
+              </div>
             </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 text-base uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Khám phá
+            {/* Discovery Links Column */}
+            <div className="lg:col-span-2">
+              <h4 className="text-white font-bold mb-8 text-sm uppercase tracking-[0.2em] flex items-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                <span className="text-premium-gradient">Khám phá</span>
               </h4>
-              <ul className="space-y-3 text-base">
+              <ul className="space-y-4">
                 {navLinks.filter(l => l.path !== '#contact').map((l) => (
                   <li key={l.name}>
-                    <Link to={l.path} className="text-emerald-100/60 hover:text-amber-400 hover:translate-x-1 transition-all inline-block">
+                    <Link to={l.path} className="text-emerald-100/70 hover:text-emerald-400 font-bold transition-all flex items-center gap-3 group/link text-base">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/20 group-hover/link:bg-emerald-500 group-hover/link:scale-125 transition-all" />
                       {l.name}
                     </Link>
                   </li>
@@ -397,64 +551,74 @@ export default function App() {
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 text-base uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Liên hệ
+            {/* Consultant Column */}
+            <div className="lg:col-span-3">
+              <h4 className="text-white font-bold mb-8 text-sm uppercase tracking-[0.2em] flex items-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
+                <span className="text-premium-gradient">Tư vấn</span>
               </h4>
-              <ul className="space-y-4 text-base text-emerald-100/60">
-                <li className="flex items-start gap-3 hover:text-white transition-colors cursor-pointer">
-                  <MapPin className="w-4 h-4 mt-0.5 text-amber-400 shrink-0" />
-                  <a href="https://www.google.com/maps/search/?api=1&query=Vietnam+Korea+University+of+Information+and+Communication+Technology" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">
-                    BestStudent VKU, Ngũ Hành Sơn, Đà Nẵng
-                  </a>
-                </li>
-                <li className="flex items-start gap-3 hover:text-white transition-colors cursor-pointer">
-                  <Mail className="w-4 h-4 mt-0.5 text-amber-400 shrink-0" />
-                  <a href="mailto:EcoHeritage@gmail.com" className="hover:text-amber-400 transition-colors">EcoHeritage@gmail.com</a>
-                </li>
-                <li className="flex items-start gap-3 hover:text-white transition-colors cursor-pointer">
-                  <Phone className="w-4 h-4 mt-0.5 text-amber-400 shrink-0" />
-                  <a href="tel:+842368880101" className="hover:text-amber-400 transition-colors">+84 236 888 0101</a>
-                </li>
+              <ul className="space-y-5">
+                {[
+                  { icon: MapPin, text: "BestStudent VKU, Đà Nẵng", href: "#" },
+                  { icon: Mail, text: "EcoHeritage@gmail.com", href: "mailto:EcoHeritage@gmail.com" },
+                  { icon: Phone, text: "+84 236 888 0101", href: "tel:+842368880101" }
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-4 group/contact">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 group-hover/contact:scale-110 transition-transform shrink-0 shadow-[0_0_10px_rgba(251,191,36,0.1)] group-hover/contact:bg-amber-500/20">
+                      <item.icon className="w-5 h-5 text-amber-400 group-hover/contact:text-amber-300 transition-colors" />
+                    </div>
+                    <a href={item.href} className="text-emerald-100/80 hover:text-white font-semibold transition-colors text-[15px] leading-relaxed break-all">
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-white font-bold mb-6 text-base uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Kết nối
-              </h4>
-              <div className="flex gap-4 mb-8">
-                <a href="https://www.facebook.com/vku.udn.vn" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-amber-400 hover:border-amber-400 hover:text-[#0a2e1f] hover:-translate-y-1 flex items-center justify-center transition-all duration-300" title="Facebook VKU">
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a href="https://www.instagram.com/vku.udn.vn/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-amber-400 hover:border-amber-400 hover:text-[#0a2e1f] hover:-translate-y-1 flex items-center justify-center transition-all duration-300" title="Instagram">
-                  <Instagram className="w-4 h-4" />
-                </a>
-                <a href="https://www.youtube.com/@vku.udn.vn" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-amber-400 hover:border-amber-400 hover:text-[#0a2e1f] hover:-translate-y-1 flex items-center justify-center transition-all duration-300" title="Youtube VKU">
-                  <Youtube className="w-4 h-4" />
-                </a>
-              </div>
-              <div className="bg-[#051a11] border border-white/5 p-5 rounded-xl relative overflow-hidden group shadow-lg">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <p className="text-base md:text-lg italic font-display text-amber-200/90 leading-relaxed relative z-10">
-                  "Nam dược trị Nam nhân" <br/>
-                  <span className="text-sm text-emerald-400/80 mt-2 block not-italic font-medium">— Tuệ Tĩnh</span>
-                </p>
+            {/* Quote Column */}
+            <div className="lg:col-span-3">
+              <div className="glass-premium rounded-[2rem] p-7 relative overflow-hidden group h-full flex flex-col justify-center border-white/5 hover:border-emerald-500/20 transition-all duration-700 shadow-2xl">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-700" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-amber-500/20 transition-all duration-700" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-5 opacity-40">
+                    <MessageSquareQuote className="w-6 h-6 text-emerald-400" />
+                    <div className="h-[1px] w-10 bg-emerald-500/30" />
+                  </div>
+                  
+                  <p className="text-2xl sm:text-3xl font-black text-white leading-[1.1] mb-6 tracking-tighter">
+                    "NAM DƯỢC TRỊ <br/>
+                    <span className="text-3xl sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-200">NAM NHÂN</span>"
+                  </p>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] text-emerald-400/80 uppercase tracking-[0.4em] font-black">Tuệ Tĩnh</span>
+                    <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-transform duration-500">
+                      <Leaf className="w-3.5 h-3.5 text-emerald-500/50" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-emerald-50/40 gap-4">
-            <p className="font-medium">© 2026 EcoHeritage AI · Mọi quyền được bảo lưu</p>
-            <div className="flex items-center gap-4">
-              <span className="hover:text-white cursor-pointer transition-colors">Điều khoản</span>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <span className="hover:text-white cursor-pointer transition-colors">Bảo mật</span>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <span className="flex items-center gap-1"><Activity className="w-3 h-3 text-emerald-500" /> Cập nhật: {now.toLocaleTimeString('vi-VN')}</span>
-              <span className="w-1 h-1 rounded-full bg-white/20"></span>
-              <Link to="/admin-portal" className="flex items-center gap-1 hover:text-emerald-400 transition-colors font-medium">
-                <ShieldCheck className="w-3 h-3 text-amber-500" /> Cổng Admin
+          {/* Bottom Bar */}
+          <div className="pt-10 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-white/30">
+            <p>© 2026 EcoHeritage AI · Mọi quyền được bảo lưu</p>
+            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+              {user && (
+                <Link to="/profile" className="hover:text-emerald-400 cursor-pointer transition-colors">Hồ sơ cá nhân</Link>
+              )}
+              <span className="hover:text-emerald-400 cursor-pointer transition-colors">Điều khoản</span>
+              <span className="hover:text-emerald-400 cursor-pointer transition-colors">Bảo mật</span>
+              <span className="flex items-center gap-2 bg-white/5 px-2.5 py-1 rounded-full border border-white/5 text-[10px]">
+                <Activity className="w-3 h-3 text-emerald-500 animate-pulse" />
+                {now.toLocaleTimeString('vi-VN')}
+              </span>
+              <Link to="/admin-portal" className="flex items-center gap-2 hover:text-amber-400 transition-colors group/admin">
+                <ShieldCheck className="w-4 h-4 text-amber-500 group-hover:rotate-12 transition-transform" />
+                Cổng Admin
               </Link>
             </div>
           </div>
