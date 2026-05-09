@@ -40,12 +40,17 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
   const coverInputRef = useRef<HTMLInputElement>(null);
   const { data: aqiData } = useAirQuality();
 
-  useLayoutEffect(() => {
-    const doScroll = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  useEffect(() => {
+    const doScroll = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
     doScroll();
-    const t = setTimeout(doScroll, 100);
-    const t2 = setTimeout(doScroll, 300);
-    return () => { clearTimeout(t); clearTimeout(t2); };
+    const t1 = setTimeout(doScroll, 50);
+    const t2 = setTimeout(doScroll, 250);
+    const t3 = setTimeout(doScroll, 500);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   useEffect(() => {
