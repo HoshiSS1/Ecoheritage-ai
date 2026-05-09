@@ -24,7 +24,8 @@
   },
   "include": ["src", "vite.config.ts"],
   "exclude": [
-    "src/src",
-    "src/**/components/ui"
+    "node_modules",
+    "dist",
+    "src/src"
   ]
 }
