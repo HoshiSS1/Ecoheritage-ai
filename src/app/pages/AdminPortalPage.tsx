@@ -198,7 +198,7 @@ export default function AdminPortalPage() {
                  <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                  Secure Identity Gate
                </div>
-               <h1 className="text-3xl font-display font-black text-slate-900 tracking-tighter uppercase mb-4 relative inline-block">
+               <h1 className="text-2xl sm:text-3xl font-display font-black text-slate-900 tracking-tighter uppercase mb-4 relative inline-block break-words max-w-full">
                  {isForgotPassword ? "Khôi phục mật khẩu" : "Đăng nhập"}
                  <span className="absolute -bottom-1.5 left-0 w-12 h-1 bg-gradient-to-r from-emerald-500 to-amber-400 rounded-full" />
                </h1>

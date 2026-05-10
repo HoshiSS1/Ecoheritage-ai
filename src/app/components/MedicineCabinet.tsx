@@ -231,7 +231,7 @@ export function MedicineCabinet({ remedies }: MedicineCabinetProps) {
               Tủ Thuốc Của Tôi
             </h2>
             <p style={{ color: T.p28, fontSize: "0.68rem", marginTop: "2px" }}>
-              Bộ sưu tập bài thuốc yêu thích
+              Bộ sưu tập hoạt động
             </p>
           </div>
         </div>
@@ -245,7 +245,7 @@ export function MedicineCabinet({ remedies }: MedicineCabinetProps) {
           }}>
             <Sparkles size={11} style={{ color: emerald.light }} />
             <span style={{ color: emerald.light, fontSize: "0.7rem", fontWeight: 600 }}>
-              {remedies.length} bài thuốc
+              {remedies.length} hoạt động
             </span>
           </div>
           <motion.button

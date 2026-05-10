@@ -63,11 +63,17 @@ export function HeritagePage() {
     };
   }, []);
 
-  useLayoutEffect(() => {
-    if (topRef.current) {
-      topRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  useEffect(() => {
+    const doScroll = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    doScroll();
+    const t1 = setTimeout(doScroll, 50);
+    const t2 = setTimeout(doScroll, 250);
+    const t3 = setTimeout(doScroll, 500);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   const [displayRemedies, setDisplayRemedies] = useState(defaultRemedies);
@@ -179,7 +185,7 @@ export function HeritagePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-8 relative inline-block pb-8"
+            className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-white leading-tight mb-8 relative inline-block pb-8 break-words max-w-full"
           >
             Tinh hoa <em className="text-premium-gradient not-italic font-bold drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">Y học cổ truyền</em>
             <motion.div 

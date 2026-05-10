@@ -57,7 +57,7 @@ export function Hero() {
             Kho tàng Y lý Đà Nẵng x AI
           </motion.div>
 
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full">
             <span className="block text-white">Sống khỏe mỗi ngày</span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic mt-2 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
               cùng di sản thảo mộc.
@@ -125,7 +125,7 @@ export function Hero() {
                 transition={{ delay: 0.8 + i * 0.15, duration: 0.8, ease: "easeOut" }}
                 className="relative group"
               >
-                <div className="font-display text-2xl sm:text-3xl lg:text-4xl text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{s.num}</div>
+                <div className="font-display text-xl sm:text-3xl lg:text-4xl text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{s.num}</div>
                 <div className="text-[11px] sm:text-[12px] text-amber-300 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black mb-0.5">{s.label}</div>
                 <div className="text-[11px] sm:text-[11px] text-emerald-200/60 uppercase tracking-widest font-bold">{s.sub}</div>
               </motion.div>
@@ -171,7 +171,7 @@ export function Hero() {
             </div>
             <div className="flex items-end justify-between mb-2">
               <div className="min-w-0">
-                <div className="font-display text-4xl sm:text-5xl font-bold tracking-tighter drop-shadow-xl text-white truncate">{currentAqi}</div>
+                <div className="font-display text-3xl sm:text-4xl font-bold tracking-tighter drop-shadow-xl text-white truncate">{currentAqi}</div>
                 <div className="text-[10px] sm:text-xs text-amber-300 font-bold uppercase tracking-widest mt-1 drop-shadow-md">US AQI — {currentStatus}</div>
               </div>
               <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-3 rounded-2xl shadow-lg">

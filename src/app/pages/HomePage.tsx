@@ -47,7 +47,7 @@ function RemediesMarquee({ remedies }: { remedies: any[] }) {
         {[...Array(2)].map((_, i) => (
           <div key={i} className="flex gap-8 items-stretch">
             {remedies.map((r, idx) => (
-              <div key={`${r.name}-${i}-${idx}`} className="w-[350px] shrink-0 h-full">
+              <div key={`${r.name}-${i}-${idx}`} className="w-[280px] sm:w-[350px] shrink-0 h-full">
                 <TraditionalRemedyCard {...r} index={idx} />
               </div>
             ))}
@@ -182,7 +182,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8"
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Theo dõi <em className="text-premium-gradient not-italic font-bold">nhịp thở</em> của <br className="hidden sm:block" />
                 thành phố hôm nay
@@ -206,7 +206,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16 perspective-[1000px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16 perspective-[1000px]">
             {dynamicEnvironmentData && dynamicEnvironmentData.map((d, i) => (
               d && <EnvironmentCard key={d.title} {...d} index={i} />
             ))}
@@ -239,7 +239,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8"
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Giao thoa y học: <br />
                 <em className="text-amber-400 not-italic font-bold">Hiện đại & Cổ truyền.</em>
@@ -294,7 +294,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="font-display text-4xl sm:text-5xl md:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8"
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Bản đồ <em className="text-amber-400 not-italic font-bold">thảo mộc</em> bản địa.
               </motion.h2>

@@ -93,7 +93,7 @@ export function TestimonialsSection() {
             <MessageSquareQuote className="w-4 h-4" />
             Cộng đồng lan tỏa
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold tracking-tight leading-[1.1]">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-white font-bold tracking-tight leading-[1.1] break-words max-w-full">
             Những <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-200 not-italic font-bold italic drop-shadow-2xl">câu chuyện</em> <br />
             được chia sẻ
           </h2>

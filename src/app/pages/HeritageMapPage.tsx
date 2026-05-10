@@ -12,7 +12,11 @@ export function HeritageMapPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    // Default collapsed on mobile (< 768px)
+    if (typeof window !== 'undefined') return window.innerWidth >= 768;
+    return true;
+  });
 
   useAirQuality();
 
@@ -129,34 +133,34 @@ export function HeritageMapPage() {
   return (
     <div className="bg-[#051a11] h-screen relative overflow-hidden font-body">
       {/* HEADER TITLE */}
-      <div className="absolute top-[100px] left-1/2 -translate-x-1/2 z-[50] pointer-events-none text-center w-full">
+      <div className="absolute top-[70px] sm:top-[100px] left-1/2 -translate-x-1/2 z-[50] pointer-events-none text-center w-full px-4">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-[#051a11]/90 backdrop-blur-2xl border border-emerald-500/20 rounded-full py-4 px-12 shadow-[0_20px_80px_rgba(0,0,0,0.6)] inline-block relative"
+          className="bg-[#051a11]/90 backdrop-blur-2xl border border-emerald-500/20 rounded-full py-2 px-5 sm:py-3 sm:px-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] inline-block relative"
         >
-          <h1 className="font-display text-sm md:text-lg text-white font-black tracking-[0.2em] uppercase relative pb-4">
+          <h1 className="font-display text-[10px] sm:text-sm md:text-lg text-white font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase relative pb-2 sm:pb-3">
             Bản đồ dược liệu <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200">Đà Nẵng</span>
             <motion.div 
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "8rem", opacity: 1 }}
+              animate={{ width: "6rem", opacity: 1 }}
               transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_15px_rgba(251,191,36,0.4)] rounded-full" 
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_15px_rgba(251,191,36,0.4)] rounded-full" 
             />
           </h1>
         </motion.div>
       </div>
 
       <Link 
-        to="/" 
-        className="absolute top-[100px] left-6 md:left-12 z-[100] w-12 h-12 bg-[#051a11]/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-[#051a11] transition-all shadow-2xl group"
+        to="/"
+        className="absolute top-[70px] sm:top-[100px] left-4 sm:left-6 md:left-12 z-[80] w-10 h-10 sm:w-12 sm:h-12 bg-[#051a11]/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-[#051a11] transition-all shadow-2xl group"
         title="Về trang chủ"
       >
         <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
       </Link>
 
       {/* SIDEBAR */}
-      <div className="absolute top-[120px] md:top-[160px] left-4 right-4 md:left-6 md:right-auto bottom-8 z-[100] flex pointer-events-none">
+      <div className="absolute top-[110px] sm:top-[120px] md:top-[160px] left-2 right-2 sm:left-4 sm:right-4 md:left-6 md:right-auto bottom-16 sm:bottom-8 z-[80] flex pointer-events-none">
         <AnimatePresence mode="wait">
           {isSidebarOpen && !activeLocationId && (
             <motion.div
@@ -164,7 +168,7 @@ export function HeritageMapPage() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -500, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 80 }}
-              className="w-full md:w-[380px] h-full flex flex-col pointer-events-auto"
+              className="w-full md:w-[380px] max-h-[50vh] md:max-h-full h-full flex flex-col pointer-events-auto"
             >
               <div className="bg-[#051a11]/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden h-full flex flex-col relative">
                 {/* Search Pill */}
@@ -191,7 +195,7 @@ export function HeritageMapPage() {
                         onClick={() => setActiveFilter(cat)}
                         className="relative py-2 group/tab transition-all shrink-0"
                       >
-                        <span className={`text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${
+                        <span className={`text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${
                           activeFilter === cat ? 'text-amber-400' : 'text-white/30 group-hover/tab:text-amber-300'
                         }`}>
                           {cat}
@@ -228,7 +232,7 @@ export function HeritageMapPage() {
 
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-black text-[13px] text-white/90 group-hover:text-emerald-400 truncate mb-0.5 uppercase tracking-tight">{loc.name}</h3>
+                            <h3 className="font-black text-[13px] text-white/90 group-hover:text-emerald-400 break-words line-clamp-2 mb-0.5 uppercase tracking-tight">{loc.name}</h3>
                             <div className="flex items-center gap-2">
                               <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{loc.type}</span>
                               <span className="text-[9px] text-white/20 truncate font-medium">{loc.address}</span>
@@ -281,7 +285,7 @@ export function HeritageMapPage() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 30, stiffness: 120 }}
-            className="absolute top-0 right-0 bottom-0 z-[110] w-full md:w-[50%] lg:w-[35%] bg-[#020b07] border-l border-white/10 shadow-[-30px_0_120px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col"
+            className="absolute top-16 sm:top-20 right-0 bottom-0 z-[85] w-full md:w-[50%] lg:w-[35%] bg-[#020b07] border-l border-white/10 shadow-[-30px_0_120px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col"
           >
             <div className="flex-1 overflow-y-auto no-scrollbar pb-28">
               {/* HERO */}

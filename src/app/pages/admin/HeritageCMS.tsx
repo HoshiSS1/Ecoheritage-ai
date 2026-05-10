@@ -51,7 +51,17 @@ export function HeritageCMS() {
   const [isSlideOpen, setIsSlideOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [form, setForm] = useState({ name: "", ingredients: "", method: "", doctorNote: "", imageBase64: "" });
+  const [form, setForm] = useState({ 
+    name: "", 
+    category: "Thanh nhiệt",
+    ingredients: "", 
+    method: "", 
+    doctorNote: "", 
+    benefits: "",
+    description: "",
+    status: "published" as const,
+    imageBase64: "" 
+  });
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -68,13 +78,33 @@ export function HeritageCMS() {
 
   const openAdd = () => {
     setEditingId(null);
-    setForm({ name: "", ingredients: "", method: "", doctorNote: "", imageBase64: "" });
+    setForm({ 
+      name: "", 
+      category: "Thanh nhiệt",
+      ingredients: "", 
+      method: "", 
+      doctorNote: "", 
+      benefits: "",
+      description: "",
+      status: "published",
+      imageBase64: "" 
+    });
     setIsSlideOpen(true);
   };
 
   const openEdit = (r: RemedyRecord) => {
     setEditingId(r.id);
-    setForm({ name: r.name, ingredients: r.ingredients, method: r.method, doctorNote: r.doctorNote, imageBase64: r.imageBase64 || "" });
+    setForm({ 
+      name: r.name, 
+      category: r.category || "Dân gian",
+      ingredients: r.ingredients, 
+      method: r.method, 
+      doctorNote: r.doctorNote, 
+      benefits: r.benefits || "",
+      description: r.description || "",
+      status: r.status || "published",
+      imageBase64: r.imageBase64 || "" 
+    });
     setIsSlideOpen(true);
   };
 
@@ -295,10 +325,44 @@ export function HeritageCMS() {
                     className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none transition-all font-black" placeholder="Ví dụ: Cao Atisô Đà Lạt" />
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <label htmlFor="remedy-category" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Phân loại <span className="text-rose-500">*</span></label>
+                    <select id="remedy-category" value={form.category} onChange={e => setForm(prev => ({ ...prev, category: e.target.value }))}
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:border-emerald-500/50 focus:bg-white focus:outline-none transition-all font-bold text-sm">
+                      <option value="Thanh nhiệt">Thanh nhiệt</option>
+                      <option value="Tiêu hóa">Tiêu hóa</option>
+                      <option value="An thần">An thần</option>
+                      <option value="Giải độc">Giải độc</option>
+                      <option value="Dân gian">Dân gian</option>
+                    </select>
+                  </div>
+                  <div className="space-y-4">
+                    <label htmlFor="remedy-status" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Trạng thái <span className="text-rose-500">*</span></label>
+                    <select id="remedy-status" value={form.status} onChange={e => setForm(prev => ({ ...prev, status: e.target.value as any }))}
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 focus:border-emerald-500/50 focus:bg-white focus:outline-none transition-all font-bold text-sm">
+                      <option value="published">Công khai</option>
+                      <option value="draft">Bản nháp</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <label htmlFor="remedy-ingredients" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Thành phần dược liệu <span className="text-rose-500">*</span></label>
                   <textarea id="remedy-ingredients" value={form.ingredients} onChange={e => setForm(prev => ({ ...prev, ingredients: e.target.value }))}
                     rows={3} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5 text-slate-900 font-medium outline-none transition focus:border-emerald-500 focus:bg-white placeholder:text-slate-300" placeholder="Danh sách các loại thảo mộc..." />
+                </div>
+
+                <div className="space-y-4">
+                  <label htmlFor="remedy-description" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Mô tả tóm tắt <span className="text-rose-500">*</span></label>
+                  <textarea id="remedy-description" value={form.description} onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+                    rows={2} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5 text-slate-900 font-medium outline-none transition focus:border-emerald-500 focus:bg-white placeholder:text-slate-300" placeholder="Mô tả ngắn gọn về bài thuốc..." />
+                </div>
+
+                <div className="space-y-4">
+                  <label htmlFor="remedy-benefits" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Công dụng & Lợi ích <span className="text-rose-500">*</span></label>
+                  <textarea id="remedy-benefits" value={form.benefits} onChange={e => setForm(prev => ({ ...prev, benefits: e.target.value }))}
+                    rows={2} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5 text-slate-900 font-medium outline-none transition focus:border-emerald-500 focus:bg-white placeholder:text-slate-300" placeholder="Các tác dụng chính đối với sức khỏe..." />
                 </div>
 
                 <div className="grid grid-cols-1 gap-8">

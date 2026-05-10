@@ -24,43 +24,7 @@ const HeritageMapPage = lazy(() => import('./pages/HeritageMapPage').then(m => (
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
 const AdminPortalPage = lazy(() => import('./pages/AdminPortalPage'));
 
-// Component cuộn lên đầu trang chuyên dụng
-function ScrollToTop() {
-  const { pathname, hash } = useLocation();
-  
-  useLayoutEffect(() => {
-    const scroll = () => {
-      window.scrollTo(0, 0);
-      document.body.scrollTo(0, 0);
-      document.documentElement.scrollTo(0, 0);
-    };
 
-    if (hash) {
-      const element = document.getElementById(hash.replace('#', ''));
-      if (element) {
-        const t = setTimeout(() => element.scrollIntoView({ behavior: 'smooth' }), 100);
-        return () => clearTimeout(t);
-      }
-    } else {
-      scroll();
-      // Multiple attempts for async/lazy-loaded content
-      const t1 = setTimeout(scroll, 10);
-      const t2 = setTimeout(scroll, 100);
-      const t3 = setTimeout(scroll, 300);
-      const t4 = setTimeout(scroll, 600);
-      const t5 = setTimeout(scroll, 1000);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-        clearTimeout(t3);
-        clearTimeout(t4);
-        clearTimeout(t5);
-      };
-    }
-  }, [pathname, hash]);
-
-  return null;
-}
 
 function BackToTop({ visible }: { visible: boolean }) {
   return (
@@ -183,7 +147,6 @@ export default function App() {
   if (isAdminRoute) {
     return (
       <>
-        <ScrollToTop />
         <Suspense fallback={suspenseFallback}>
           <Routes>
             <Route path="/admin-portal/*" element={<AdminPortalPage />} />
@@ -195,25 +158,24 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#051a11] text-emerald-50 selection:bg-amber-400/30 selection:text-white font-body overflow-x-hidden relative">
-      <ScrollToTop />
       {/* NAV - Fix background color (tránh chìm) và thêm viền */}
       <motion.nav
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className={`fixed top-0 left-0 right-0 z-[90] transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-[120] transition-all duration-500 ${
           scrolled ? 'bg-[#020b07]/90 backdrop-blur-2xl shadow-[0_10px_50px_rgba(0,0,0,0.8)] border-b border-emerald-500/10' : 'bg-[#051a11]/60 backdrop-blur-md border-b border-white/5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between relative">
           <Link to="/" className="flex items-center gap-3 group cursor-pointer">
-            <div className="relative bg-gradient-to-br from-emerald-400 to-emerald-700 p-3 rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.7)] transition-all duration-500">
-              <div className="absolute -inset-1 bg-emerald-400/20 rounded-2xl blur-md animate-pulse" />
-              <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Leaf className="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
+            <div className="relative bg-gradient-to-br from-emerald-400 to-emerald-700 p-2 sm:p-3 rounded-xl sm:rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.7)] transition-all duration-500">
+              <div className="absolute -inset-1 bg-emerald-400/20 rounded-xl sm:rounded-2xl blur-md animate-pulse" />
+              <div className="absolute inset-0 bg-white/20 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Leaf className="w-5 h-5 sm:w-7 sm:h-7 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
             </div>
             <div>
-              <div className="font-display text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-amber-300 transition-colors duration-300">EcoHeritage</div>
-              <div className="text-[10px] uppercase tracking-[0.3em] font-semibold text-amber-400/90 group-hover:text-white transition-colors duration-300">AI · Đà Nẵng</div>
+              <div className="font-display text-lg sm:text-2xl font-bold tracking-tight text-white group-hover:text-amber-300 transition-colors duration-300">EcoHeritage</div>
+              <div className="text-[8px] sm:text-[10px] uppercase tracking-[0.3em] font-semibold text-amber-400/90 group-hover:text-white transition-colors duration-300">AI · Đà Nẵng</div>
             </div>
           </Link>
 
@@ -357,18 +319,30 @@ export default function App() {
             )}
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 text-white">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden relative z-20 w-10 h-10 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 text-white">
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
 
-        {menuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20, scale: 0.95 }} 
-            animate={{ opacity: 1, y: 0, scale: 1 }} 
-            className="lg:hidden absolute top-full left-4 right-4 mt-4 bg-[#0a2e1f]/98 backdrop-blur-2xl shadow-[0_40px_80px_rgba(0,0,0,1)] rounded-[2.5rem] border border-emerald-500/20 overflow-hidden z-[100]"
-          >
-            <div className="px-6 py-10 flex flex-col gap-2 relative">
+        <AnimatePresence>
+          {menuOpen && (
+            <>
+              {/* Fullscreen Backdrop */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setMenuOpen(false)}
+                className="lg:hidden fixed inset-0 h-screen w-screen bg-[#020b07]/90 backdrop-blur-md z-[110]"
+              />
+              
+              <motion.div 
+                initial={{ opacity: 0, y: -20, scale: 0.95 }} 
+                animate={{ opacity: 1, y: 0, scale: 1 }} 
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                className="lg:hidden absolute top-[90px] left-4 right-4 bg-[#0a2e1f]/98 shadow-[0_40px_80px_rgba(0,0,0,1)] rounded-[2.5rem] border border-emerald-500/20 overflow-hidden z-[120]"
+              >
+                <div className="px-6 py-8 flex flex-col gap-2 relative max-h-[75vh] overflow-y-auto custom-scrollbar">
               <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-[50px] rounded-full" />
               
               {navLinks.map((l) => (
@@ -435,9 +409,11 @@ export default function App() {
                   <button onClick={() => { setIsAuthOpen(true); setMenuOpen(false); }} className="w-full bg-gradient-to-r from-amber-500 to-amber-300 text-[#0a2e1f] py-6 rounded-[2rem] font-black uppercase tracking-[0.25em] text-xs shadow-2xl shadow-amber-500/40 active:scale-95 transition-all">Đăng nhập</button>
                 )}
               </div>
-            </div>
-          </motion.div>
-        )}
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       <AuthModal 
@@ -488,7 +464,7 @@ export default function App() {
         </Routes>
       </Suspense>
 
-      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-24 pb-12 border-t border-emerald-500/10 relative overflow-hidden">
+      <footer id="contact" className="bg-[#020b07] text-emerald-50/80 pt-16 sm:pt-24 pb-20 sm:pb-12 border-t border-emerald-500/10 relative overflow-hidden">
         {/* Decorative background elements - enhanced glow */}
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />
@@ -504,11 +480,11 @@ export default function App() {
                     <Leaf className="w-8 h-8 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
                   </div>
                   <div>
-                    <div className="font-display text-3xl font-bold text-white tracking-tight">EcoHeritage</div>
+                    <div className="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">EcoHeritage</div>
                     <div className="text-[10px] uppercase tracking-[0.4em] font-bold text-amber-400 mt-1">AI · Đà Nẵng</div>
                   </div>
                 </Link>
-                <p className="text-emerald-100/60 leading-relaxed text-lg font-medium max-w-[320px]">
+                <p className="text-emerald-100/60 leading-relaxed text-sm sm:text-lg font-medium max-w-[320px]">
                   Tiên phong kết hợp trí tuệ nhân tạo với di sản y học dân tộc để mang lại giải pháp chăm sóc sức khỏe xanh bền vững.
                 </p>
               </div>

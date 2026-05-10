@@ -29,7 +29,7 @@ export function StatsSection() {
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_#10b981]" />
             Trạm dữ liệu môi trường
           </div>
-          <h2 className="relative inline-block pb-8 font-display text-4xl sm:text-5xl md:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-6 break-words max-w-full">
+          <h2 className="relative inline-block pb-8 font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-6 break-words max-w-full">
             Theo dõi chất lượng môi trường <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">theo thời gian thực</em>
             <motion.div 
               initial={{ width: 0, opacity: 0 }}

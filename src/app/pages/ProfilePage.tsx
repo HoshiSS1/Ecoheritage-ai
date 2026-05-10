@@ -168,7 +168,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
 
   const stats = [
     { label: 'Ngày đồng hành', value: '1', icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-400/10', trend: 'Mới' },
-    { label: 'Bài thuốc đã lưu', value: savedRemediesCount.toString(), icon: Heart, color: 'text-rose-400', bg: 'bg-rose-400/10', trend: 'Yêu thích' },
+    { label: 'Bài thuốc đã lưu', value: savedRemediesCount.toString(), icon: Heart, color: 'text-rose-400', bg: 'bg-rose-400/10', trend: 'Hoạt động' },
     { label: 'Góp ý hệ thống', value: reviewsCount.toString(), icon: MessageSquareQuote, color: 'text-amber-400', bg: 'bg-amber-400/10', trend: 'Đã gửi' },
     { label: 'Địa điểm quan tâm', value: savedLocationsCount.toString(), icon: MapPin, color: 'text-emerald-400', bg: 'bg-emerald-400/10', trend: 'Đã đánh dấu' },
   ];
@@ -207,7 +207,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
             <div className="absolute inset-0 h-[65%] bg-gradient-to-t from-[#020b07] via-[#051a11]/20 to-transparent opacity-60 z-10 pointer-events-none" />
             
             {/* User Info Glass Container */}
-            <div className="absolute bottom-4 sm:bottom-12 left-4 right-4 sm:right-auto sm:left-12 z-20 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-10 bg-black/60 backdrop-blur-3xl p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:min-w-[500px]">
+            <div className="absolute bottom-4 sm:bottom-12 left-4 right-4 sm:right-auto sm:left-12 z-20 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-10 bg-black/60 backdrop-blur-3xl p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:max-w-[600px]">
                <div className="relative group/avatar cursor-pointer shrink-0">
                   <div className="absolute -inset-2 bg-emerald-500/20 blur-xl rounded-full opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-500" />
                   <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full border-4 border-white/10 overflow-hidden relative shadow-2xl">
@@ -271,7 +271,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                 {[
                   { id: 'overview', label: 'Tổng quan', icon: Layout },
                   { id: 'security', label: 'Bảo mật', icon: Lock },
-                  { id: 'activity', label: 'Bài thuốc yêu thích', icon: Heart },
+                  { id: 'activity', label: 'Hoạt động', icon: Heart },
                   { id: 'settings', label: 'Cài đặt', icon: Settings },
                 ].map((tab) => (
                   <button

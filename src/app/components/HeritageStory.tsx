@@ -84,7 +84,7 @@ export function HeritageStory() {
                 </span>
                 Hành trình di sản
               </div>
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-white leading-[1.1] mb-6 drop-shadow-xl break-words max-w-full">
+              <h2 className="font-display text-2xl sm:text-3xl md:text-5xl text-white leading-[1.1] mb-6 drop-shadow-xl break-words max-w-full">
                 Từ <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic font-bold">lá lốt sau hè</em> <br/>đến <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic font-bold">thuật toán AI</em>.
               </h2>
               <p className="text-lg text-[#F8FAFC]/95 leading-relaxed font-medium drop-shadow-md">

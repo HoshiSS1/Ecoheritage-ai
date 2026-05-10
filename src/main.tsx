@@ -5,11 +5,14 @@ import { Toaster } from "sonner";
 import App from "./app/App.tsx";
 import "./styles/index.css";
 
+import ScrollToTop from "./app/components/ScrollToTop";
+
 // Lấy Google Client ID (Ưu tiên localStorage từ Admin portal, sau đó mới tới .env)
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
+    <ScrollToTop />
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <App />
       <Toaster position="bottom-right" richColors />

@@ -64,7 +64,7 @@ export function EnvironmentChart() {
             <TrendingUp className="w-3 h-3" />
             XU HƯỚNG
           </motion.div>
-          <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-white font-bold tracking-tight">
+          <h3 className="font-display text-2xl sm:text-3xl md:text-5xl text-white font-bold tracking-tight break-words max-w-full">
             Nhịp thở của thành phố
           </h3>
           <p className="text-emerald-100/50 text-sm sm:text-base mt-2 font-medium">
