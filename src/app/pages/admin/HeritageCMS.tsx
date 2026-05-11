@@ -59,7 +59,7 @@ export function HeritageCMS() {
     doctorNote: "", 
     benefits: "",
     description: "",
-    status: "published" as const,
+    status: "published" as "published" | "draft",
     imageBase64: "" 
   });
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
