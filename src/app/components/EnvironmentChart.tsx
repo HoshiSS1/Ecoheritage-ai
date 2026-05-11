@@ -114,8 +114,16 @@ export function EnvironmentChart() {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div className="relative z-10 mt-6 text-sm text-emerald-100/70">
-        {isLoading ? 'Đang cập nhật dữ liệu mới nhất...' : source === 'live' ? 'Nguồn: Open-Meteo Air Quality + Forecast' : 'Đang hiển thị dữ liệu dự phòng khi API chưa sẵn sàng.'}
+      <div className="relative z-10 mt-10 flex flex-col sm:flex-row items-center justify-between border-t border-white/5 pt-6 gap-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-amber-400 animate-pulse' : source === 'live' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]'}`} />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+            {isLoading ? 'Đang đồng bộ dữ liệu...' : source === 'live' ? 'Hệ thống trực tuyến' : 'Chế độ ngoại tuyến'}
+          </span>
+        </div>
+        <div className="text-[10px] font-medium text-white/20 italic tracking-wide">
+          {source === 'live' ? 'Dữ liệu được phân tích từ Open-Meteo Air Quality' : 'Hiển thị dữ liệu mẫu khi API không phản hồi'}
+        </div>
       </div>
     </motion.div>
   );
