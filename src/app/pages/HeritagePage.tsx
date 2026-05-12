@@ -63,18 +63,7 @@ export function HeritagePage() {
     };
   }, []);
 
-  useEffect(() => {
-    const doScroll = () => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
-    doScroll();
-    const t1 = setTimeout(doScroll, 50);
-    const t2 = setTimeout(doScroll, 250);
-    const t3 = setTimeout(doScroll, 500);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, []);
+  // ScrollToTop component handles initial mount scrolling
 
   const [displayRemedies, setDisplayRemedies] = useState(defaultRemedies);
 
@@ -125,6 +114,10 @@ export function HeritagePage() {
 
   useLayoutEffect(() => {
     setCurrentPage(1);
+    // Scroll up when changing filters or searching
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [searchTerm, activeFilter]);
 
   const totalPages = Math.ceil(filteredRemedies.length / ITEMS_PER_PAGE);

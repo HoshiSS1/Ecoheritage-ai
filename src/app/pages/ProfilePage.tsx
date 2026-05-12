@@ -41,17 +41,9 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
   const { data: aqiData } = useAirQuality();
 
   useEffect(() => {
-    const doScroll = () => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
-    doScroll();
-    const t1 = setTimeout(doScroll, 50);
-    const t2 = setTimeout(doScroll, 250);
-    const t3 = setTimeout(doScroll, 500);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, []);
+    // Scroll to top when tab changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab]);
 
   useEffect(() => {
     const savedAvatar = localStorage.getItem(`avatar_${user.email}`);

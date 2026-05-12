@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useMemo, useLayoutEffect, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router';
 import { Search, Leaf, MapPin, ChevronLeft, ChevronRight, Share2, Activity, History as HistoryIcon, Star, Clock, Sprout, Navigation } from 'lucide-react';
@@ -12,6 +12,7 @@ export function HeritageMapPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
+  const detailPanelRef = useRef<HTMLDivElement>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     // Default collapsed on mobile (< 768px)
     if (typeof window !== 'undefined') return window.innerWidth >= 768;
@@ -125,6 +126,11 @@ export function HeritageMapPage() {
     if (activeLocationId) {
       const activeElement = document.getElementById(`sidebar-item-${activeLocationId}`);
       if (activeElement) activeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      
+      // Scroll the detail panel to top when location changes
+      if (detailPanelRef.current) {
+        detailPanelRef.current.scrollTop = 0;
+      }
     }
   }, [activeLocationId]);
 
@@ -287,7 +293,7 @@ export function HeritageMapPage() {
             transition={{ type: 'spring', damping: 30, stiffness: 120 }}
             className="absolute top-16 sm:top-20 right-0 bottom-0 z-[85] w-full md:w-[50%] lg:w-[35%] bg-[#020b07] border-l border-white/10 shadow-[-30px_0_120px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col"
           >
-            <div className="flex-1 overflow-y-auto no-scrollbar pb-28">
+            <div ref={detailPanelRef} className="flex-1 overflow-y-auto no-scrollbar pb-28">
               {/* HERO */}
               <div className="h-[35vh] relative shrink-0 group overflow-hidden">
                 <img
