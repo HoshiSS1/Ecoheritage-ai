@@ -57,14 +57,14 @@ export function Hero() {
             Kho tàng Y lý Đà Nẵng x AI
           </motion.div>
 
-          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full">
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-5xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full">
             <span className="block text-white">Sống khỏe mỗi ngày</span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic mt-2 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
               cùng di sản thảo mộc.
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-[#F8FAFC]/95 mb-8 sm:mb-10 max-w-xl leading-relaxed font-medium drop-shadow-md">
+          <p className="text-base sm:text-lg md:text-xl text-[#F8FAFC]/95 mb-8 sm:mb-10 max-w-full xl:max-w-xl leading-relaxed font-medium drop-shadow-md">
             <strong className="font-semibold tracking-wide text-white">EcoHeritage</strong> dùng AI kết nối tri thức thảo mộc với dữ liệu môi trường, giúp bạn chủ động chăm sóc sức khỏe.
           </p>
 
@@ -138,11 +138,12 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.8, rotateY: 20 }}
           animate={{ opacity: 1, scale: 1, rotateY: 0 }}
           transition={{ duration: 1.5, delay: 0.4, type: "spring", bounce: 0.4 }}
-          className="relative hidden lg:block perspective-[1500px]"
+          className="relative hidden lg:flex items-center justify-center perspective-[1500px] w-full"
         >
-          {/* Main 3D Container */}
-          <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-white/10 transform-style-3d group">
-            {/* Inner Glow */}
+          <div className="relative w-full max-w-[420px] xl:max-w-[480px]">
+            {/* Main 3D Container */}
+            <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-white/10 transform-style-3d group w-full">
+              {/* Inner Glow */}
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-amber-500/20 mix-blend-overlay z-10 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
             
             <ImageWithFallback
@@ -159,7 +160,7 @@ export function Hero() {
             initial={{ opacity: 0, x: 50, y: 50, translateZ: 50 }}
             animate={{ opacity: 1, x: 0, y: 0, translateZ: 100 }}
             transition={{ delay: 1.2, duration: 1, type: "spring" }}
-            className="absolute -left-2 lg:-left-12 top-20 bg-[#0a2e1f]/70 backdrop-blur-2xl border border-white/10 text-white rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-56 lg:w-72 z-30 hover:-translate-y-2 transition-transform duration-500"
+            className="absolute -left-6 xl:-left-16 top-16 bg-[#0a2e1f]/80 backdrop-blur-3xl border border-white/10 text-white rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-64 lg:w-72 z-30 hover:-translate-y-2 transition-transform duration-500"
           >
             <div className="absolute -top-3 -right-3 w-16 h-16 bg-emerald-500/30 rounded-full blur-xl" />
             <div className="flex items-center gap-3 mb-4">
@@ -188,7 +189,7 @@ export function Hero() {
             initial={{ opacity: 0, x: -50, y: -50, translateZ: 80 }}
             animate={{ opacity: 1, x: 0, y: 0, translateZ: 120 }}
             transition={{ delay: 1.5, duration: 1, type: "spring" }}
-            className="absolute -right-2 lg:-right-8 bottom-24 bg-gradient-to-br from-amber-400/90 to-amber-600/90 backdrop-blur-xl border border-white/20 text-[#051a11] rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-52 lg:w-64 z-40 hover:-translate-y-2 transition-transform duration-500"
+            className="absolute -right-4 xl:-right-10 bottom-12 bg-gradient-to-br from-amber-400/95 to-amber-600/95 backdrop-blur-2xl border border-white/20 text-[#051a11] rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-56 lg:w-64 z-40 hover:-translate-y-2 transition-transform duration-500"
           >
             <div className="absolute top-0 right-0 w-full h-full bg-[url('/textures/rice-paper.png')] opacity-30 mix-blend-overlay rounded-[2rem]" />
             <div className="relative z-10">
@@ -200,6 +201,7 @@ export function Hero() {
               <div className="text-[13px] font-semibold text-[#051a11] leading-relaxed mt-2">Siro lá lốt mật ong — giải pháp vàng cho họng hắt hơi ngày bụi.</div>
             </div>
           </motion.div>
+          </div>
         </motion.div>
       </div>
 
