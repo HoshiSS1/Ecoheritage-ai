@@ -31,6 +31,27 @@ export default defineConfig({
     },
   },
 
+  // Pre-bundle heavy dependencies for faster dev start
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'motion/react', 'recharts', 'lucide-react', 'sonner', 'react-router'],
+  },
+
+  // Build optimization
+  build: {
+    target: 'esnext',
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router'],
+          motion: ['motion/react'],
+          charts: ['recharts'],
+          icons: ['lucide-react'],
+        },
+      },
+    },
+  },
+
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
 })

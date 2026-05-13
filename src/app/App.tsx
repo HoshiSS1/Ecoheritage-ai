@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { AuthModal } from './components/AuthModal';
 import { ChatWidget } from './widgets/ChatWidget';
 import { AQIAlertPopup } from './components/AQIAlertPopup';
+import { getAvatarUrl } from './utils/avatarUtils';
 import { createSeedFeedback, createSeedUsers } from './pages/admin/adminData';
 import { FEEDBACK_STORAGE_KEY } from './pages/admin/adminUtils';
 
@@ -49,11 +50,26 @@ function BackToTop({ visible }: { visible: boolean }) {
 export default function App() {
   // ─── ĐẢM BẢO ĐỒNG NHẤT DỮ LIỆU TRÊN MÁY MỚI ───
   useEffect(() => {
-    // 1. Khởi tạo Feedback
-    if (!localStorage.getItem(FEEDBACK_STORAGE_KEY)) {
-      const initialSeeds = createSeedFeedback();
+    // 1. Khởi tạo Feedback và Migration dữ liệu mẫu cũ
+    const existingRaw = localStorage.getItem(FEEDBACK_STORAGE_KEY);
+    const initialSeeds = createSeedFeedback();
+    if (!existingRaw) {
       localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(initialSeeds));
       console.log("EcoHeritage: Khởi tạo dữ liệu mẫu thành công.");
+    } else {
+      try {
+        let existing = JSON.parse(existingRaw);
+        // Wipe old seeds and re-insert new seeds to ensure fresh content
+        const userRealFeedback = existing.filter((item: any) => {
+          if (item.source === "seeded" || String(item.id).startsWith("seed-")) return false;
+          // Also catch specific old data the user screenshotted if they lacked the source tag
+          if (item.author === "David Wilson" || item.author === "Nguyễn Văn Tèo" || item.author === "Sinh viên") return false;
+          if (item.remedyUsed === "ECOHERITAGE APP" || item.remedyUsed === "WEBSITE" || item.remedyUsed === "DỰ ÁN DI SẢN SỐ") return false;
+          return true;
+        });
+        const merged = [...initialSeeds, ...userRealFeedback];
+        localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(merged));
+      } catch (e) {}
     }
 
     // 2. Khởi tạo Users (Khắc phục lỗi mất tài khoản khi sang máy khác)
@@ -157,7 +173,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#051a11] text-emerald-50 selection:bg-amber-400/30 selection:text-white font-body overflow-x-hidden relative">
+    <div className="min-h-screen bg-[#051a11] text-emerald-50 selection:bg-amber-400/30 selection:text-white font-body overflow-hidden relative">
       {/* NAV - Fix background color (tránh chìm) và thêm viền */}
       <motion.nav
         initial={{ y: -50, opacity: 0 }}
@@ -269,9 +285,9 @@ export default function App() {
                   <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 flex items-center justify-center border border-emerald-500/30 group-hover/user:scale-110 transition-transform duration-500 overflow-hidden relative">
                     <div className="absolute inset-0 bg-emerald-500/10 animate-pulse" />
                     {userAvatar ? (
-                      <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover relative z-10" />
+                      <img src={userAvatar} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      <User className="w-5 h-5 text-emerald-400 relative z-10" />
+                      <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full object-cover grayscale-[0.2]" />
                     )}
                   </div>
                   <span className="text-sm font-bold text-white tracking-tight">{user.name}</span>

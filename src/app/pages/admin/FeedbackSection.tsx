@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { MessageSquareQuote, CheckCircle2, Clock, Filter, Globe, Leaf, Trash2, Star, Trash } from "lucide-react";
+import { MessageSquareQuote, CheckCircle2, Clock, Filter, Globe, FlaskConical, Trash2, Star, Trash } from "lucide-react";
 import { toast } from "sonner";
 import {
   shellCardClass, formatDateTime, loadStoredState,
@@ -105,16 +105,6 @@ export function FeedbackSection({ onPendingChange }: FeedbackSectionProps) {
       onPendingChange?.();
       return next;
     });
-
-    const publicRaw = localStorage.getItem("ecoheritage_reviews");
-    if (publicRaw) {
-      try {
-        const publicReviews = JSON.parse(publicRaw);
-        const filteredPublic = publicReviews.filter((r: any) => r.id !== id);
-        localStorage.setItem("ecoheritage_reviews", JSON.stringify(filteredPublic));
-      } catch (e) {}
-    }
-
     toast.success("Đã xóa vĩnh viễn nhận xét.");
   };
 
@@ -122,14 +112,6 @@ export function FeedbackSection({ onPendingChange }: FeedbackSectionProps) {
     const idsToRemove = new Set(filtered.map(r => r.id));
     const next = records.filter(r => !idsToRemove.has(r.id));
     persist(next);
-
-    const publicRaw = localStorage.getItem("ecoheritage_reviews");
-    if (publicRaw) {
-      const publicReviews = JSON.parse(publicRaw);
-      const filteredPublic = publicReviews.filter((r: any) => !idsToRemove.has(r.id));
-      localStorage.setItem("ecoheritage_reviews", JSON.stringify(filteredPublic));
-    }
-
     setBulkDeleteActive(false);
     toast.success(`Đã xóa sạch ${idsToRemove.size} nhận xét.`);
   };
@@ -141,7 +123,7 @@ export function FeedbackSection({ onPendingChange }: FeedbackSectionProps) {
   const tabs: { id: TabId; label: string; icon: any; count: number }[] = [
     { id: "all", label: "Tất cả", icon: Filter, count: records.length },
     { id: "web", label: "Web", icon: Globe, count: webCount },
-    { id: "heritage", label: "Di sản", icon: Leaf, count: heritageCount },
+    { id: "heritage", label: "Bài thuốc", icon: FlaskConical, count: heritageCount },
     { id: "pending", label: "Chờ duyệt", icon: Clock, count: pendingCount },
   ];
 
@@ -155,12 +137,12 @@ export function FeedbackSection({ onPendingChange }: FeedbackSectionProps) {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-5 mb-8">
-        <div className={`${shellCardClass} p-5`}><div className="flex items-center gap-3"><div className="rounded-xl bg-emerald-500/10 p-2 border border-emerald-500/20"><CheckCircle2 className="h-4 w-4 text-emerald-600" /></div><div><p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Đã duyệt</p><p className="text-2xl font-bold text-slate-900">{records.filter(r => r.status === "published").length}</p></div></div></div>
-        <div className={`${shellCardClass} p-5`}><div className="flex items-center gap-3"><div className="rounded-xl bg-amber-500/10 p-2 border border-amber-500/20"><Clock className="h-4 w-4 text-amber-600" /></div><div><p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Chờ duyệt</p><p className="text-2xl font-bold text-slate-900">{pendingCount}</p></div></div></div>
-        <div className={`${shellCardClass} p-5`}><div className="flex items-center gap-3"><div className="rounded-xl bg-amber-500/10 p-2 border border-amber-500/20"><Star className="h-4 w-4 text-amber-600" /></div><div><p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tiêu biểu</p><p className="text-2xl font-bold text-slate-900">{records.filter(r => r.isFeatured).length}</p></div></div></div>
-        <div className={`${shellCardClass} p-5`}><div className="flex items-center gap-3"><div className="rounded-xl bg-blue-500/10 p-2 border border-blue-500/20"><Globe className="h-4 w-4 text-blue-600" /></div><div><p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Web</p><p className="text-2xl font-bold text-slate-900">{webCount}</p></div></div></div>
-        <div className={`${shellCardClass} p-5`}><div className="flex items-center gap-3"><div className="rounded-xl bg-emerald-500/10 p-2 border border-emerald-500/20"><Leaf className="h-4 w-4 text-emerald-600" /></div><div><p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Di sản</p><p className="text-2xl font-bold text-slate-900">{heritageCount}</p></div></div></div>
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-8">
+        <div className={`${shellCardClass} p-5 bg-gradient-to-br from-white to-slate-50 border-emerald-100/50`}><div className="flex items-center gap-3"><div className="rounded-2xl bg-emerald-500/10 p-2.5 border border-emerald-500/20 shadow-inner"><CheckCircle2 className="h-5 w-5 text-emerald-600" /></div><div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đã duyệt</p><p className="text-2xl font-black text-slate-800 tracking-tight">{records.filter(r => r.status === "published").length}</p></div></div></div>
+        <div className={`${shellCardClass} p-5 bg-gradient-to-br from-white to-slate-50 border-amber-100/50`}><div className="flex items-center gap-3"><div className="rounded-2xl bg-amber-500/10 p-2.5 border border-amber-500/20 shadow-inner"><Clock className="h-5 w-5 text-amber-600" /></div><div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chờ duyệt</p><p className="text-2xl font-black text-slate-800 tracking-tight">{pendingCount}</p></div></div></div>
+        <div className={`${shellCardClass} p-5 bg-gradient-to-br from-white to-slate-50 border-amber-100/50`}><div className="flex items-center gap-3"><div className="rounded-2xl bg-amber-500/10 p-2.5 border border-amber-500/20 shadow-inner"><Star className="h-5 w-5 text-amber-600" /></div><div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tiêu biểu</p><p className="text-2xl font-black text-slate-800 tracking-tight">{records.filter(r => r.isFeatured).length}</p></div></div></div>
+        <div className={`${shellCardClass} p-5 bg-gradient-to-br from-white to-slate-50 border-blue-100/50`}><div className="flex items-center gap-3"><div className="rounded-2xl bg-blue-500/10 p-2.5 border border-blue-500/20 shadow-inner"><Globe className="h-5 w-5 text-blue-600" /></div><div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Góp ý Web</p><p className="text-2xl font-black text-slate-800 tracking-tight">{webCount}</p></div></div></div>
+        <div className={`${shellCardClass} p-5 bg-gradient-to-br from-white to-slate-50 border-emerald-100/50`}><div className="flex items-center gap-3"><div className="rounded-2xl bg-emerald-500/10 p-2.5 border border-emerald-500/20 shadow-inner"><FlaskConical className="h-5 w-5 text-emerald-600" /></div><div><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bài thuốc</p><p className="text-2xl font-black text-slate-800 tracking-tight">{heritageCount}</p></div></div></div>
       </div>
 
       <div className={`${shellCardClass} overflow-hidden`}>
@@ -196,118 +178,93 @@ export function FeedbackSection({ onPendingChange }: FeedbackSectionProps) {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 px-4">
-            <div className="mb-6 rounded-full bg-slate-50 p-8 shadow-inner"><MessageSquareQuote className="h-16 w-16 text-slate-200" /></div>
-            <h4 className="text-lg font-semibold text-slate-400">Không tìm thấy phản hồi nào</h4>
+          <div className="flex flex-col items-center justify-center py-24 px-4 bg-white">
+            <div className="mb-6 rounded-[2.5rem] bg-slate-50 border border-slate-100 p-10 shadow-inner"><MessageSquareQuote className="h-20 w-20 text-slate-200" /></div>
+            <h4 className="text-xl font-black text-slate-800 tracking-tight">Không tìm thấy phản hồi nào</h4>
+            <p className="text-sm text-slate-400 font-medium mt-2">Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse">
-              <thead>
-                <tr className="border-b border-slate-100 bg-slate-50 text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">
-                  <th className="px-6 py-5 text-left">Người đóng góp</th>
-                  <th className="px-6 py-5 text-left">Nội dung & Di sản</th>
-                  <th className="px-6 py-5 text-center">Đánh giá</th>
-                  <th className="px-6 py-5 text-center">Trạng thái</th>
-                  <th className="px-6 py-5 text-right">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filtered.map(fb => (
-                  <tr key={fb.id} className="group hover:bg-slate-50/50 transition-all duration-300">
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="relative group/avatar shrink-0">
-                          <div className="w-11 h-11 rounded-2xl p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400 shadow-sm transition-transform group-hover/avatar:scale-110">
-                            <div className="w-full h-full rounded-[14px] bg-white p-[1px] overflow-hidden">
-                              <img 
-                                src={getAvatarUrl(fb.author)} 
-                                alt={fb.author} 
-                                className="w-full h-full object-cover grayscale-[0.1] contrast-125"
-                              />
-                            </div>
+          <div className="p-6 bg-slate-50/30">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filtered.map(fb => (
+                <div key={fb.id} className="group relative bg-white rounded-[2rem] border border-slate-200 p-6 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-full overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-50 to-transparent rounded-full -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Header: User Info & Actions */}
+                  <div className="flex justify-between items-start mb-5 relative z-10">
+                    <div className="flex items-center gap-3">
+                      <div className="relative shrink-0">
+                        <div className="w-12 h-12 rounded-[1.25rem] p-[2px] bg-gradient-to-tr from-emerald-400 to-emerald-100 shadow-md">
+                          <div className="w-full h-full rounded-[1.1rem] bg-white p-[2px] overflow-hidden">
+                            <img src={getAvatarUrl(fb.author, fb.authorEmail)} alt={fb.author} className="w-full h-full object-cover rounded-[0.9rem]" />
                           </div>
                         </div>
-                        <div><p className="font-bold text-slate-900 text-[15px]">{fb.author}</p></div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 max-w-md">
-                      <p className="text-[10px] font-black text-amber-600 uppercase tracking-wider mb-2">{fb.remedyUsed}</p>
-                      <p className="text-sm leading-relaxed text-slate-600 italic font-medium">"{fb.content}"</p>
-                    </td>
-                    <td className="px-6 py-5 text-center">
-                      <div className="flex items-center justify-center gap-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className={`h-2.5 w-2.5 ${i < (fb.satisfaction || 5) ? "fill-amber-400 text-amber-400" : "text-slate-200"}`} />
-                        ))}
-                      </div>
-                      <p className="text-[9px] font-black text-slate-300 mt-2 uppercase tracking-widest">{fb.category === "heritage" ? "Di sản" : "Web"}</p>
-                    </td>
-                    <td className="px-6 py-5 text-center">
-                      <div className="flex flex-col items-center gap-1.5">
-                        <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.15em] shadow-sm border ${
-                          fb.status === "published" 
-                            ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                            : "bg-amber-50 text-amber-600 border-amber-100"
-                        }`}>
-                          <div className={`h-1.5 w-1.5 rounded-full ${fb.status === "pending" ? "bg-amber-500 animate-pulse" : "bg-emerald-500"}`} />
-                          {fb.status === "published" ? "Đã duyệt" : "Chờ duyệt"}
-                        </span>
                         {fb.isFeatured && (
-                          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest bg-amber-400 text-[#051a11] shadow-sm mt-1">
-                            ★ Featured
-                          </span>
+                          <div className="absolute -bottom-1 -right-1 bg-amber-400 w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                            <Star className="w-3 h-3 text-white fill-white" />
+                          </div>
                         )}
-                        <p className="text-[10px] font-bold text-slate-300 mt-2">{formatDateTime(fb.createdAt)}</p>
                       </div>
-                    </td>
-                    <td className="px-6 py-5 text-right">
-                      <div className="flex items-center justify-end gap-3">
-                        {fb.status === "pending" && (
-                          <button
-                            onClick={() => approveOne(fb.id)}
-                            className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-                            title="Duyệt nhận xét"
-                          >
-                            <CheckCircle2 className="h-4 w-4" />
-                          </button>
-                        )}
-                        {fb.status === "published" && (
-                          <button 
-                            onClick={() => {
-                              const category = fb.category || 'web';
-                              const currentlyFeaturedCount = records.filter(r => r.category === category && r.isFeatured).length;
-                              if (!fb.isFeatured && currentlyFeaturedCount >= 4) {
-                                toast.error(`Tối đa 4 nhận xét cho luồng ${category === 'web' ? 'Web' : 'Di sản'}.`);
-                                return;
-                              }
-                              persist(records.map(r => r.id === fb.id ? { ...r, isFeatured: !r.isFeatured } : r));
-                            }}
-                            className={`group relative flex items-center justify-center h-6 w-12 rounded-full p-1 transition-all duration-500 shadow-inner ${fb.isFeatured ? "bg-amber-400" : "bg-slate-100"}`}
-                            title="Đánh dấu tiêu biểu"
-                          >
-                            <motion.div 
-                              animate={{ x: fb.isFeatured ? 12 : -12 }}
-                              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                              className="h-4 w-4 rounded-full bg-white shadow-md flex items-center justify-center"
-                            >
-                              {fb.isFeatured && <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />}
-                            </motion.div>
-                          </button>
-                        )}
-                        <button
-                          onClick={() => setDeleteTarget({ id: fb.id, author: fb.author })}
-                          className="p-2.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-600 hover:text-white transition-all shadow-sm"
-                          title="Xóa vĩnh viễn"
-                        >
-                          <Trash2 className="h-4 w-4" />
+                      <div>
+                        <h4 className="font-black text-slate-800 text-[15px]">{fb.author}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{formatDateTime(fb.createdAt)}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {fb.status === "pending" && (
+                        <button onClick={() => approveOne(fb.id)} className="p-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors" title="Duyệt">
+                          <CheckCircle2 className="w-4 h-4" />
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      )}
+                      {fb.status === "published" && (
+                        <button onClick={() => {
+                          const category = fb.category || 'web';
+                          const currentlyFeaturedCount = records.filter(r => r.category === category && r.isFeatured).length;
+                          if (!fb.isFeatured && currentlyFeaturedCount >= 4) { toast.error(`Tối đa 4 nhận xét cho ${category === 'web' ? 'Web' : 'Di sản'}.`); return; }
+                          persist(records.map(r => r.id === fb.id ? { ...r, isFeatured: !r.isFeatured } : r));
+                        }} className={`p-2 rounded-xl transition-colors ${fb.isFeatured ? 'bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600'}`} title={fb.isFeatured ? "Bỏ tiêu biểu" : "Đánh dấu tiêu biểu"}>
+                          <Star className={`w-4 h-4 ${fb.isFeatured ? 'fill-current' : ''}`} />
+                        </button>
+                      )}
+                      <button onClick={() => setDeleteTarget({ id: fb.id, author: fb.author })} className="p-2 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors" title="Xóa">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Rating & Category */}
+                  <div className="flex items-center justify-between mb-4 relative z-10">
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={`h-3.5 w-3.5 ${i < (fb.satisfaction || 5) ? "fill-amber-400 text-amber-400" : "text-slate-200"}`} />
+                      ))}
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${fb.category === "heritage" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-blue-50 text-blue-600 border border-blue-100"}`}>
+                      {fb.category === "heritage" ? "Bài thuốc" : "Web"}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 bg-slate-50/80 border border-slate-100 rounded-2xl p-4 relative z-10">
+                    <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <MessageSquareQuote className="w-3 h-3" /> {fb.remedyUsed}
+                    </p>
+                    <p className="text-sm text-slate-700 font-medium leading-relaxed italic line-clamp-4">"{fb.content}"</p>
+                  </div>
+                  
+                  {/* Status Badge */}
+                  <div className="mt-4 flex items-center justify-between relative z-10 border-t border-slate-100 pt-4">
+                     <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${fb.status === "published" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-amber-500 animate-pulse"}`} />
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${fb.status === "published" ? "text-emerald-600" : "text-amber-600"}`}>
+                           {fb.status === "published" ? "Đã xác thực" : "Đang chờ duyệt"}
+                        </span>
+                     </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

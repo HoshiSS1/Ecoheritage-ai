@@ -1,5 +1,5 @@
 import { useState, useMemo, useLayoutEffect, useRef, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Search, Filter, Leaf, Star, User, Send, Heart, MessageSquareQuote, Sparkles, Clock, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { TraditionalRemedyCard } from '../components/TraditionalRemedyCard';
@@ -19,13 +19,13 @@ export function HeritagePage() {
 
   // Feedback Form State
   const [fbName, setFbName] = useState('');
+  const [useCustomFbName, setUseCustomFbName] = useState(false);
   const [fbEmail, setFbEmail] = useState('');
   const [fbComment, setFbComment] = useState('');
   const [fbRating, setFbRating] = useState(5);
   const [fbHover, setFbHover] = useState<number | null>(null);
-  const [fbType, setFbType] = useState('Hiệu quả sử dụng');
   const [fbRemedyId, setFbRemedyId] = useState('');
-  const [fbAllowPublic, setFbAllowPublic] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [fbSubmitting, setFbSubmitting] = useState(false);
 
   const loadReviews = () => {
@@ -128,7 +128,18 @@ export function HeritagePage() {
 
   const handleSubmitFeedback = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fbName.trim() || !fbComment.trim()) {
+    let finalName = 'Khách';
+    const activeUser = sessionStorage.getItem('ecoheritage_active_user');
+    
+    if (useCustomFbName && fbName.trim()) {
+      finalName = fbName.trim();
+    } else if (activeUser && !useCustomFbName) {
+      finalName = JSON.parse(activeUser).name;
+    } else if (fbName.trim()) {
+      finalName = fbName.trim();
+    }
+
+    if (finalName === 'Khách' && !fbName.trim() && !activeUser) {
       toast.error('Vui lòng nhập đầy đủ tên và nhận xét của bạn!');
       return;
     }
@@ -136,7 +147,8 @@ export function HeritagePage() {
     setFbSubmitting(true);
     try {
       const result = saveAdminFeedback({
-        author: fbName,
+        author: finalName,
+        authorEmail: activeUser ? JSON.parse(activeUser).email : '',
         content: fbComment,
         satisfaction: fbRating,
         category: 'heritage',
@@ -280,65 +292,151 @@ export function HeritagePage() {
             <h3 className="text-2xl font-bold text-white mb-4 flex flex-col gap-2">
               <div className="flex items-center gap-3">
                 <Heart className="w-6 h-6 text-rose-400 fill-rose-400 animate-pulse" /> 
-                <span className="text-premium-gradient">Đóng góp cho Di sản</span>
+                <span className="text-premium-gradient">Đóng góp bài thuốc</span>
               </div>
               <div className="w-20 h-1 bg-gradient-to-r from-emerald-400 to-amber-300 rounded-full" />
             </h3>
             <p className="text-emerald-100/60 text-sm mb-8">Chia sẻ kinh nghiệm hoặc phản hồi của bạn về các bài thuốc dân gian.</p>
 
             <form onSubmit={handleSubmitFeedback} className="space-y-6 relative z-10">
-              <div className="flex items-center gap-2 mb-4 bg-white/5 p-3 rounded-2xl border border-white/5">
-                <span className="text-xs font-bold text-white/40 uppercase tracking-widest mr-2">Đánh giá:</span>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onMouseEnter={() => setFbHover(star)}
-                    onMouseLeave={() => setFbHover(null)}
-                    onClick={() => setFbRating(star)}
-                    className="transition-transform hover:scale-125 focus:outline-none"
-                  >
-                    <Star
-                      className={`w-7 h-7 ${
-                        (fbHover !== null ? star <= fbHover : star <= fbRating)
-                          ? 'text-amber-400 fill-amber-400 filter drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-                          : 'text-white/10'
-                      } transition-all duration-300`}
-                    />
-                  </button>
-                ))}
+              {sessionStorage.getItem('ecoheritage_active_user') && !useCustomFbName ? (() => {
+                const user = JSON.parse(sessionStorage.getItem('ecoheritage_active_user')!);
+                return (
+                  <div className="flex items-center justify-between bg-white/[0.03] p-4 rounded-2xl border border-white/10 mb-2 group/badge">
+                    <div className="flex items-center gap-3">
+                      <div className="relative shrink-0">
+                        <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400">
+                          <div className="w-full h-full rounded-full bg-[#051a11] p-[2px]">
+                            <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                          </div>
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#051a11] flex items-center justify-center">
+                          <ShieldCheck className="w-2.5 h-2.5 text-white" />
+                        </div>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[9px] text-emerald-400/80 font-bold uppercase tracking-wider mb-0.5">Tài khoản</p>
+                        <p className="text-white font-bold text-sm truncate max-w-[120px] sm:max-w-[180px]">{user.name}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setUseCustomFbName(true)}
+                      className="text-xs text-white/40 hover:text-white underline underline-offset-4 transition-colors shrink-0 ml-2"
+                    >
+                      Đổi tên khác
+                    </button>
+                  </div>
+                );
+              })() : (
+                <div className="space-y-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="Nhập tên hiển thị (hoặc để trống để Ẩn danh)"
+                    value={fbName}
+                    onChange={(e) => setFbName(e.target.value)}
+                    className="w-full input-premium"
+                  />
+                  {sessionStorage.getItem('ecoheritage_active_user') && (
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUseCustomFbName(false);
+                          setFbName('');
+                        }}
+                        className="text-xs text-emerald-400 font-bold uppercase tracking-widest hover:text-emerald-300 transition-colors flex items-center gap-1"
+                      >
+                        <ShieldCheck className="w-3 h-3" /> Quay lại dùng tài khoản
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner mb-4">
+                <p className="text-xs font-bold text-white/60 mb-3">Mức độ hài lòng</p>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onMouseEnter={() => setFbHover(star)}
+                      onMouseLeave={() => setFbHover(null)}
+                      onClick={() => setFbRating(star)}
+                      className="transition-transform hover:scale-125 focus:outline-none"
+                    >
+                      <Star
+                        className={`w-8 h-8 ${
+                          (fbHover !== null ? star <= fbHover : star <= fbRating)
+                            ? 'text-amber-400 fill-amber-400 filter drop-shadow-[0_0_12px_rgba(251,191,36,0.6)]'
+                            : 'text-white/20 hover:text-white/40'
+                        } transition-all duration-300`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-3 px-3 py-1 bg-amber-400/10 text-amber-400 border border-amber-400/20 rounded-xl text-xs font-black uppercase tracking-widest">
+                    {fbRating}/5
+                  </span>
+                </div>
               </div>
 
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Tên của bạn"
-                  value={fbName}
-                  onChange={(e) => setFbName(e.target.value)}
-                  className="w-full input-premium"
-                />
+                <div className="relative group z-50">
+                  <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-full input-premium bg-[#051a11] text-left relative flex items-center justify-between"
+                  >
+                    <span className={fbRemedyId ? "text-white" : "text-white/40"}>
+                      {fbRemedyId || "-- Chọn bài thuốc bạn đã sử dụng --"}
+                    </span>
+                    <svg 
+                      width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"
+                      className={`text-white/40 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                    >
+                      <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
 
-                <div className="relative group">
-                  <input
-                    list="remedy-suggestions"
-                    placeholder="Tìm kiếm bài thuốc cần nhận xét..."
-                    value={fbRemedyId}
-                    onChange={(e) => setFbRemedyId(e.target.value)}
-                    className="w-full input-premium"
-                  />
-                  <datalist id="remedy-suggestions">
-                    {defaultRemedies.map(r => (
-                      <option key={r.id} value={r.name} />
-                    ))}
-                  </datalist>
+                  <AnimatePresence>
+                    {isDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scaleY: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scaleY: 1 }}
+                        exit={{ opacity: 0, y: -10, scaleY: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-0 right-0 mt-2 bg-[#0a2e1f]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden z-50 origin-top"
+                      >
+                        <div className="max-h-60 overflow-y-auto custom-scrollbar py-2">
+                          {defaultRemedies.map(r => (
+                            <button
+                              key={r.id}
+                              type="button"
+                              onClick={() => {
+                                setFbRemedyId(r.name);
+                                setIsDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-5 py-3 hover:bg-emerald-500/20 transition-colors text-[14px] ${fbRemedyId === r.name ? 'text-amber-400 font-bold bg-emerald-500/10' : 'text-white/80'}`}
+                            >
+                              {r.name}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                <textarea
-                  value={fbComment}
-                  onChange={(e) => setFbComment(e.target.value)}
-                  placeholder="Chia sẻ nhận xét hoặc kết quả sau khi sử dụng..."
-                  className="w-full input-premium min-h-[140px] resize-none"
-                />
+                <div className="relative group/textarea">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-amber-500/0 opacity-0 group-hover/textarea:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
+                  <textarea
+                    value={fbComment}
+                    onChange={(e) => setFbComment(e.target.value)}
+                    placeholder="Chia sẻ nhận xét hoặc kết quả sau khi sử dụng bài thuốc..."
+                    className="w-full input-premium min-h-[140px] resize-none text-[15px] leading-relaxed relative z-10"
+                  />
+                </div>
               </div>
 
               <button

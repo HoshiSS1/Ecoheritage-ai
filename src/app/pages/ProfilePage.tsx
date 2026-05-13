@@ -76,10 +76,10 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
         const locations = (locationsRaw && locationsRaw !== 'undefined') ? JSON.parse(locationsRaw) : [];
         if (Array.isArray(locations)) setSavedLocationsCount(locations.length);
         
-        const reviewsRaw = localStorage.getItem('ecoheritage_reviews');
+        const reviewsRaw = localStorage.getItem('ecoheritage_admin_feedback');
         const reviews = (reviewsRaw && reviewsRaw !== 'undefined') ? JSON.parse(reviewsRaw) : [];
         if (Array.isArray(reviews)) {
-          const userReviews = reviews.filter((r: any) => r && r.author === user.name);
+          const userReviews = reviews.filter((r: any) => r && (r.author === user.name || r.authorEmail === user.email));
           setReviewsCount(userReviews.length);
         }
       } catch (e) {
@@ -111,6 +111,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
       if (type === 'avatar') {
         setAvatarPreview(base64);
         localStorage.setItem(`avatar_${user.email}`, base64);
+        localStorage.setItem(`avatar_${user.name}`, base64); // Fallback for feedback rendering
         onAvatarChange?.(base64);
         window.dispatchEvent(new Event('storage_sync'));
         toast.success('✨ Cập nhật ảnh đại diện thành công!');
@@ -158,11 +159,27 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
     } catch { toast.error('Lỗi hệ thống'); }
   };
 
+  // Calculate real days since registration
+  const daysJoined = (() => {
+    try {
+      const usersRaw = localStorage.getItem('ecoheritage_users');
+      if (usersRaw) {
+        const users = JSON.parse(usersRaw);
+        const me = users.find((u: any) => u.email === user.email);
+        if (me?.createdAt) {
+          const diff = Date.now() - new Date(me.createdAt).getTime();
+          return Math.max(1, Math.floor(diff / 86400000));
+        }
+      }
+    } catch {}
+    return 1;
+  })();
+
   const stats = [
-    { label: 'Ngày đồng hành', value: '1', icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-400/10', trend: 'Mới' },
-    { label: 'Bài thuốc đã lưu', value: savedRemediesCount.toString(), icon: Heart, color: 'text-rose-400', bg: 'bg-rose-400/10', trend: 'Hoạt động' },
-    { label: 'Góp ý hệ thống', value: reviewsCount.toString(), icon: MessageSquareQuote, color: 'text-amber-400', bg: 'bg-amber-400/10', trend: 'Đã gửi' },
-    { label: 'Địa điểm quan tâm', value: savedLocationsCount.toString(), icon: MapPin, color: 'text-emerald-400', bg: 'bg-emerald-400/10', trend: 'Đã đánh dấu' },
+    { label: 'Ngày đồng hành', value: daysJoined.toString(), icon: Calendar, color: 'text-blue-400', bg: 'bg-blue-400/10', trend: daysJoined > 7 ? 'Tích cực' : 'Mới' },
+    { label: 'Bài thuốc đã lưu', value: savedRemediesCount.toString(), icon: Heart, color: 'text-rose-400', bg: 'bg-rose-400/10', trend: savedRemediesCount > 0 ? 'Hoạt động' : 'Chưa lưu' },
+    { label: 'Góp ý hệ thống', value: reviewsCount.toString(), icon: MessageSquareQuote, color: 'text-amber-400', bg: 'bg-amber-400/10', trend: reviewsCount > 0 ? 'Đã gửi' : 'Chưa gửi' },
+    { label: 'Địa điểm quan tâm', value: savedLocationsCount.toString(), icon: MapPin, color: 'text-emerald-400', bg: 'bg-emerald-400/10', trend: savedLocationsCount > 0 ? 'Đã đánh dấu' : 'Chưa có' },
   ];
 
   const recentActivity = [
@@ -206,12 +223,11 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                      {avatarPreview ? (
                         <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-                           <User className="w-10 h-10 sm:w-12 sm:h-12 text-white/50" />
-                        </div>
+                        <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full object-cover grayscale-[0.2]" />
                      )}
                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm" onClick={() => avatarInputRef.current?.click()}>
                         <Camera className="w-6 h-6 text-white" />
+                        <span className="absolute bottom-2 text-[8px] font-bold text-white uppercase">Thay ảnh</span>
                      </div>
                   </div>
                   <input type="file" ref={avatarInputRef} onChange={(e) => handleImageUpload(e, 'avatar')} accept="image/*" className="hidden" />
@@ -297,13 +313,14 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                     {/* Stats Row */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                       {stats.map((s, i) => (
-                        <div key={s.label} className="relative bg-[#0a1913]/60 backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 shadow-xl hover:scale-[1.05] transition-all duration-500 group overflow-hidden">
+                        <div key={s.label} className="relative bg-[#0a1913]/60 backdrop-blur-xl border border-white/5 rounded-[2rem] p-5 sm:p-6 shadow-xl hover:scale-[1.03] transition-all duration-500 group overflow-hidden">
                            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/0 via-amber-500/0 to-emerald-500/0 group-hover:from-emerald-500/10 group-hover:via-amber-500/10 group-hover:to-emerald-500/10 transition-colors duration-1000 z-0 pointer-events-none" />
-                           <div className={`relative z-10 w-12 h-12 rounded-2xl ${s.bg} ${s.color} flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform`}>
-                              <s.icon className="w-6 h-6" />
+                           <div className={`relative z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl ${s.bg} ${s.color} flex items-center justify-center mb-3 group-hover:rotate-12 transition-transform`}>
+                              <s.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                            </div>
-                           <div className="relative z-10 text-3xl font-black tracking-tighter text-white mb-1 drop-shadow-md">{s.value}</div>
-                           <div className="relative z-10 text-[10px] font-black uppercase tracking-[0.2em] text-white/40">{s.label}</div>
+                           <div className="relative z-10 text-2xl sm:text-3xl font-black tracking-tighter text-white mb-0.5 drop-shadow-md">{s.value}</div>
+                           <div className="relative z-10 text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] text-white/40">{s.label}</div>
+                           <div className={`relative z-10 text-[8px] font-bold uppercase tracking-widest mt-2 ${s.color}`}>{s.trend}</div>
                         </div>
                       ))}
                     </div>
@@ -380,7 +397,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                           <div>
                              <h4 className="text-xs font-black text-white/30 uppercase tracking-[0.3em] mb-2">Ghi chú hệ thống</h4>
                              <p className="text-xl font-black text-white">Tài khoản <span className="text-emerald-400">Đã xác minh</span></p>
-                             <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest mt-1">Cập nhật lần cuối: 2 giờ trước</p>
+                             <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest mt-1">Đã tham gia {daysJoined} ngày</p>
                           </div>
                           <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
                              <Shield className="w-8 h-8" />

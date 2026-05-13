@@ -82,35 +82,6 @@ export function AdminLayout() {
         feedback = [];
       }
 
-      // Data recovery: scan ecoheritage_reviews for lost data
-      const publicRaw = localStorage.getItem("ecoheritage_reviews");
-      if (publicRaw) {
-        try {
-          const publicReviews = JSON.parse(publicRaw);
-          const existingIds = new Set(feedback.map((f: any) => f.id));
-
-          const recovered = publicReviews.filter((r: any) => !existingIds.has(r.id)).map((r: any) => ({
-            id: r.id,
-            author: r.author || r.userName || "Ẩn danh",
-            remedyUsed: r.remedyUsed || r.remedyId || "Nền tảng EcoHeritage",
-            content: r.content || r.comment || "",
-            satisfaction: r.satisfaction || r.rating || 5,
-            source: "user",
-            category: (r.remedyId && r.remedyId !== "web-general" ? "heritage" : "web"),
-            status: "pending",
-            isRead: false,
-            createdAt: r.createdAt || r.date || new Date().toISOString()
-          }));
-
-          if (recovered.length > 0) {
-            feedback = [...recovered, ...feedback];
-            localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
-            window.dispatchEvent(new Event("storage_sync"));
-          }
-        } catch (e) {
-          console.error("Lỗi thuật toán cứu hộ:", e);
-        }
-      }
 
       const pending = feedback.filter((r: any) => r.status === "pending" && r.isRead !== true);
 

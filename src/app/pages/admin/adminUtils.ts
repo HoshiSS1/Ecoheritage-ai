@@ -39,6 +39,7 @@ export interface RemedyRecord {
 export interface FeedbackRecord {
   id: string;
   author: string;
+  authorEmail?: string;
   remedyUsed: string;
   content: string;
   satisfaction: number;
@@ -203,6 +204,7 @@ export function saveAdminFeedback(record: Partial<FeedbackRecord>) {
     const newRecord: FeedbackRecord = {
       id: record.id || `fb-${Date.now()}`,
       author: record.author || "Ẩn danh",
+      authorEmail: record.authorEmail || "",
       remedyUsed: record.remedyUsed || "Nền tảng",
       content: record.content || "",
       satisfaction: record.satisfaction || 5,
@@ -217,28 +219,10 @@ export function saveAdminFeedback(record: Partial<FeedbackRecord>) {
     feedback.unshift(newRecord);
     localStorage.setItem(storageKey, JSON.stringify(feedback));
     
-    // BACKUP: Save to ecoheritage_reviews as well to prevent data loss
-    try {
-      const publicRaw = localStorage.getItem("ecoheritage_reviews");
-      const publicReviews = publicRaw ? JSON.parse(publicRaw) : [];
-      publicReviews.unshift({
-        id: newRecord.id,
-        author: newRecord.author,
-        comment: newRecord.content,
-        rating: newRecord.satisfaction,
-        date: newRecord.createdAt,
-        remedyId: newRecord.category === "heritage" ? "heritage-general" : "web-general"
-      });
-      localStorage.setItem("ecoheritage_reviews", JSON.stringify(publicReviews));
-    } catch (e) {
-      console.error("Lỗi lưu backup public review:", e);
-    }
-    
     // Dispatch events for ALL tabs and components
     window.dispatchEvent(new Event("storage_sync")); 
     window.dispatchEvent(new StorageEvent("storage", { key: storageKey }));
     
-    console.log("IT Expert: Đã lưu feedback mới vào 2 kho:", newRecord.id);
     return newRecord;
   } catch (e) {
     console.error("Lỗi chí mạng gởi feedback Admin:", e);

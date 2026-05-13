@@ -12,6 +12,7 @@ export function HeritageMapPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
+  const [savedLocations, setSavedLocations] = useState<string[]>([]);
   const detailPanelRef = useRef<HTMLDivElement>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     // Default collapsed on mobile (< 768px)
@@ -31,7 +32,25 @@ export function HeritageMapPage() {
     const t1 = setTimeout(doScroll, 50);
     const t2 = setTimeout(doScroll, 250);
     const t3 = setTimeout(doScroll, 500);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    
+    // Load saved locations
+    const loadSavedLocs = () => {
+      const raw = localStorage.getItem('ecoheritage_saved_locations');
+      if (raw && raw !== 'undefined') {
+        try {
+          setSavedLocations(JSON.parse(raw));
+        } catch { /* ignore */ }
+      }
+    };
+    loadSavedLocs();
+    window.addEventListener('storage', loadSavedLocs);
+    window.addEventListener('storage_sync', loadSavedLocs);
+
+    return () => { 
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); 
+      window.removeEventListener('storage', loadSavedLocs);
+      window.removeEventListener('storage_sync', loadSavedLocs);
+    };
   }, []);
 
   const [locations, setLocations] = useState<any[]>([]);
@@ -75,10 +94,10 @@ export function HeritageMapPage() {
 
   const categories = useMemo(() => {
     try {
-      const types = (locations || []).map((l) => l?.type).filter(Boolean);
-      return ['Tất cả', ...Array.from(new Set(types))];
+      const types = (locations || []).map((l) => l.type).filter(Boolean);
+      return ['Tất cả', 'Đã lưu', ...Array.from(new Set(types))];
     } catch {
-      return ['Tất cả'];
+      return ['Tất cả', 'Đã lưu'];
     }
   }, [locations]);
 
@@ -104,13 +123,21 @@ export function HeritageMapPage() {
           normalize(loc.address).includes(searchNormalized) ||
           (loc.herbs && Array.isArray(loc.herbs) && loc.herbs.some((kw: string) => normalize(kw).includes(searchNormalized)));
 
-        const matchesFilter = activeFilter === 'Tất cả' || loc.type === activeFilter;
+        let matchesFilter = false;
+        if (activeFilter === 'Tất cả') {
+          matchesFilter = true;
+        } else if (activeFilter === 'Đã lưu') {
+          matchesFilter = savedLocations.includes(loc.id);
+        } else {
+          matchesFilter = loc.type === activeFilter;
+        }
+        
         return matchesSearch && matchesFilter;
       });
     } catch {
       return [];
     }
-  }, [searchTerm, activeFilter, locations]);
+  }, [searchTerm, activeFilter, locations, savedLocations]);
 
   const handleLocationSelect = (locId: string) => {
     setActiveLocationId((prev) => (prev === locId ? null : locId));
@@ -133,6 +160,20 @@ export function HeritageMapPage() {
       }
     }
   }, [activeLocationId]);
+
+  const toggleSaveLocation = (locId: string) => {
+    let newSaved = [...savedLocations];
+    if (newSaved.includes(locId)) {
+      newSaved = newSaved.filter(id => id !== locId);
+      toast.success('Đã bỏ lưu địa điểm');
+    } else {
+      newSaved.push(locId);
+      toast.success('Đã lưu địa điểm quan tâm');
+    }
+    setSavedLocations(newSaved);
+    localStorage.setItem('ecoheritage_saved_locations', JSON.stringify(newSaved));
+    window.dispatchEvent(new Event('storage_sync'));
+  };
 
   const activeLoc = activeLocationId ? filteredLocations.find((l) => l.id === activeLocationId) : null;
 
@@ -455,6 +496,17 @@ export function HeritageMapPage() {
             {/* STICKY ACTION BAR */}
             <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#020b07] via-[#020b07] to-transparent z-[60] border-t border-white/5 backdrop-blur-md">
               <div className="flex gap-4">
+                <button
+                  onClick={() => toggleSaveLocation(activeLoc.id)}
+                  className={`w-14 h-12 flex items-center justify-center rounded-xl border transition-all ${
+                    savedLocations.includes(activeLoc.id) 
+                      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' 
+                      : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title={savedLocations.includes(activeLoc.id) ? "Bỏ lưu địa điểm" : "Lưu địa điểm"}
+                >
+                  <MapPin className={`w-5 h-5 ${savedLocations.includes(activeLoc.id) ? 'fill-emerald-400' : ''}`} />
+                </button>
                 <button
                   onClick={() =>
                     window.open(

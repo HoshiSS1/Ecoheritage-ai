@@ -8,6 +8,7 @@ import {
 } from "./admin/adminUtils";
 import { createSeedRemedies, createSeedLocations } from "./admin/adminData";
 import AdminLayout from "./admin/AdminLayout";
+import { hashPassword } from "../utils/crypto";
 
 export default function AdminPortalPage() {
   const [username, setUsername] = useState("");
@@ -22,11 +23,17 @@ export default function AdminPortalPage() {
   const [resetEmail, setResetEmail] = useState("");
 
   useEffect(() => {
-    const sessionRaw = sessionStorage.getItem(ADMIN_SESSION_KEY);
+    const sessionRaw = sessionStorage.getItem(ADMIN_SESSION_KEY) || localStorage.getItem(ADMIN_SESSION_KEY);
     if (sessionRaw) {
       try {
         const parsed = JSON.parse(sessionRaw);
-        if (parsed?.authenticated) setIsAuthenticated(true);
+        if (parsed?.authenticated) {
+          setIsAuthenticated(true);
+          // If it was only in localStorage, sync it to sessionStorage
+          if (!sessionStorage.getItem(ADMIN_SESSION_KEY)) {
+            sessionStorage.setItem(ADMIN_SESSION_KEY, sessionRaw);
+          }
+        }
       } catch (e) {
         console.error("Session restore failed:", e);
       }
@@ -49,7 +56,7 @@ export default function AdminPortalPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       let role = null;
       let userEmail = username;
 
@@ -59,7 +66,11 @@ export default function AdminPortalPage() {
         const rawUsers = localStorage.getItem("ecoheritage_users");
         if (rawUsers) {
           const users = JSON.parse(rawUsers);
-          const user = users.find((u: any) => u.email === username && u.password === password);
+          const hashedPassword = await hashPassword(password);
+          // Allow login via email OR name
+          const user = users.find((u: any) => 
+            (u.email === username || u.name === username) && u.password === hashedPassword
+          );
           if (user) {
             if (user.status === "banned") {
               toast.error("Tài khoản đã bị vô hiệu hóa", {
@@ -83,12 +94,18 @@ export default function AdminPortalPage() {
       }
 
       if (role) {
-        sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({ 
+        const sessionData = { 
           authenticated: true, 
           timestamp: Date.now(),
           role: role,
           email: userEmail
-        }));
+        };
+        sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(sessionData));
+        
+        if (rememberMe) {
+          localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(sessionData));
+        }
+
         toast.success(`Xác thực thành công!`, {
           description: `Đăng nhập với vai trò: ${role}`,
           style: { borderLeft: "4px solid #10b981" }
@@ -220,7 +237,7 @@ export default function AdminPortalPage() {
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
                       className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
-                      placeholder="admin@ecoheritage.vn"
+                      placeholder="Nhập email của bạn..."
                       required
                     />
                   </div>
@@ -267,7 +284,7 @@ export default function AdminPortalPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
-                    placeholder="Username"
+                    placeholder="Email hoặc Tên người dùng..."
                     required
                   />
                 </div>

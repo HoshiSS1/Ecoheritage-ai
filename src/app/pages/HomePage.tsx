@@ -296,7 +296,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 transition={{ delay: 0.1 }}
                 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
               >
-                Bản đồ <em className="text-amber-400 not-italic font-bold">thảo mộc</em> bản địa.
+                Kho tàng <em className="text-amber-400 not-italic font-bold">bài thuốc</em> dân gian.
               </motion.h2>
               <motion.div
                 initial={{ width: 0, opacity: 0 }}
@@ -334,39 +334,41 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
       <TestimonialsSection />
 
       {/* CTA */}
-      <section className="py-14 sm:py-20 md:py-32 relative bg-[#051a11] overflow-hidden flex items-center justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-gradient-to-tr from-emerald-600/20 to-amber-500/20 blur-[80px] rounded-full animate-pulse mix-blend-screen" />
-        </div>
+      {!sessionStorage.getItem('ecoheritage_active_user') && (
+        <section className="py-14 sm:py-20 md:py-32 relative bg-[#051a11] overflow-hidden flex items-center justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]">
+          <div className="absolute inset-0">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-gradient-to-tr from-emerald-600/20 to-amber-500/20 blur-[80px] rounded-full animate-pulse mix-blend-screen" />
+          </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: "easeOut" }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-8 sm:p-12 md:p-20 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
-            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-emerald-400 mb-6 drop-shadow-lg">Sẵn sàng sống xanh?</p>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8 text-white drop-shadow-2xl break-words">
-              Khởi đầu lối <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">sống xanh</em> <br />
-              cùng <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">EcoHeritage</em>
-            </h2>
-            <p className="text-emerald-100/80 max-w-2xl mx-auto mb-10 sm:mb-12 text-base sm:text-lg font-light leading-relaxed">
-              Chủ động làm chủ sức khỏe mỗi ngày cùng Trí tuệ nhân tạo và Y học bản địa.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="relative group overflow-hidden bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#051a11] px-12 py-5 rounded-full font-bold text-lg shadow-[0_0_40px_rgba(16,185,129,0.4)] hover:shadow-[0_0_60px_rgba(16,185,129,0.7)] transition-all duration-500 hover:-translate-y-1"
-              >
-                <span className="relative z-10 flex items-center gap-2">Tham gia EcoHeritage <Activity className="w-5 h-5" /></span>
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-              </button>
-              <Link
-                to="/heritage"
-                className="relative group overflow-hidden bg-white/5 border border-white/20 text-white hover:text-amber-300 px-12 py-5 rounded-full font-bold text-lg backdrop-blur-sm transition-all duration-500 hover:-translate-y-1"
-              >
-                Tìm hiểu thêm
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+          <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: "easeOut" }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-8 sm:p-12 md:p-20 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-emerald-400 mb-6 drop-shadow-lg">Sẵn sàng sống xanh?</p>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8 text-white drop-shadow-2xl break-words">
+                Khởi đầu lối <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">sống xanh</em> <br />
+                cùng <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">EcoHeritage</em>
+              </h2>
+              <p className="text-emerald-100/80 max-w-2xl mx-auto mb-10 sm:mb-12 text-base sm:text-lg font-light leading-relaxed">
+                Chủ động làm chủ sức khỏe mỗi ngày cùng Trí tuệ nhân tạo và Y học bản địa.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <button
+                  onClick={() => setIsAuthOpen(true)}
+                  className="relative group overflow-hidden bg-gradient-to-r from-emerald-500 to-emerald-400 text-[#051a11] px-12 py-5 rounded-full font-bold text-lg shadow-[0_0_40px_rgba(16,185,129,0.4)] hover:shadow-[0_0_60px_rgba(16,185,129,0.7)] transition-all duration-500 hover:-translate-y-1"
+                >
+                  <span className="relative z-10 flex items-center gap-2">Tham gia EcoHeritage <Activity className="w-5 h-5" /></span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                </button>
+                <Link
+                  to="/heritage"
+                  className="relative group overflow-hidden bg-white/5 border border-white/20 text-white hover:text-amber-300 px-12 py-5 rounded-full font-bold text-lg backdrop-blur-sm transition-all duration-500 hover:-translate-y-1"
+                >
+                  Tìm hiểu thêm
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
     </>
   );
 }

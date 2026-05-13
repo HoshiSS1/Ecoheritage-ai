@@ -20,9 +20,20 @@ export function TestimonialsSection() {
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
   const [comment, setComment] = useState('');
   const [name, setName] = useState('');
+  const [useCustomName, setUseCustomName] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    try {
+      const activeUserStr = sessionStorage.getItem('ecoheritage_active_user');
+      if (activeUserStr) {
+        const activeUser = JSON.parse(activeUserStr);
+        if (activeUser?.name) {
+          setName(activeUser.name);
+        }
+      }
+    } catch (e) {}
+
     // Only show admin-approved reviews that are FEATURED
     const adminFbRaw = localStorage.getItem('ecoheritage_admin_feedback');
     const adminFb = adminFbRaw ? JSON.parse(adminFbRaw) : [];
@@ -54,9 +65,13 @@ export function TestimonialsSection() {
       const isoDate = new Date().toISOString();
 
       // IT Expert: Use unified helper for perfect sync
+      const activeUserData = sessionStorage.getItem('ecoheritage_active_user');
+      const userEmail = activeUserData ? JSON.parse(activeUserData).email : '';
+      
       saveAdminFeedback({
         id: newId,
         author: name,
+        authorEmail: userEmail,
         remedyUsed: 'Nền tảng EcoHeritage',
         content: comment,
         satisfaction: rating,
@@ -64,12 +79,12 @@ export function TestimonialsSection() {
         createdAt: isoDate
       });
 
-      // Legacy sync for public display
-      const savedReviews = JSON.parse(localStorage.getItem('ecoheritage_reviews') || '[]');
-      localStorage.setItem('ecoheritage_reviews', JSON.stringify([{ id: newId, author: name, content: comment, rating, date: isoDate }, ...savedReviews]));
-
       setComment('');
-      setName('');
+      // Reset name if not using logged in account
+      const activeUserStr = sessionStorage.getItem('ecoheritage_active_user');
+      if (!activeUserStr || useCustomName) {
+        setName('');
+      }
       setRating(5);
       setIsSubmitting(false);
       toast.success('Cảm ơn bạn đã góp ý! Lời nhắn đã được gửi đến ban quản trị.');
@@ -110,42 +125,102 @@ export function TestimonialsSection() {
           >
             <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-amber-500/20 transition-colors duration-700" />
             
-            <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
-              <Heart className="w-6 h-6 text-rose-400 fill-rose-400 animate-pulse" /> 
-              <span className="text-premium-gradient">Gửi góp ý</span>
+            <h3 className="text-2xl font-bold text-white mb-4 flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <Heart className="w-6 h-6 text-rose-400 fill-rose-400 animate-pulse" /> 
+                <span className="text-premium-gradient">Gửi góp ý</span>
+              </div>
+              <div className="w-20 h-1 bg-gradient-to-r from-emerald-400 to-amber-300 rounded-full" />
             </h3>
             <p className="text-emerald-100/60 text-sm mb-8">Ý kiến của bạn giúp EcoHeritage hoàn thiện mỗi ngày.</p>
 
             <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-              <div className="flex items-center gap-2 mb-4 bg-white/5 p-3 rounded-2xl border border-white/5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onMouseEnter={() => setHoveredStar(star)}
-                    onMouseLeave={() => setHoveredStar(null)}
-                    onClick={() => setRating(star)}
-                    className="transition-transform hover:scale-125 focus:outline-none"
-                  >
-                    <Star
-                      className={`w-7 h-7 ${
-                        (hoveredStar !== null ? star <= hoveredStar : star <= rating)
-                          ? 'text-amber-400 fill-amber-400 filter drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-                          : 'text-white/20'
-                      } transition-all duration-300`}
-                    />
-                  </button>
-                ))}
+              <div className="bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner mb-4">
+                <p className="text-xs font-bold text-white/60 mb-3">Mức độ hài lòng</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onMouseEnter={() => setHoveredStar(star)}
+                      onMouseLeave={() => setHoveredStar(null)}
+                      onClick={() => setRating(star)}
+                      className="transition-transform hover:scale-125 focus:outline-none"
+                    >
+                      <Star
+                        className={`w-7 h-7 ${
+                          (hoveredStar !== null ? star <= hoveredStar : star <= rating)
+                            ? 'text-amber-400 fill-amber-400 filter drop-shadow-[0_0_12px_rgba(251,191,36,0.6)]'
+                            : 'text-white/20 hover:text-white/40'
+                        } transition-all duration-300`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-2 px-3 py-1 bg-amber-400/10 text-amber-400 border border-amber-400/20 rounded-xl text-xs font-black">
+                    {rating}/5
+                  </span>
+                </div>
               </div>
 
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Tên của bạn"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full input-premium"
-                />
+                {sessionStorage.getItem('ecoheritage_active_user') && !useCustomName ? (() => {
+                  const user = JSON.parse(sessionStorage.getItem('ecoheritage_active_user')!);
+                  return (
+                    <div className="flex items-center justify-between bg-white/[0.03] p-4 rounded-2xl border border-white/10 group/badge">
+                      <div className="flex items-center gap-3">
+                        <div className="relative shrink-0">
+                          <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400">
+                            <div className="w-full h-full rounded-full bg-[#051a11] p-[2px]">
+                              <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                            </div>
+                          </div>
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#051a11] flex items-center justify-center">
+                            <ShieldCheck className="w-2.5 h-2.5 text-white" />
+                          </div>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[9px] text-emerald-400/80 font-bold uppercase tracking-wider mb-0.5">Tài khoản</p>
+                          <p className="text-white font-bold text-sm truncate max-w-[120px] sm:max-w-[180px]">{user.name}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUseCustomName(true);
+                          setName('');
+                        }}
+                        className="text-xs text-white/40 hover:text-white underline underline-offset-4 transition-colors shrink-0 ml-2"
+                      >
+                        Đổi tên khác
+                      </button>
+                    </div>
+                  );
+                })() : (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Nhập tên hiển thị (hoặc để trống để Ẩn danh)"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full input-premium"
+                    />
+                    {sessionStorage.getItem('ecoheritage_active_user') && (
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUseCustomName(false);
+                            const u = JSON.parse(sessionStorage.getItem('ecoheritage_active_user')!);
+                            setName(u.name);
+                          }}
+                          className="text-xs text-emerald-400 font-bold uppercase tracking-widest hover:text-emerald-300 transition-colors flex items-center gap-1"
+                        >
+                          <ShieldCheck className="w-3 h-3" /> Quay lại dùng tài khoản
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <textarea
                   value={comment}

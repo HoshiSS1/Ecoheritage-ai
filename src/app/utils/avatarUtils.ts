@@ -1,4 +1,13 @@
-export function getAvatarUrl(name: string): string {
+export function getAvatarUrl(name: string, email?: string): string {
+  if (email) {
+    const saved = localStorage.getItem(`avatar_${email}`);
+    if (saved) return saved;
+  }
+  
+  // Fallback check by name (in case email isn't provided but they saved it somehow)
+  const savedByName = localStorage.getItem(`avatar_${name}`);
+  if (savedByName) return savedByName;
+
   const lowerName = name.toLowerCase();
   
   // Older Men (Chú, Ông, Bác trai)
