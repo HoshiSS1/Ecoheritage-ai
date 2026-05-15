@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { TraditionalRemedyCard } from '../components/TraditionalRemedyCard';
 import { PaginationBar } from '../components/PaginationBar';
 import { traditionalRemedies as defaultRemedies } from '../data';
-import { saveAdminFeedback } from '../pages/admin/adminUtils';
+import { FEEDBACK_STORAGE_KEY, REMEDIES_STORAGE_KEY, saveAdminFeedback } from '../pages/admin/adminUtils';
 import { getAvatarUrl } from '../utils/avatarUtils';
 
 const ITEMS_PER_PAGE = 9;
@@ -29,7 +29,7 @@ export function HeritagePage() {
   const [fbSubmitting, setFbSubmitting] = useState(false);
 
   const loadReviews = () => {
-    const adminFbRaw = localStorage.getItem('ecoheritage_admin_feedback');
+    const adminFbRaw = localStorage.getItem(FEEDBACK_STORAGE_KEY);
     let adminFb = [];
     if (adminFbRaw) {
       try {
@@ -51,7 +51,7 @@ export function HeritagePage() {
   useEffect(() => {
     loadReviews();
     const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'ecoheritage_admin_feedback' || e.key === 'storage_sync') {
+      if (e.key === FEEDBACK_STORAGE_KEY || e.key === 'storage_sync') {
         loadReviews();
       }
     };
@@ -69,7 +69,7 @@ export function HeritagePage() {
 
   useEffect(() => {
     const loadRemedies = () => {
-      const raw = localStorage.getItem('ecoheritage_admin_remedies');
+      const raw = localStorage.getItem(REMEDIES_STORAGE_KEY);
       if (raw && raw !== 'undefined') {
         try {
           const parsed = JSON.parse(raw);

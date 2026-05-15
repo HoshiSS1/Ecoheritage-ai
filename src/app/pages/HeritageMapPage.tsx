@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { HeritageMap } from '../components/HeritageMap';
 import { HERITAGE_LOCATIONS } from '../heritageData';
 import { useAirQuality } from '../utils/useAirQuality';
+import { LOCATIONS_STORAGE_KEY } from './admin/adminUtils';
 
 export function HeritageMapPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,7 +58,7 @@ export function HeritageMapPage() {
 
   useEffect(() => {
     const loadData = () => {
-      const raw = localStorage.getItem('ecoheritage_admin_locations');
+      const raw = localStorage.getItem(LOCATIONS_STORAGE_KEY);
       if (raw) {
         try {
           const stored = JSON.parse(raw);

@@ -13,6 +13,7 @@ import { useAirQuality } from '../utils/useAirQuality';
 import { traditionalRemedies } from '../data';
 import { getAvatarUrl } from '../utils/avatarUtils';
 import { TraditionalRemedyCard } from '../components/TraditionalRemedyCard';
+import { FEEDBACK_STORAGE_KEY } from './admin/adminUtils';
 
 interface ProfilePageProps {
   user: { name: string; email: string };
@@ -76,7 +77,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
         const locations = (locationsRaw && locationsRaw !== 'undefined') ? JSON.parse(locationsRaw) : [];
         if (Array.isArray(locations)) setSavedLocationsCount(locations.length);
         
-        const reviewsRaw = localStorage.getItem('ecoheritage_admin_feedback');
+        const reviewsRaw = localStorage.getItem(FEEDBACK_STORAGE_KEY);
         const reviews = (reviewsRaw && reviewsRaw !== 'undefined') ? JSON.parse(reviewsRaw) : [];
         if (Array.isArray(reviews)) {
           const userReviews = reviews.filter((r: any) => r && (r.author === user.name || r.authorEmail === user.email));

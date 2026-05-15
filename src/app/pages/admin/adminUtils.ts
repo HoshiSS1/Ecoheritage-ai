@@ -99,11 +99,13 @@ export interface LocationRecord {
 }
 
 // ─── Constants ───────────────────────────────────────────
-export const ADMIN_SESSION_KEY = "ecoheritage_admin_session";
-export const REMEDIES_STORAGE_KEY = "ecoheritage_admin_remedies";
-export const FEEDBACK_STORAGE_KEY = "ecoheritage_admin_feedback";
-export const LOCATIONS_STORAGE_KEY = "ecoheritage_admin_locations";
-export const CLIMATE_CACHE_STORAGE_KEY = "ecoheritage_admin_climate_cache";
+export const DATA_VERSION = "1.2.1"; // Update this when making breaking changes to data structure
+export const ADMIN_SESSION_KEY = "ecoheritage_admin_session_v" + DATA_VERSION;
+export const REMEDIES_STORAGE_KEY = "ecoheritage_admin_remedies_v" + DATA_VERSION;
+export const FEEDBACK_STORAGE_KEY = "ecoheritage_admin_feedback_v" + DATA_VERSION;
+export const LOCATIONS_STORAGE_KEY = "ecoheritage_admin_locations_v" + DATA_VERSION;
+export const CLIMATE_CACHE_STORAGE_KEY = "ecoheritage_admin_climate_cache_v" + DATA_VERSION;
+export const VERSION_CHECK_KEY = "ecoheritage_data_version";
 
 export const ADMIN_USERNAME =
   import.meta.env.VITE_ADMIN_PORTAL_USER || "admin";

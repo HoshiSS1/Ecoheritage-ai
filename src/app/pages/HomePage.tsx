@@ -11,6 +11,7 @@ import { HeritageStory } from '../components/HeritageStory';
 import { TestimonialsSection } from '../components/TestimonialsSection';
 import { environmentData, healthAdvices, traditionalRemedies as defaultRemedies } from '../data';
 import { useAirQuality } from '../utils/useAirQuality';
+import { REMEDIES_STORAGE_KEY } from './admin/adminUtils';
 import { Cloud, Sun, Droplets, Wind, TrendingUp } from 'lucide-react';
 import { useState, useEffect, useRef, useMemo } from 'react';
 
@@ -73,7 +74,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
 
   useEffect(() => {
     const loadRemedies = () => {
-      const raw = localStorage.getItem('ecoheritage_admin_remedies');
+      const raw = localStorage.getItem(REMEDIES_STORAGE_KEY);
       if (raw) {
         try {
           const parsed = JSON.parse(raw);

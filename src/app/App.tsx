@@ -48,36 +48,35 @@ function BackToTop({ visible }: { visible: boolean }) {
 }
 
 export default function App() {
-  // ─── ĐẢM BẢO ĐỒNG NHẤT DỮ LIỆU TRÊN MÁY MỚI ───
+  // ─── ĐẢM BẢO ĐỒNG NHẤT DỮ LIỆU TRÊN MỌI THIẾT BỊ ───
   useEffect(() => {
-    // 1. Khởi tạo Feedback và Migration dữ liệu mẫu cũ
-    const existingRaw = localStorage.getItem(FEEDBACK_STORAGE_KEY);
-    const initialSeeds = createSeedFeedback();
-    if (!existingRaw) {
-      localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(initialSeeds));
-      console.log("EcoHeritage: Khởi tạo dữ liệu mẫu thành công.");
-    } else {
-      try {
-        let existing = JSON.parse(existingRaw);
-        // Wipe old seeds and re-insert new seeds to ensure fresh content
-        const userRealFeedback = existing.filter((item: any) => {
-          if (item.source === "seeded" || String(item.id).startsWith("seed-")) return false;
-          // Also catch specific old data the user screenshotted if they lacked the source tag
-          if (item.author === "David Wilson" || item.author === "Nguyễn Văn Tèo" || item.author === "Sinh viên") return false;
-          if (item.remedyUsed === "ECOHERITAGE APP" || item.remedyUsed === "WEBSITE" || item.remedyUsed === "DỰ ÁN DI SẢN SỐ") return false;
-          return true;
-        });
-        const merged = [...initialSeeds, ...userRealFeedback];
-        localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(merged));
-      } catch (e) {}
-    }
+    import('./pages/admin/adminUtils').then(({ DATA_VERSION, VERSION_CHECK_KEY }) => {
+      const storedVersion = localStorage.getItem(VERSION_CHECK_KEY);
+      
+      // Nếu phiên bản dữ liệu cũ hoặc chưa có, thực hiện Migration/Reset
+      if (storedVersion !== DATA_VERSION) {
+        console.log(`EcoHeritage: Đang nâng cấp dữ liệu từ ${storedVersion || 'v0'} lên ${DATA_VERSION}...`);
+        
+        // 1. Khởi tạo/Cập nhật Feedback (Đảm bảo seed mới nhất)
+        const initialSeeds = createSeedFeedback();
+        localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(initialSeeds));
 
-    // 2. Khởi tạo Users (Khắc phục lỗi mất tài khoản khi sang máy khác)
-    if (!localStorage.getItem('ecoheritage_users')) {
-      const seedUsers = createSeedUsers();
-      localStorage.setItem('ecoheritage_users', JSON.stringify(seedUsers));
-      console.log("EcoHeritage: Khởi tạo danh sách người dùng mẫu thành công.");
-    }
+        // 2. Khởi tạo Users
+        const seedUsers = createSeedUsers();
+        localStorage.setItem('ecoheritage_users', JSON.stringify(seedUsers));
+
+        // 3. Cập nhật version để không lặp lại logic này
+        localStorage.setItem(VERSION_CHECK_KEY, DATA_VERSION);
+        
+        // Dispatch để các component khác (Bản đồ, Bài thuốc) biết để load lại từ Source mới
+        window.dispatchEvent(new Event("storage_sync"));
+        
+        toast.info("💎 Hệ thống đã đồng bộ dữ liệu mới nhất!", {
+          description: "Các chỉ số môi trường và bản đồ di sản đã được cập nhật chính xác.",
+          duration: 5000
+        });
+      }
+    });
   }, []);
 
   const [menuOpen, setMenuOpen] = useState(false);

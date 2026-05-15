@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Star, MessageSquareQuote, User, Send, Heart, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
-import { saveAdminFeedback } from '../pages/admin/adminUtils';
+import { FEEDBACK_STORAGE_KEY, saveAdminFeedback } from '../pages/admin/adminUtils';
 import { getAvatarUrl } from '../utils/avatarUtils';
 
 interface Review {
@@ -35,7 +35,7 @@ export function TestimonialsSection() {
     } catch (e) {}
 
     // Only show admin-approved reviews that are FEATURED
-    const adminFbRaw = localStorage.getItem('ecoheritage_admin_feedback');
+    const adminFbRaw = localStorage.getItem(FEEDBACK_STORAGE_KEY);
     const adminFb = adminFbRaw ? JSON.parse(adminFbRaw) : [];
     
     // Filter by category 'web' and isFeatured true
