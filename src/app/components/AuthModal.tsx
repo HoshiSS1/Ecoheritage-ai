@@ -643,9 +643,6 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       onError={() => {
                         toast.error('Lỗi khi gọi Google. Cần OAuth Client ID!');
                       }}
-                      theme="filled_black"
-                      text="continue_with"
-                      shape="rectangular"
                       width="100%"
                     />
                   </div>
