@@ -18,6 +18,18 @@ body, html, #root {
   margin: 0;
   padding: 0;
   overflow-anchor: none;
+  scroll-behavior: smooth;
+}
+
+/* Fluidity & Hardware Acceleration */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  image-rendering: -webkit-optimize-contrast;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .perspective-1000 {

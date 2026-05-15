@@ -254,7 +254,7 @@ export function DashboardSection() {
 
               <div className="mt-6 flex items-center gap-3">
                 <div className="h-2 w-2 rounded-full bg-[#051a11] animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#051a11]/50">Dữ liệu thời gian thực · {climateSnapshot.source === 'live' ? 'OpenWeather' : 'Fallback'}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#051a11]/50">Dữ liệu thời gian thực · {climateSnapshot.source === 'live' ? 'Open-Meteo' : 'Fallback'}</span>
               </div>
             </div>
             {climateError && <div className="mt-6 rounded-2xl bg-rose-500/10 p-4 text-[10px] font-bold border border-rose-500/20 text-rose-300">{climateError}</div>}

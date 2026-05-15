@@ -21,6 +21,13 @@ export default function AdminPortalPage() {
   const [regionCount, setRegionCount] = useState(0);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [forgotStep, setForgotStep] = useState<'email' | 'otp' | 'reset'>('email');
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [newAdminPassword, setNewAdminPassword] = useState("");
+  const [confirmAdminPassword, setConfirmAdminPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [lockoutUntil, setLockoutUntil] = useState(0);
 
   useEffect(() => {
     const sessionRaw = sessionStorage.getItem(ADMIN_SESSION_KEY) || localStorage.getItem(ADMIN_SESSION_KEY);
@@ -28,10 +35,16 @@ export default function AdminPortalPage() {
       try {
         const parsed = JSON.parse(sessionRaw);
         if (parsed?.authenticated) {
-          setIsAuthenticated(true);
-          // If it was only in localStorage, sync it to sessionStorage
-          if (!sessionStorage.getItem(ADMIN_SESSION_KEY)) {
-            sessionStorage.setItem(ADMIN_SESSION_KEY, sessionRaw);
+          const SESSION_TTL = 24 * 60 * 60 * 1000;
+          if (parsed.timestamp && Date.now() - parsed.timestamp > SESSION_TTL) {
+            sessionStorage.removeItem(ADMIN_SESSION_KEY);
+            localStorage.removeItem(ADMIN_SESSION_KEY);
+            toast.info('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          } else {
+            setIsAuthenticated(true);
+            if (!sessionStorage.getItem(ADMIN_SESSION_KEY)) {
+              sessionStorage.setItem(ADMIN_SESSION_KEY, sessionRaw);
+            }
           }
         }
       } catch (e) {
@@ -54,6 +67,14 @@ export default function AdminPortalPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (Date.now() < lockoutUntil) {
+      const remaining = Math.ceil((lockoutUntil - Date.now()) / 60000);
+      toast.error('Quá nhiều lần thử', {
+        description: `Vui lòng đợi ${remaining} phút trước khi thử lại.`,
+        style: { borderLeft: '4px solid #ef4444' }
+      });
+      return;
+    }
     setIsLoading(true);
 
     setTimeout(async () => {
@@ -112,40 +133,131 @@ export default function AdminPortalPage() {
         });
         window.location.reload();
       } else {
-        toast.error("Thông tin xác thực không chính xác", {
-          description: "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.",
-          style: { borderLeft: "4px solid #ef4444" }
-        });
+        const newAttempts = loginAttempts + 1;
+        setLoginAttempts(newAttempts);
+        if (newAttempts >= 5) {
+          const lockout = Date.now() + 15 * 60 * 1000;
+          setLockoutUntil(lockout);
+          setLoginAttempts(0);
+          toast.error('Tài khoản tạm khóa', {
+            description: 'Quá 5 lần thử sai. Vui lòng đợi 15 phút.',
+            style: { borderLeft: '4px solid #ef4444' }
+          });
+        } else {
+          toast.error('Thông tin xác thực không chính xác', {
+            description: `Vui lòng kiểm tra lại (${5 - newAttempts} lần thử còn lại).`,
+            style: { borderLeft: '4px solid #ef4444' }
+          });
+        }
         setIsLoading(false);
       }
     }, 1200);
   };
 
-  const handleForgotPassword = (e: React.FormEvent) => {
+  const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       setIsLoading(false);
-      const usersRaw = localStorage.getItem('ecoheritage_users');
-      const users = usersRaw ? JSON.parse(usersRaw) : [];
-      const user = users.find((u: any) => u.email === resetEmail);
-      
-      const isSuperAdmin = resetEmail === ADMIN_USERNAME || resetEmail === "admin@ecoheritage.vn";
-      const isAdminRole = user && user.role !== 'Member';
 
-      if (isSuperAdmin || isAdminRole) {
-        toast.success("Đã gửi liên kết khôi phục!", {
-          description: "Vui lòng kiểm tra hộp thư email của bạn để tiến hành thiết lập lại mật khẩu.",
-          style: { borderLeft: "4px solid #10b981" }
-        });
-        setIsForgotPassword(false);
-      } else {
-        toast.error("Tài khoản không tồn tại", {
-          description: "Không tìm thấy tài khoản quản trị nào với địa chỉ email này.",
-          style: { borderLeft: "4px solid #ef4444" }
-        });
+      if (forgotStep === 'email') {
+        const isSuperAdmin = resetEmail === ADMIN_USERNAME || resetEmail === "admin@ecoheritage.vn";
+        if (isSuperAdmin) {
+          toast.info('Tài khoản Super Admin', {
+            description: 'Mật khẩu Super Admin được quản lý qua cấu hình hệ thống. Vui lòng liên hệ kỹ thuật viên.',
+            style: { borderLeft: '4px solid #3b82f6' }
+          });
+          return;
+        }
+        const usersRaw = localStorage.getItem('ecoheritage_users');
+        const users = usersRaw ? JSON.parse(usersRaw) : [];
+        const user = users.find((u: any) => u.email === resetEmail);
+        const isAdminRole = user && user.role && user.role !== 'Member';
+        if (isAdminRole) {
+          const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+          sessionStorage.setItem('eco_admin_reset_otp', JSON.stringify({
+            code: generatedOtp, email: resetEmail, expiresAt: Date.now() + 300000
+          }));
+          toast.success('Mã xác thực đã được gửi!', {
+            description: `Mã OTP của bạn: ${generatedOtp} — Hiệu lực 5 phút.`,
+            duration: 8000,
+            style: { borderLeft: '4px solid #10b981' }
+          });
+          setForgotStep('otp');
+        } else {
+          toast.error('Tài khoản không tồn tại', {
+            description: 'Không tìm thấy tài khoản quản trị nào với email này.',
+            style: { borderLeft: '4px solid #ef4444' }
+          });
+        }
+        return;
       }
-    }, 1200);
+
+      if (forgotStep === 'otp') {
+        try {
+          const otpData = JSON.parse(sessionStorage.getItem('eco_admin_reset_otp') || '{}');
+          if (otpData.code === forgotOtp && otpData.email === resetEmail && Date.now() < otpData.expiresAt) {
+            toast.success('Xác thực thành công!', {
+              description: 'Bây giờ bạn có thể đặt mật khẩu mới.',
+              style: { borderLeft: '4px solid #10b981' }
+            });
+            sessionStorage.removeItem('eco_admin_reset_otp');
+            setForgotStep('reset');
+          } else if (otpData.expiresAt && Date.now() >= otpData.expiresAt) {
+            toast.error('Mã OTP đã hết hạn!', {
+              description: 'Vui lòng quay lại để nhận mã mới.',
+              style: { borderLeft: '4px solid #ef4444' }
+            });
+          } else {
+            toast.error('Mã xác thực không chính xác.', {
+              style: { borderLeft: '4px solid #ef4444' }
+            });
+          }
+        } catch {
+          toast.error('Lỗi xác thực. Vui lòng thử lại.');
+        }
+        return;
+      }
+
+      if (forgotStep === 'reset') {
+        if (!newAdminPassword || !confirmAdminPassword) {
+          toast.error('Vui lòng nhập đầy đủ mật khẩu mới.');
+          return;
+        }
+        if (newAdminPassword.length < 6) {
+          toast.error('Mật khẩu mới phải có ít nhất 6 ký tự.');
+          return;
+        }
+        if (newAdminPassword !== confirmAdminPassword) {
+          toast.error('Mật khẩu xác nhận không khớp.');
+          return;
+        }
+        try {
+          const usersRaw = localStorage.getItem('ecoheritage_users');
+          let users = usersRaw ? JSON.parse(usersRaw) : [];
+          const userIndex = users.findIndex((u: any) => u.email === resetEmail);
+          if (userIndex !== -1) {
+            const hashed = await hashPassword(newAdminPassword);
+            users[userIndex].password = hashed;
+            localStorage.setItem('ecoheritage_users', JSON.stringify(users));
+            toast.success('Đổi mật khẩu thành công! 🎉', {
+              description: 'Vui lòng đăng nhập lại với mật khẩu mới.',
+              style: { borderLeft: '4px solid #10b981' }
+            });
+            setIsForgotPassword(false);
+            setForgotStep('email');
+            setNewAdminPassword('');
+            setConfirmAdminPassword('');
+            setForgotOtp('');
+            setResetEmail('');
+          } else {
+            toast.error('Lỗi không tìm thấy người dùng để cập nhật.');
+          }
+        } catch {
+          toast.error('Lỗi khi cập nhật mật khẩu.');
+        }
+      }
+    }, 800);
   };
 
   return (
@@ -216,32 +328,98 @@ export default function AdminPortalPage() {
                  Secure Identity Gate
                </div>
                <h1 className="text-2xl sm:text-3xl font-display font-black text-slate-900 tracking-tighter uppercase mb-4 relative inline-block break-words max-w-full">
-                 {isForgotPassword ? "Khôi phục mật khẩu" : "Đăng nhập"}
+                 {isForgotPassword 
+                   ? (forgotStep === 'email' ? 'Khôi phục mật khẩu' : forgotStep === 'otp' ? 'Xác thực OTP' : 'Đặt mật khẩu mới')
+                   : 'Đăng nhập'}
                  <span className="absolute -bottom-1.5 left-0 w-12 h-1 bg-gradient-to-r from-emerald-500 to-amber-400 rounded-full" />
                </h1>
                <p className="mt-4 text-slate-400 text-sm font-bold italic">
-                 {isForgotPassword ? "Nhập mã định danh để khôi phục." : "Xác thực quyền quản trị viên."}
+                 {isForgotPassword 
+                   ? (forgotStep === 'email' ? 'Nhập email để nhận mã xác thực.' : forgotStep === 'otp' ? 'Nhập mã OTP đã gửi qua thông báo.' : 'Vui lòng nhập mật khẩu mới bảo mật hơn.')
+                   : 'Xác thực quyền quản trị viên.'}
                </p>
             </div>
 
             {isForgotPassword ? (
               <form onSubmit={handleForgotPassword} className="space-y-8">
-                <div className="space-y-3">
-                  <label className="text-[11px] font-black text-slate-900 uppercase tracking-[0.25em] ml-1">MÃ ĐỊNH DANH / EMAIL</label>
-                  <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-6 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
-                      <User className="h-5 w-5" />
+                {forgotStep === 'email' && (
+                  <div className="space-y-3">
+                    <label className="text-[11px] font-black text-slate-900 uppercase tracking-[0.25em] ml-1">EMAIL TÀI KHOẢN</label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-6 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                        <User className="h-5 w-5" />
+                      </div>
+                      <input
+                        type="text"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
+                        placeholder="Nhập email của bạn..."
+                        required
+                      />
                     </div>
-                    <input
-                      type="text"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
-                      placeholder="Nhập email của bạn..."
-                      required
-                    />
                   </div>
-                </div>
+                )}
+
+                {forgotStep === 'otp' && (
+                  <div className="space-y-3">
+                    <label className="text-[11px] font-black text-slate-900 uppercase tracking-[0.25em] ml-1">MÃ XÁC THỰC OTP</label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-6 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                        <ShieldCheck className="h-5 w-5" />
+                      </div>
+                      <input
+                        type="text"
+                        value={forgotOtp}
+                        onChange={(e) => setForgotOtp(e.target.value)}
+                        maxLength={6}
+                        className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm text-center tracking-[0.5em] placeholder:tracking-normal"
+                        placeholder="Nhập mã 6 số"
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {forgotStep === 'reset' && (
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black text-slate-900 uppercase tracking-[0.25em] ml-1">MẬT KHẨU MỚI</label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-6 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                          <Lock className="h-5 w-5" />
+                        </div>
+                        <input
+                          type={showNewPassword ? "text" : "password"}
+                          value={newAdminPassword}
+                          onChange={(e) => setNewAdminPassword(e.target.value)}
+                          className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-14 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
+                          placeholder="Nhập mật khẩu mới..."
+                          required
+                        />
+                        <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute inset-y-0 right-0 flex items-center pr-6 text-slate-400 hover:text-emerald-600 transition-colors">
+                          {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-black text-slate-900 uppercase tracking-[0.25em] ml-1">XÁC NHẬN MẬT KHẨU</label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-6 text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                          <Lock className="h-5 w-5" />
+                        </div>
+                        <input
+                          type="password"
+                          value={confirmAdminPassword}
+                          onChange={(e) => setConfirmAdminPassword(e.target.value)}
+                          className={`w-full rounded-2xl bg-slate-50 border py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:bg-white focus:outline-none focus:ring-4 transition-all font-bold text-base shadow-sm ${confirmAdminPassword && newAdminPassword !== confirmAdminPassword ? 'border-rose-300 focus:border-rose-400 focus:ring-rose-500/5' : 'border-slate-200 focus:border-emerald-500/50 focus:ring-emerald-500/5'}`}
+                          placeholder="Nhập lại mật khẩu mới..."
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <button
                   type="submit"
@@ -256,16 +434,25 @@ export default function AdminPortalPage() {
                         Đang xử lý...
                       </>
                     ) : (
-                      "Gửi mã khôi phục"
+                      forgotStep === 'email' ? 'Gửi mã OTP' : forgotStep === 'otp' ? 'Xác thực OTP' : 'Đổi mật khẩu mới'
                     )}
                   </span>
                 </button>
 
-                <div className="text-center mt-6">
+                <div className="flex justify-between items-center mt-6">
+                  {forgotStep !== 'email' && (
+                    <button
+                      type="button"
+                      onClick={() => setForgotStep(forgotStep === 'reset' ? 'otp' : 'email')}
+                      className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      Quay lại
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => setIsForgotPassword(false)}
-                    className="text-xs font-bold text-emerald-600 hover:text-emerald-500 transition-colors"
+                    onClick={() => { setIsForgotPassword(false); setForgotStep('email'); setForgotOtp(''); setNewAdminPassword(''); setConfirmAdminPassword(''); setResetEmail(''); }}
+                    className="text-xs font-bold text-emerald-600 hover:text-emerald-500 transition-colors ml-auto"
                   >
                     Quay lại đăng nhập
                   </button>
@@ -333,7 +520,7 @@ export default function AdminPortalPage() {
                 </label>
                 <button 
                   type="button" 
-                  onClick={() => setIsForgotPassword(true)}
+                  onClick={() => { setIsForgotPassword(true); setForgotStep('email'); }}
                   className="text-xs font-bold text-emerald-600 hover:text-emerald-500 transition-colors"
                 >
                   Quên mật khẩu?

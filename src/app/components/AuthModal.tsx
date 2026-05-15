@@ -36,9 +36,13 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
   // Tính toán độ mạnh mật khẩu (1-4: Yếu, 5-6: Trung bình, 7+: Mạnh)
   const getPasswordStrength = (pass: string) => {
     if (!pass) return { score: 0, label: '', barClass: 'bg-transparent', textClass: 'text-transparent' };
-    const len = pass.length;
-    if (len >= 7) return { score: 3, label: 'Mạnh', barClass: 'bg-emerald-400', textClass: 'text-emerald-400' };
-    if (len >= 5) return { score: 2, label: 'Trung bình', barClass: 'bg-amber-400', textClass: 'text-amber-400' };
+    let score = 0;
+    if (pass.length >= 8) score++;
+    if (/[A-Z]/.test(pass)) score++;
+    if (/[0-9]/.test(pass)) score++;
+    if (/[^A-Za-z0-9]/.test(pass)) score++;
+    if (score >= 3) return { score: 3, label: 'Mạnh', barClass: 'bg-emerald-400', textClass: 'text-emerald-400' };
+    if (score >= 2) return { score: 2, label: 'Trung bình', barClass: 'bg-amber-400', textClass: 'text-amber-400' };
     return { score: 1, label: 'Yếu', barClass: 'bg-rose-400', textClass: 'text-rose-400' };
   };
 
@@ -88,9 +92,13 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
           const users = usersRaw ? JSON.parse(usersRaw) : [];
           const user = users.find((u: any) => u.email === email);
           if (user) {
+            const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            sessionStorage.setItem('eco_reset_otp', JSON.stringify({
+              code: generatedOtp, email, expiresAt: Date.now() + 300000
+            }));
             toast.success('Mã xác thực đã được gửi!', {
-              description: `Vui lòng kiểm tra hộp thư ${email} để lấy mã OTP (Demo: 123456).`,
-              duration: 5000,
+              description: `Mã OTP của bạn: ${generatedOtp} — Hiệu lực 5 phút.`,
+              duration: 8000,
             });
             setForgotPasswordStep('otp');
           } else {
@@ -108,12 +116,21 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
           setError('Vui lòng nhập mã xác thực.');
           return;
         }
-        if (otp === '123456') {
-          toast.success('Xác thực thành công!', { description: 'Bây giờ bạn có thể đặt mật khẩu mới.' });
-          setForgotPasswordStep('reset');
-        } else {
-          setError('Mã xác thực không chính xác. Thử lại với 123456.');
-          toast.error('Mã OTP sai!');
+        try {
+          const otpData = JSON.parse(sessionStorage.getItem('eco_reset_otp') || '{}');
+          if (otpData.code === otp && otpData.email === email && Date.now() < otpData.expiresAt) {
+            toast.success('Xác thực thành công!', { description: 'Bây giờ bạn có thể đặt mật khẩu mới.' });
+            sessionStorage.removeItem('eco_reset_otp');
+            setForgotPasswordStep('reset');
+          } else if (otpData.expiresAt && Date.now() >= otpData.expiresAt) {
+            setError('Mã xác thực đã hết hạn. Vui lòng yêu cầu mã mới.');
+            toast.error('Mã OTP đã hết hạn!');
+          } else {
+            setError('Mã xác thực không chính xác.');
+            toast.error('Mã OTP sai!');
+          }
+        } catch {
+          setError('Lỗi xác thực. Vui lòng thử lại.');
         }
         return;
       }
@@ -123,8 +140,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
           setError('Vui lòng nhập mật khẩu mới.');
           return;
         }
-        if (newPassword.length < 4) {
-          setError('Mật khẩu mới phải có ít nhất 4 ký tự.');
+        if (newPassword.length < 6) {
+          setError('Mật khẩu mới phải có ít nhất 6 ký tự.');
           return;
         }
         if (newPassword !== confirmNewPassword) {
@@ -157,12 +174,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
       }
     }
 
-    // Cho phép đăng nhập nhanh admin qua modal public
-    if (isLogin && email === 'admin' && (password === import.meta.env.VITE_ADMIN_PORTAL_PASSWORD || password === 'ecoheritage-admin')) {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({ authenticated: true, authenticatedAt: new Date().toISOString() }));
-      window.location.href = '/admin-portal';
-      return;
-    }
+    // Admin login chỉ qua /admin-portal — không cho shortcut ở modal công khai
 
     // Đăng nhập / Đăng ký: cần đầy đủ thông tin
     if (!email || !password || (!isLogin && !name)) {
@@ -170,8 +182,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
       return;
     }
 
-    if (password.length < 4) {
-      setError('Mật khẩu phải có ít nhất 4 ký tự.');
+    if (password.length < 6) {
+      setError('Mật khẩu phải có ít nhất 6 ký tự.');
       return;
     }
 
@@ -367,11 +379,11 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                   </div>
                   <input
                     type="text"
-                    placeholder="Nhập mã OTP (123456)"
+                    placeholder="Nhập mã xác thực 6 số"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     maxLength={6}
-                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-amber-500/30 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-amber-500/60 focus:shadow-[0_0_0_3px_rgba(245,158,11,0.15)] transition-all text-center tracking-[0.5em] font-bold"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-amber-500/30 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-amber-500/60 focus:shadow-[0_0_0_3px_rgba(245,158,11,0.15)] transition-all text-center tracking-[0.5em] placeholder:tracking-normal font-bold"
                   />
                 </motion.div>
               )}

@@ -38,7 +38,9 @@ function RemediesMarquee({ remedies }: { remedies: any[] }) {
           gap: '2rem',
           width: 'max-content',
           animation: `marquee 60s linear infinite`,
-          animationPlayState: isPaused ? 'paused' : 'running'
+          animationPlayState: isPaused ? 'paused' : 'running',
+          willChange: 'transform',
+          transform: 'translateZ(0)'
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

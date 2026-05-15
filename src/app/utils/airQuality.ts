@@ -31,6 +31,32 @@ function buildUrl(base: string, params: Record<string, string>) {
   return url.toString();
 }
 
+/**
+ * Chuyển đổi nồng độ PM2.5 (μg/m³) sang chỉ số US AQI theo bảng breakpoint EPA.
+ * Đây là cách tính chuẩn thay vì dùng giá trị us_aqi từ API (thường bị sai lệch).
+ */
+function calculateAQIFromPM25(pm25: number): number {
+  const breakpoints = [
+    { cLow: 0,     cHigh: 12,    iLow: 0,   iHigh: 50  },
+    { cLow: 12.1,  cHigh: 35.4,  iLow: 51,  iHigh: 100 },
+    { cLow: 35.5,  cHigh: 55.4,  iLow: 101, iHigh: 150 },
+    { cLow: 55.5,  cHigh: 150.4, iLow: 151, iHigh: 200 },
+    { cLow: 150.5, cHigh: 250.4, iLow: 201, iHigh: 300 },
+    { cLow: 250.5, cHigh: 350.4, iLow: 301, iHigh: 400 },
+    { cLow: 350.5, cHigh: 500.4, iLow: 401, iHigh: 500 },
+  ];
+
+  const truncated = Math.floor(pm25 * 10) / 10;
+  for (const bp of breakpoints) {
+    if (truncated >= bp.cLow && truncated <= bp.cHigh) {
+      return Math.round(
+        ((bp.iHigh - bp.iLow) / (bp.cHigh - bp.cLow)) * (truncated - bp.cLow) + bp.iLow
+      );
+    }
+  }
+  return truncated > 500.4 ? 500 : 0;
+}
+
 async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
   const response = await fetch(url, { signal });
   if (!response.ok) {
@@ -113,8 +139,9 @@ export async function fetchAirQuality(signal?: AbortSignal): Promise<AirQualityD
       fetchJson<any>(weatherUrl, signal),
     ]);
 
-    const aqi = Math.round(Number(air.current?.us_aqi ?? 0));
     const pm25 = Number(Number(air.current?.pm2_5 ?? 0).toFixed(1));
+    // Tính AQI chuẩn EPA từ PM2.5 thay vì dùng us_aqi của API (hay bị sai lệch)
+    const aqi = calculateAQIFromPM25(pm25);
     // If UV index is 0 because it's night, we keep it 0. But if it's 0 during the day, we might have a data gap.
     const uvIndexRaw = Number(air.current?.uv_index ?? 0);
     const uvIndex = Number(uvIndexRaw.toFixed(1));
@@ -171,7 +198,7 @@ export async function fetchEnvironmentTrend(signal?: AbortSignal): Promise<Envir
     .map((time: string, index: number) => ({
       timestamp: time,
       time: new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" }).format(new Date(time)),
-      aqi: Math.round(Number(air.hourly.us_aqi?.[index] ?? 0)),
+      aqi: calculateAQIFromPM25(Number(Number(air.hourly.pm2_5?.[index] ?? 0).toFixed(1))),
       pm25: Number(Number(air.hourly.pm2_5?.[index] ?? 0).toFixed(1)),
       uv: Number(Number(air.hourly.uv_index?.[index] ?? 0).toFixed(1)),
       humidity: humidityByTime.get(time) ?? 0,
