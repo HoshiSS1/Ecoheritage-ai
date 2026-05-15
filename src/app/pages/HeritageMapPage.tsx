@@ -296,9 +296,11 @@ export function HeritageMapPage() {
                   <div className="grid grid-cols-2 gap-y-3 gap-x-4">
                     {[
                       { label: 'Khu bảo tồn', color: '#10b981' },
-                      { label: 'Làng nghề', color: '#f59e0b' },
-                      { label: 'Tiệm thuốc', color: '#8b5cf6' },
-                      { label: 'Dược liệu', color: '#ec4899' },
+                      { label: 'Làng nghề', color: '#ec4899' },
+                      { label: 'Chợ dược liệu', color: '#ef4444' },
+                      { label: 'Tiệm di sản', color: '#f59e0b' },
+                      { label: 'Vùng nguyên liệu', color: '#8b5cf6' },
+                      { label: 'Dược liệu quý', color: '#3b82f6' },
                     ].map((type) => (
                       <div key={type.label} className="flex items-center gap-2.5">
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: type.color }} />
@@ -410,10 +412,55 @@ export function HeritageMapPage() {
                     </div>
                     <p className="text-[13px] text-white/80 leading-relaxed italic">{activeLoc.history}</p>
                   </div>
+
+                  {/* Environmental Indicators */}
+                  {(activeLoc.aqi !== undefined || activeLoc.humidity !== undefined || activeLoc.medicinalPower) && (
+                    <div className="grid grid-cols-3 gap-3 mt-4">
+                      {activeLoc.aqi !== undefined && (
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 text-center">
+                          <p className="text-[8px] font-black text-white/25 uppercase tracking-widest mb-1.5">AQI</p>
+                          <p className={`text-xl font-black ${activeLoc.aqi <= 50 ? 'text-emerald-400' : activeLoc.aqi <= 100 ? 'text-amber-400' : 'text-rose-400'}`}>{activeLoc.aqi}</p>
+                          <p className="text-[9px] text-white/30 font-bold mt-1">{activeLoc.aqi <= 50 ? 'Trong lành' : activeLoc.aqi <= 100 ? 'Trung bình' : 'Cần lưu ý'}</p>
+                        </div>
+                      )}
+                      {activeLoc.humidity !== undefined && (
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 text-center">
+                          <p className="text-[8px] font-black text-white/25 uppercase tracking-widest mb-1.5">Độ ẩm</p>
+                          <p className="text-xl font-black text-cyan-400">{activeLoc.humidity}%</p>
+                          <p className="text-[9px] text-white/30 font-bold mt-1">{activeLoc.humidity > 80 ? 'Rất cao' : activeLoc.humidity > 60 ? 'Tốt' : 'Khô'}</p>
+                        </div>
+                      )}
+                      {activeLoc.medicinalPower && (
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 text-center">
+                          <p className="text-[8px] font-black text-white/25 uppercase tracking-widest mb-1.5">Dược tính</p>
+                          <p className={`text-sm font-black ${activeLoc.medicinalPower === 'Cực đại' ? 'text-emerald-400' : activeLoc.medicinalPower === 'Cao' || activeLoc.medicinalPower === 'Mạnh' ? 'text-amber-400' : 'text-white/70'}`}>{activeLoc.medicinalPower}</p>
+                          <p className="text-[9px] text-white/30 font-bold mt-1">Vùng này</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                {/* SECTION 2: Kho tàng dược liệu (bỏ mục hình 2 theo yêu cầu) */}
-                {/* Để tránh lỗi JSX và đúng yêu cầu, mình xóa toàn bộ khối section này ở panel detail. */}
+                {/* SECTION 2: Kho tàng dược liệu */}
+                {activeLoc.herbs && Array.isArray(activeLoc.herbs) && activeLoc.herbs.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1 h-4 bg-amber-400 rounded-full" />
+                      <h3 className="text-[13px] font-black uppercase text-white tracking-[0.2em]">Dược liệu đặc trưng</h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {activeLoc.herbs.map((herb: string, i: number) => (
+                        <span key={i} className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] font-bold rounded-full">{herb}</span>
+                      ))}
+                    </div>
+                    {activeLoc.folkTip && (
+                      <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10">
+                        <p className="text-[9px] font-black text-amber-400/60 uppercase tracking-widest mb-2">💡 Mẹo dân gian</p>
+                        <p className="text-[13px] text-amber-100/80 italic leading-relaxed">{activeLoc.folkTip}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* SECTION 4: Thông tin tham quan */}
                 <div className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 space-y-5">

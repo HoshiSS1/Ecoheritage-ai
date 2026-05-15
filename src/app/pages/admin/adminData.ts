@@ -92,6 +92,18 @@ export function createSeedLocations(): LocationRecord[] {
     imageBase64: "",
     isVisible: true,
     updatedAt: new Date().toISOString(),
+    // Preserve environmental & detail fields
+    aqi: location.aqi,
+    humidity: location.humidity,
+    medicinalPower: location.medicinalPower,
+    rating: location.rating,
+    folkTip: location.folkTip,
+    reviews: location.reviews,
+    description: location.description,
+    history: location.history,
+    bestTime: location.bestTime,
+    contact: location.contact,
+    comments: location.comments,
   }));
 }
 
