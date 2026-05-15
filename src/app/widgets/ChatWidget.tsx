@@ -542,7 +542,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
             </div>
 
             <div className="p-4 bg-[#051a11] border-t border-white/5">
-              <div className="flex gap-2 overflow-x-auto pb-3 custom-scrollbar hide-scrollbar">
+              <div className="flex gap-2 overflow-x-auto pb-3 custom-scrollbar">
                 {suggestions.map((s) => (
                   <button
                     key={s}
