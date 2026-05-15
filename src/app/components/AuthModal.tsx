@@ -574,8 +574,11 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                 <div className="pt-5 mt-5 border-t border-white/10 flex flex-col items-center">
                   <p className="text-xs text-white/30 uppercase tracking-widest mb-4">Hoặc tiếp tục với</p>
 
-                  <div className="w-full rounded-xl overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.03)] border border-white/5">
+                  <div className="w-full flex justify-center items-center py-2">
                     <GoogleLogin
+                      theme="filled_black"
+                      shape="pill"
+                      text="continue_with"
                       onSuccess={(credentialResponse) => {
                         try {
                           const token = credentialResponse.credential;
