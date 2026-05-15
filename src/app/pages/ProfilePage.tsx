@@ -190,7 +190,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
     { id: 4, type: 'feedback', title: 'Gửi góp ý về tính năng AI tư vấn', time: '2 ngày trước', icon: MessageSquareQuote, color: 'text-amber-400' },
   ];
   return (
-    <div className="min-h-screen bg-[#020b07] text-white pt-24 pb-20 relative overflow-hidden font-body">
+    <div className="min-h-screen bg-[#020b07] text-white pt-24 pb-40 relative overflow-hidden font-body">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[60vw] h-[60vh] bg-emerald-600/10 blur-[150px] opacity-30" />
         <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vh] bg-amber-600/5 blur-[150px] opacity-20" />

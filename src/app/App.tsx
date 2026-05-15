@@ -409,7 +409,7 @@ export default function App() {
                 </div>
               ))}
 
-              <div className="mt-6 pt-8 border-t border-white/10 space-y-4">
+              <div className="mt-6 pt-8 pb-12 border-t border-white/10 space-y-4">
                 {user ? (
                   <div className="grid grid-cols-2 gap-4">
                     <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white py-5 rounded-3xl font-bold transition-all border border-white/10 text-xs uppercase tracking-widest">
