@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  fullName     String    @db.NVarChar(100)
+  email        String    @unique @db.NVarChar(255)
+  passwordHash String    @db.NVarChar(255)
+  role         String    @default("User") @db.NVarChar(20)
+  avatarUrl    String?   @db.NVarChar(500)
+  createdAt    DateTime  @default(now())
+  reviews      Review[]
+}
+
+model Heritage {
+  id             Int       @id @default(autoincrement())
+  slugId         String    @unique @db.NVarChar(100)
+  name           String    @db.NVarChar(255)
+  address        String?   @db.NVarChar(500)
+  latitude       Float?
+  longitude      Float?
+  status         String?   @db.NVarChar(100)
+  level          String?   @db.NVarChar(100)
+  herbs          String?   @db.NVarChar(Max)
+  regulations    String?   @db.NVarChar(Max)
+  category       String?   @db.NVarChar(100)
+  color          String?   @db.NVarChar(50)
+  imageUrl       String?   @db.NVarChar(500)
+  aqi            Int?
+  humidity       Int?
+  medicinalPower String?   @db.NVarChar(100)
+  rating         Float?
+  folkTip        String?   @db.NVarChar(Max)
+  reviewsCount   Int?      @default(0)
+  description    String?   @db.NVarChar(Max)
+  history        String?   @db.NVarChar(Max)
+  bestTime       String?   @db.NVarChar(255)
+  contact        String?   @db.NVarChar(255)
+  createdAt      DateTime  @default(now())
+  remedies       Remedy[]
+  reviews        Review[]
+}
+
+model Remedy {
+  id           Int       @id @default(autoincrement())
+  slugId       String    @unique @db.NVarChar(100)
+  name         String    @db.NVarChar(255)
+  category     String?   @db.NVarChar(100)
+  ingredients  String?   @db.NVarChar(Max)
+  benefits     String?   @db.NVarChar(Max)
+  keywords     String?   @db.NVarChar(Max)
+  usage        String?   @db.NVarChar(Max)
+  imageEmoji   String?   @db.NVarChar(50)
+  steps        String?   @db.NVarChar(Max)
+  imageUrl     String?   @db.NVarChar(500)
+  heritageId   Int?
+  heritage     Heritage? @relation(fields: [heritageId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+}
+
+model Review {
+  id          Int       @id @default(autoincrement())
+  userId      Int?
+  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  heritageId  Int?
+  heritage    Heritage? @relation(fields: [heritageId], references: [id], onDelete: Cascade)
+  guestName   String?   @db.NVarChar(100)
+  rating      Int
+  comment     String?   @db.NVarChar(Max)
+  createdAt   DateTime  @default(now())
+}

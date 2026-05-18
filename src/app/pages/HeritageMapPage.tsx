@@ -5,7 +5,7 @@ import { Search, Leaf, MapPin, ChevronLeft, ChevronRight, Share2, Activity, Hist
 import { toast } from 'sonner';
 
 import { HeritageMap } from '../components/HeritageMap';
-import { HERITAGE_LOCATIONS } from '../heritageData';
+import { useHeritages } from '../hooks/useApi';
 import { useAirQuality } from '../utils/useAirQuality';
 import { LOCATIONS_STORAGE_KEY } from './admin/adminUtils';
 
@@ -54,44 +54,25 @@ export function HeritageMapPage() {
     };
   }, []);
 
+  const { heritages: backendHeritages, loading } = useHeritages();
   const [locations, setLocations] = useState<any[]>([]);
 
   useEffect(() => {
-    const loadData = () => {
-      const raw = localStorage.getItem(LOCATIONS_STORAGE_KEY);
-      if (raw) {
-        try {
-          const stored = JSON.parse(raw);
-          const mapped = stored
-            .map((l: any) => ({
-              ...l,
-              position: [l.lat, l.lon],
-              image: l.imageBase64 || l.image,
-              herbs: typeof l.herbs === 'string' ? l.herbs.split(',').map((h: string) => h.trim()) : l.herbs,
-              history: l.history || 'Nguồn gốc đang được cập nhật thêm thông tin chân thực từ người dân địa phương.',
-              comments: l.comments && l.comments.length > 0 ? l.comments : [
-                { user: 'Trần Bình', text: 'Không gian rất tốt, mọi người nên đến trải nghiệm!', rating: 5 },
-                { user: 'Ngọc Lan', text: 'Nhiều thảo dược quý, môi trường bảo tồn tuyệt vời.', rating: 4 }
-              ]
-            }))
-            .filter((l: any) => l.isVisible !== false);
-          setLocations(mapped);
-        } catch {
-          setLocations(HERITAGE_LOCATIONS);
-        }
-      } else {
-        setLocations(HERITAGE_LOCATIONS);
-      }
-    };
-
-    loadData();
-    window.addEventListener('storage', loadData);
-    window.addEventListener('storage_sync', loadData);
-    return () => {
-      window.removeEventListener('storage', loadData);
-      window.removeEventListener('storage_sync', loadData);
-    };
-  }, []);
+    if (!loading && backendHeritages.length > 0) {
+      const mapped = backendHeritages.map((l: any) => ({
+        ...l,
+        position: l.position || [l.latitude, l.longitude],
+        image: l.image || l.imageUrl,
+        herbs: typeof l.herbs === 'string' ? l.herbs.split(',').map((h: string) => h.trim()) : l.herbs,
+        history: l.history || 'Nguồn gốc đang được cập nhật thêm thông tin chân thực từ người dân địa phương.',
+        comments: l.comments && l.comments.length > 0 ? l.comments : [
+          { user: 'Trần Bình', text: 'Không gian rất tốt, mọi người nên đến trải nghiệm!', rating: 5 },
+          { user: 'Ngọc Lan', text: 'Nhiều thảo dược quý, môi trường bảo tồn tuyệt vời.', rating: 4 }
+        ]
+      })).filter((l: any) => l.isVisible !== false);
+      setLocations(mapped);
+    }
+  }, [backendHeritages, loading]);
 
   const categories = useMemo(() => {
     try {
