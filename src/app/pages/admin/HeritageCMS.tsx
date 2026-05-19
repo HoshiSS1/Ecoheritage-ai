@@ -278,12 +278,12 @@ export function HeritageCMS() {
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setIsSlideOpen(false)}
-              className="fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-sm"
+              className="fixed inset-0 z-[60] bg-slate-950/20 backdrop-blur-sm"
             />
             <motion.div
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 35, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 h-full w-full max-w-xl bg-white border-l border-slate-200 shadow-2xl flex flex-col"
+              className="fixed right-0 top-0 z-[70] h-full w-full max-w-[480px] bg-white border-l border-slate-200 shadow-2xl flex flex-col"
             >
               <div className="flex items-center justify-between border-b border-slate-100 px-10 py-8 bg-slate-50/50">
                 <div>
@@ -295,7 +295,7 @@ export function HeritageCMS() {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-10 py-10 space-y-8 custom-scrollbar bg-white">
+                <form onSubmit={handleSubmit} data-lenis-prevent="true" className="flex-1 overflow-y-auto px-6 sm:px-10 py-10 space-y-8 bg-white" style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}>
                   <div className="space-y-4">
                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Hình ảnh minh họa</label>
                   <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageUpload} className="hidden" />

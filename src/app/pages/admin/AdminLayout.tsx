@@ -212,7 +212,7 @@ export function AdminLayout() {
   );
 
   return (
-    <div className="h-screen overflow-hidden bg-[#F8FAFC] text-[#1E293B]">
+    <div className="h-[100dvh] overflow-hidden bg-[#F8FAFC] text-[#1E293B]">
       {/* Desktop Sidebar */}
       <aside className="fixed left-0 top-0 z-30 hidden h-screen w-[292px] border-r border-slate-200 bg-white px-6 py-6 lg:flex lg:flex-col shadow-[10px_0_40px_-20px_rgba(0,0,0,0.05)]">
         {sidebarContent}
@@ -234,7 +234,7 @@ export function AdminLayout() {
       )}
 
       {/* Main Area */}
-      <div className="flex h-screen flex-col lg:ml-[292px]">
+      <div className="flex h-full flex-col lg:ml-[292px]">
         {/* Header */}
         <header className="sticky top-0 z-20 flex h-20 w-full items-center justify-between border-b border-slate-100 bg-white/80 px-4 backdrop-blur-xl sm:px-8 shadow-sm">
           <div className="flex items-center gap-4">
