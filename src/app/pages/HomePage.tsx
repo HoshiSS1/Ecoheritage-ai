@@ -73,6 +73,9 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
   const [displayRemedies, setDisplayRemedies] = useState(defaultRemedies);
 
   useEffect(() => {
+    // Build a lookup map from the original default remedies by id
+    const defaultMap = new Map(defaultRemedies.map(r => [r.id, r]));
+
     const loadRemedies = () => {
       const raw = localStorage.getItem(REMEDIES_STORAGE_KEY);
       if (raw) {
@@ -81,7 +84,32 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
           if (Array.isArray(parsed)) {
             const activeRemedies = parsed.filter((r: any) => r && r.status === 'published');
             if (activeRemedies.length > 0) {
-              setDisplayRemedies(activeRemedies);
+              // Merge CMS records with original data to restore steps, usage, imageUrl, ingredients[]
+              const merged = activeRemedies.map((cmsRemedy: any) => {
+                const original = defaultMap.get(cmsRemedy.id);
+                if (original) {
+                  return {
+                    ...original,
+                    ...cmsRemedy,
+                    steps: original.steps,
+                    usage: original.usage,
+                    imageUrl: cmsRemedy.imageBase64 || original.imageUrl,
+                    ingredients: original.ingredients,
+                    benefits: cmsRemedy.benefits || original.benefits,
+                  };
+                }
+                // CMS-only remedy (user-created)
+                return {
+                  ...cmsRemedy,
+                  steps: cmsRemedy.method ? cmsRemedy.method.split('. ').filter(Boolean) : [],
+                  usage: cmsRemedy.doctorNote || cmsRemedy.description || '',
+                  imageUrl: cmsRemedy.imageBase64 || '',
+                  ingredients: typeof cmsRemedy.ingredients === 'string'
+                    ? cmsRemedy.ingredients.split(',').map((s: string) => s.trim()).filter(Boolean)
+                    : cmsRemedy.ingredients || [],
+                };
+              });
+              setDisplayRemedies(merged);
               return;
             }
           }

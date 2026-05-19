@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Sparkles, Leaf, Info, X, ChevronRight, BookOpen, Clock, Heart } from 'lucide-react';
@@ -194,87 +195,90 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
         </div>
       </GlassCard>
 
-      {/* Steps Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" style={{ margin: 0 }}>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-[#020b07]/80 backdrop-blur-sm"
-            />
-            
-            {/* Modal Content */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[var(--eco-surface)] border border-[var(--border-default)] rounded-[var(--radius-xl)] overflow-hidden max-h-[85vh] flex flex-col shadow-[var(--shadow-2xl)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="p-5 sm:p-6 border-b border-[var(--border-subtle)] flex items-start justify-between bg-[var(--glass-bg)] relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                
-                <div className="relative z-10">
-                  <div className="mb-3">
-                    <StatusBadge variant="emerald" label={category} icon={Sparkles} />
-                  </div>
-                  <h3 className="font-display text-xl sm:text-2xl text-white font-bold leading-tight">
-                    <span className="text-premium-gradient">{name}</span>
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Body */}
-              <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
-                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-6 flex items-center gap-2">
-                  <Leaf className="w-3.5 h-3.5 text-emerald-400" /> Các bước thực hiện
-                </h4>
-                
-                <div className="space-y-6">
-                  {steps?.map((step, idx) => (
-                    <div key={idx} className="flex gap-4 group/step">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--eco-elevated)] border border-[var(--border-default)] text-emerald-400 flex items-center justify-center font-display font-bold text-sm shadow-sm group-hover/step:bg-emerald-500/10 group-hover/step:border-emerald-500/30 transition-all duration-300">
-                        {idx + 1}
-                      </div>
-                      <p className="text-[var(--text-secondary)] leading-relaxed text-[15px] font-medium pt-1 group-hover/step:text-[var(--text-primary)] transition-colors">
-                        {step}
-                      </p>
+      {/* Steps Modal — portaled to body to escape GlassCard transform+overflow containment */}
+      {createPortal(
+        <AnimatePresence>
+          {isModalOpen && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" style={{ margin: 0 }}>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsModalOpen(false)}
+                className="absolute inset-0 bg-[#020b07]/80 backdrop-blur-sm"
+              />
+              
+              {/* Modal Content */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="relative w-full max-w-2xl bg-[var(--eco-surface)] border border-[var(--border-default)] rounded-[var(--radius-xl)] overflow-hidden max-h-[85vh] flex flex-col shadow-[var(--shadow-2xl)]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="p-5 sm:p-6 border-b border-[var(--border-subtle)] flex items-start justify-between bg-[var(--glass-bg)] relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                  
+                  <div className="relative z-10">
+                    <div className="mb-3">
+                      <StatusBadge variant="emerald" label={category} icon={Sparkles} />
                     </div>
-                  ))}
+                    <h3 className="font-display text-xl sm:text-2xl text-white font-bold leading-tight">
+                      <span className="text-premium-gradient">{name}</span>
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-[var(--border-subtle)]">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3 flex items-center gap-2">
-                    <Info className="w-3.5 h-3.5 text-amber-400" /> Cách dùng
+                {/* Body */}
+                <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-6 flex items-center gap-2">
+                    <Leaf className="w-3.5 h-3.5 text-emerald-400" /> Các bước thực hiện
                   </h4>
-                  <p className="text-[14px] text-[var(--text-primary)] italic font-medium leading-relaxed bg-[var(--eco-elevated)] p-4 rounded-lg border border-[var(--border-default)] border-l-2 border-l-amber-500/50">
-                    {usage}
-                  </p>
-                </div>
+                  
+                  <div className="space-y-6">
+                    {steps?.map((step, idx) => (
+                      <div key={idx} className="flex gap-4 group/step">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[var(--eco-elevated)] border border-[var(--border-default)] text-emerald-400 flex items-center justify-center font-display font-bold text-sm shadow-sm group-hover/step:bg-emerald-500/10 group-hover/step:border-emerald-500/30 transition-all duration-300">
+                          {idx + 1}
+                        </div>
+                        <p className="text-[var(--text-secondary)] leading-relaxed text-[15px] font-medium pt-1 group-hover/step:text-[var(--text-primary)] transition-colors">
+                          {step}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
 
-                {/* Footer / Disclaimer */}
-                <div className="mt-8">
-                  <p className="text-[10px] text-amber-400/80 italic flex items-center justify-center gap-1.5 uppercase tracking-widest font-bold">
-                    <Info className="w-3.5 h-3.5 text-amber-400" />
-                    Tham vấn ý kiến chuyên gia trước khi sử dụng
-                  </p>
+                  <div className="mt-8 pt-6 border-t border-[var(--border-subtle)]">
+                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-3 flex items-center gap-2">
+                      <Info className="w-3.5 h-3.5 text-amber-400" /> Cách dùng
+                    </h4>
+                    <p className="text-[14px] text-[var(--text-primary)] italic font-medium leading-relaxed bg-[var(--eco-elevated)] p-4 rounded-lg border border-[var(--border-default)] border-l-2 border-l-amber-500/50">
+                      {usage}
+                    </p>
+                  </div>
+
+                  {/* Footer / Disclaimer */}
+                  <div className="mt-8">
+                    <p className="text-[10px] text-amber-400/80 italic flex items-center justify-center gap-1.5 uppercase tracking-widest font-bold">
+                      <Info className="w-3.5 h-3.5 text-amber-400" />
+                      Tham vấn ý kiến chuyên gia trước khi sử dụng
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }
