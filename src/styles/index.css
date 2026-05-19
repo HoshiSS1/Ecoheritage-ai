@@ -1,11 +1,7 @@
 @import './fonts.css';
+@import './design-tokens.css';
 @import './tailwind.css';
 @import './theme.css';
-
-/* 3D Perspective Utilities & Global Fixes */
-:root {
-  --perspective: 1500px;
-}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -112,44 +108,61 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-/* Premium UI Utilities */
+
+/* ═══════════════════════════════════════════════════════════════════
+   Premium UI Utilities — Using Design Tokens
+   ═══════════════════════════════════════════════════════════════════ */
+
 .glass-premium {
-  backdrop-filter: blur(24px);
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+  transition: background-color var(--duration-normal) var(--ease-smooth),
+              border-color var(--duration-normal) var(--ease-smooth),
+              box-shadow var(--duration-slow) var(--ease-smooth);
+}
+
+.glass-premium:hover {
+  background-color: var(--glass-bg-hover);
+  border-color: var(--border-hover);
 }
 
 .input-premium {
-  background-color: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  color: white;
-  font-size: 0.875rem;
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color var(--duration-normal) var(--ease-smooth),
+              box-shadow var(--duration-normal) var(--ease-smooth),
+              background-color var(--duration-normal) var(--ease-smooth);
 }
 
 .input-premium:focus {
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  border-color: var(--border-active);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
+  background-color: rgba(0, 0, 0, 0.45);
 }
 
 .input-premium::placeholder {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
 }
 
 .btn-premium {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(to right, #059669, #34d399);
-  color: #051a11;
-  font-weight: 700;
-  padding: 0.875rem 1.5rem;
-  border-radius: 0.75rem;
-  transition: all 300ms ease;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, var(--eco-emerald-dim), var(--eco-emerald-bright));
+  color: var(--eco-dark);
+  font-weight: var(--weight-bold);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-normal) var(--ease-smooth);
+  box-shadow: var(--shadow-glow-emerald);
   border: none;
   cursor: pointer;
   display: inline-flex;
@@ -158,12 +171,13 @@ body {
 }
 
 .btn-premium:hover {
-  background: linear-gradient(to right, #10b981, #6ee7b7);
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, var(--eco-emerald), #6ee7b7);
+  box-shadow: var(--shadow-glow-strong);
+  transform: translateY(-1px);
 }
 
 .btn-premium:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-premium::after {
@@ -179,20 +193,21 @@ body {
   color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
-  background-image: linear-gradient(to right, #34d399, #a7f3d0, #fde68a);
+  background-image: linear-gradient(135deg, var(--eco-emerald-bright), #a7f3d0, var(--eco-amber-light));
 }
 
 .card-glow-hover {
-  transition: all 0.5s ease;
+  transition: border-color var(--duration-slow) var(--ease-smooth),
+              box-shadow var(--duration-slow) var(--ease-smooth);
 }
 
 .card-glow-hover:hover {
-  border-color: rgba(16, 185, 129, 0.3);
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-glow-emerald);
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
+  0%   { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
 

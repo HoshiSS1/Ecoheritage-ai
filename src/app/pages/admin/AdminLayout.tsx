@@ -322,7 +322,7 @@ export function AdminLayout() {
         </header>
 
         {/* Content */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main ref={mainRef} data-lenis-prevent="true" className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           {renderContent()}
         </main>
       </div>

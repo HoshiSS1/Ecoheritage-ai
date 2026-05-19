@@ -3,6 +3,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { motion } from 'motion/react';
 import { TrendingUp } from 'lucide-react';
 import { fetchEnvironmentTrend, EnvironmentTrendPoint } from '../utils/airQuality';
+import { SectionHeader } from './SectionHeader';
 
 const fallbackChartData: EnvironmentTrendPoint[] = [
   { timestamp: 'fallback-00', time: '00:00', aqi: 40, uv: 0, humidity: 85, pm25: 12 },
@@ -49,28 +50,19 @@ export function EnvironmentChart() {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 1, type: "spring", bounce: 0.4 }}
-      className="relative bg-[#0a2e1f]/40 backdrop-blur-2xl rounded-[3rem] p-8 md:p-12 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)] border border-white/10 overflow-hidden"
+      className="relative bg-[var(--eco-surface)]/40 backdrop-blur-2xl rounded-[var(--radius-3xl)] p-8 md:p-12 shadow-[var(--shadow-xl)] border border-[var(--border-default)] overflow-hidden"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-amber-500/5 pointer-events-none" />
       
-      <div className="flex flex-col mb-10 relative z-10">
-        <div className="text-left">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-2 rounded-full text-[10px] uppercase tracking-[0.3em] font-black backdrop-blur-md mb-4"
-          >
-            <TrendingUp className="w-3 h-3" />
-            XU HƯỚNG
-          </motion.div>
-          <h3 className="font-display text-2xl sm:text-3xl md:text-5xl text-white font-bold tracking-tight break-words max-w-full">
-            Nhịp thở của thành phố
-          </h3>
-          <p className="text-emerald-100/50 text-sm sm:text-base mt-2 font-medium">
-            Phân tích đa chiều AQI, UV và Độ ẩm theo thời gian thực
-          </p>
-        </div>
+      <div className="relative z-10 mb-10">
+        <SectionHeader
+          icon={TrendingUp}
+          badge="Xu hướng"
+          title={<>Nhịp thở của <em className="text-premium-gradient not-italic">thành phố</em></>}
+          subtitle="Phân tích đa chiều AQI, UV và Độ ẩm theo thời gian thực"
+          align="left"
+          className="!mb-0"
+        />
       </div>
 
       <div className="relative z-10 w-full h-[400px]">

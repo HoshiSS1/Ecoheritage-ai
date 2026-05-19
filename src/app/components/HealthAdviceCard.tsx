@@ -1,5 +1,5 @@
 import { LucideIcon, Microscope, Leaf } from 'lucide-react';
-import { motion } from 'motion/react';
+import { GlassCard } from './GlassCard';
 
 interface HealthAdviceCardProps {
   icon: LucideIcon;
@@ -11,74 +11,71 @@ interface HealthAdviceCardProps {
 }
 
 const categoryConfig = {
-  protection: { grad: 'from-sky-400 to-blue-600', ring: 'rgba(56,189,248,0.2)' },
-  nutrition: { grad: 'from-emerald-400 to-green-600', ring: 'rgba(52,211,153,0.2)' },
-  exercise: { grad: 'from-purple-400 to-fuchsia-600', ring: 'rgba(192,132,252,0.2)' },
-  rest: { grad: 'from-amber-400 to-orange-600', ring: 'rgba(251,191,36,0.2)' },
+  protection: { glow: 'blue' as const, grad: 'from-sky-400 to-blue-600', iconColor: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/20' },
+  nutrition:  { glow: 'emerald' as const, grad: 'from-emerald-400 to-green-600', iconColor: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+  exercise:   { glow: 'rose' as const, grad: 'from-purple-400 to-fuchsia-600', iconColor: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
+  rest:       { glow: 'amber' as const, grad: 'from-amber-400 to-orange-600', iconColor: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
 };
 
 export function HealthAdviceCard({ icon: Icon, title, modernAdvice, traditionalAdvice, category, index = 0 }: HealthAdviceCardProps) {
   const c = categoryConfig[category];
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40, rotateY: 10 }}
-      whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ delay: index * 0.15, duration: 0.8, type: "spring", bounce: 0.4 }}
-      className="group relative flex flex-col h-full bg-[#051a11]/80 backdrop-blur-xl rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-8 border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] transition-all duration-500 overflow-hidden transform-style-3d"
-    >
-      {/* 3D Ambient Glow */}
-      <div className={`absolute -top-32 -right-32 w-64 h-64 rounded-full bg-gradient-to-br ${c.grad} blur-3xl opacity-20 group-hover:opacity-40 transition-opacity duration-700`} />
-      <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
+  return (
+    <GlassCard
+      glow={c.glow}
+      delay={index * 0.1}
+      className="group flex flex-col h-full p-5 sm:p-8"
+    >
+      {/* Header */}
       <div className="flex items-center gap-4 sm:gap-5 mb-6 sm:mb-8 relative z-10">
-        <div className={`bg-gradient-to-br ${c.grad} p-4 rounded-2xl shadow-[0_0_20px_${c.ring}] transform group-hover:rotate-12 transition-transform duration-500 relative overflow-hidden`}>
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Icon className="w-7 h-7 text-white relative z-10" />
+        <div className={`relative w-12 h-12 rounded-[var(--radius-lg)] bg-gradient-to-br ${c.grad} p-2.5 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-[var(--radius-lg)]" />
+          <Icon className="w-full h-full text-white relative z-10 drop-shadow-md" />
         </div>
-        <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-white font-bold tracking-tight drop-shadow-md break-words max-w-full relative group-hover:text-amber-400 transition-colors duration-500 pb-2">
+        <h3 className="font-display text-xl sm:text-2xl text-white font-bold tracking-tight drop-shadow-md break-words max-w-full relative group-hover:text-amber-300 transition-colors duration-500">
           {title}
-          <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-amber-400 opacity-0 group-hover:w-full group-hover:opacity-100 transition-all duration-700 shadow-[0_0_15px_rgba(251,191,36,0.6)]" />
         </h3>
       </div>
 
-      <div className="space-y-6 relative z-10 flex flex-col flex-grow">
-        <div className="bg-white/5 border border-white/5 rounded-2xl p-5 sm:p-7 backdrop-blur-sm group-hover:bg-white/10 group-hover:border-white/10 transition-colors duration-500 relative overflow-hidden flex-1">
-          <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-sky-400 to-sky-600" />
+      <div className="space-y-4 relative z-10 flex flex-col flex-grow">
+        {/* Modern Advice */}
+        <div className="bg-[var(--glass-bg)] border border-[var(--border-default)] rounded-[var(--radius-lg)] p-5 relative overflow-hidden flex-1 group/modern transition-colors hover:border-[var(--border-hover)]">
+          <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-sky-400 to-blue-600" />
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-sky-500/20 rounded-lg border border-sky-500/30">
+            <div className="p-1.5 bg-sky-500/10 rounded-md border border-sky-500/20">
               <Microscope className="w-4 h-4 text-sky-400" />
             </div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-sky-300">Khoa học hiện đại</h4>
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-300">Khoa học hiện đại</h4>
           </div>
-          <ul className="space-y-4 pl-2 mt-2">
+          <ul className="space-y-3 pl-1">
             {modernAdvice.map((advice, i) => (
-              <li key={i} className="text-base sm:text-[17px] text-[#F8FAFC] flex items-start gap-4 leading-relaxed font-medium break-words drop-shadow-md">
-                <span className="text-sky-500 mt-2 text-[10px] flex-shrink-0 animate-pulse">●</span>
-                <span>{advice}</span>
+              <li key={i} className="text-sm sm:text-base text-[var(--text-secondary)] flex items-start gap-3 leading-relaxed font-medium">
+                <span className="text-sky-500 mt-1.5 text-[8px] flex-shrink-0">●</span>
+                <span className="group-hover/modern:text-[var(--text-primary)] transition-colors">{advice}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-500/5 to-emerald-500/5 border border-amber-500/10 rounded-2xl p-5 sm:p-7 backdrop-blur-sm group-hover:border-amber-500/20 transition-colors duration-500 relative overflow-hidden flex-1">
+        {/* Traditional Advice */}
+        <div className="bg-[var(--glass-bg)] border border-[var(--border-default)] rounded-[var(--radius-lg)] p-5 relative overflow-hidden flex-1 group/trad transition-colors hover:border-[var(--border-hover)]">
           <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-amber-400 to-emerald-500" />
           <div className="flex items-center justify-end gap-3 mb-4">
-            <h4 className="text-xs font-bold uppercase tracking-[0.25em] text-amber-400 text-right">Y học cổ truyền</h4>
-            <div className="p-2 bg-amber-500/20 rounded-lg border border-amber-500/30">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-400 text-right">Y học cổ truyền</h4>
+            <div className="p-1.5 bg-amber-500/10 rounded-md border border-amber-500/20">
               <Leaf className="w-4 h-4 text-amber-400" />
             </div>
           </div>
-          <ul className="space-y-4 pr-2 mt-2">
+          <ul className="space-y-3 pr-1">
             {traditionalAdvice.map((advice, i) => (
-              <li key={i} className="text-base sm:text-[17px] text-amber-50 flex flex-row-reverse items-start gap-4 leading-relaxed font-medium text-right break-words drop-shadow-md">
-                <span className="text-emerald-500 mt-1.5 text-[12px] flex-shrink-0 animate-pulse">✦</span>
-                <span>{advice}</span>
+              <li key={i} className="text-sm sm:text-base text-[var(--text-secondary)] flex flex-row-reverse items-start gap-3 leading-relaxed font-medium text-right">
+                <span className="text-emerald-500 mt-1 text-[10px] flex-shrink-0">✦</span>
+                <span className="group-hover/trad:text-amber-50 transition-colors">{advice}</span>
               </li>
             ))}
           </ul>
         </div>
       </div>
-    </motion.div>
+    </GlassCard>
   );
 }

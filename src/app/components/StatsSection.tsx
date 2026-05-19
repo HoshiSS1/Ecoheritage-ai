@@ -1,63 +1,95 @@
 import { motion } from 'motion/react';
-import { Droplets, Gauge, Sun, Wind } from 'lucide-react';
+import { Droplets, Gauge, Sun, Wind, Activity } from 'lucide-react';
 import { useAirQuality } from '../utils/useAirQuality';
+import { AnimatedCounter } from './AnimatedCounter';
+import { SectionHeader } from './SectionHeader';
 
 export function StatsSection() {
   const { data: aqiData } = useAirQuality();
 
   const stats = [
-    { icon: Gauge, value: aqiData ? String(aqiData.aqi) : '0', label: 'US AQI Đà Nẵng', color: 'text-sky-400' },
-    { icon: Wind, value: aqiData ? `${aqiData.pm25}` : '0', label: 'PM2.5 (µg/m³)', color: 'text-rose-400' },
-    { icon: Sun, value: aqiData ? String(aqiData.uvIndex) : '0', label: 'Chỉ số UV hiện tại', color: 'text-amber-400' },
-    { icon: Droplets, value: aqiData ? `${aqiData.humidity}%` : '0%', label: 'Độ ẩm không khí', color: 'text-emerald-400' },
+    {
+      icon: Gauge,
+      value: aqiData?.aqi ?? 0,
+      suffix: '',
+      label: 'US AQI Đà Nẵng',
+      color: 'text-sky-400',
+      gradient: 'from-sky-400 to-blue-600',
+    },
+    {
+      icon: Wind,
+      value: aqiData?.pm25 ?? 0,
+      suffix: '',
+      label: 'PM2.5 (µg/m³)',
+      color: 'text-rose-400',
+      gradient: 'from-rose-400 to-pink-600',
+    },
+    {
+      icon: Sun,
+      value: aqiData?.uvIndex ?? 0,
+      suffix: '',
+      label: 'Chỉ số UV hiện tại',
+      color: 'text-amber-400',
+      gradient: 'from-amber-400 to-orange-600',
+    },
+    {
+      icon: Droplets,
+      value: aqiData?.humidity ?? 0,
+      suffix: '%',
+      label: 'Độ ẩm không khí',
+      color: 'text-emerald-400',
+      gradient: 'from-emerald-400 to-green-600',
+    },
   ];
 
   return (
-    <section className="bg-gradient-to-b from-[#020b07] to-[#051a11] py-14 sm:py-20 md:py-32 relative overflow-hidden border-y border-white/5">
+    <section className="bg-gradient-to-b from-[var(--eco-black)] to-[var(--eco-dark)] relative overflow-hidden border-y border-[var(--border-subtle)]" style={{ paddingTop: 'var(--section-py)', paddingBottom: 'var(--section-py)' }}>
+      {/* Perspective Grid Background */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute bottom-0 left-0 w-full h-[50%] bg-gradient-to-t from-emerald-500/20 to-transparent" style={{ backgroundImage: 'linear-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px', transform: 'perspective(500px) rotateX(60deg)', transformOrigin: 'bottom' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-8 sm:mb-12 md:mb-16 max-w-4xl mx-auto"
-        >
-          <div className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-6 py-3 rounded-full text-[12px] uppercase tracking-[0.4em] font-black mb-8 sm:mb-10 backdrop-blur-md shadow-[0_0_25px_rgba(16,185,129,0.25)]">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_#10b981]" />
-            Trạm dữ liệu môi trường
-          </div>
-          <h2 className="relative inline-block pb-8 font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-6 break-words max-w-full">
-            Theo dõi chất lượng môi trường <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">theo thời gian thực</em>
-            <motion.div 
-              initial={{ width: 0, opacity: 0 }}
-              whileInView={{ width: "16rem", opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_20px_rgba(251,191,36,0.4)] rounded-full" 
-            />
-          </h2>
-        </motion.div>
+        <SectionHeader
+          icon={Activity}
+          badge="Trạm dữ liệu môi trường"
+          title={<>Theo dõi chất lượng môi trường <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">theo thời gian thực</em></>}
+        />
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 perspective-[1000px]">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 40, rotateX: 15 }}
-              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.15, duration: 0.8, type: "spring", bounce: 0.4 }}
-              whileHover={{ y: -10, scale: 1.05 }}
-              className="bg-[#0a2e1f]/60 backdrop-blur-xl rounded-[1.5rem] sm:rounded-[2rem] lg:rounded-[2.5rem] p-5 sm:p-6 lg:p-8 border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] transition-all duration-500 relative group overflow-hidden"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ delay: i * 0.12, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="group relative bg-[var(--eco-surface)]/60 backdrop-blur-xl rounded-[var(--radius-2xl)] p-5 sm:p-6 lg:p-8 border border-[var(--border-default)] shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-xl)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className={`absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br from-current to-transparent opacity-10 blur-2xl group-hover:opacity-30 transition-opacity duration-700 ${s.color}`} />
-              
-              <s.icon className={`w-8 h-8 sm:w-10 sm:h-10 mb-4 sm:mb-6 drop-shadow-[0_0_15px_currentColor] transition-transform duration-500 group-hover:scale-110 ${s.color}`} />
-              <div className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3 drop-shadow-lg tracking-tighter truncate">{s.value}</div>
-              <div className="text-[11px] sm:text-[12px] md:text-[14px] text-emerald-100/70 leading-relaxed font-bold group-hover:text-emerald-50 transition-colors uppercase tracking-[0.15em] break-words">{s.label}</div>
+              {/* Hover gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              {/* Ambient glow */}
+              <div className={`absolute -top-12 -right-12 w-32 h-32 rounded-full bg-gradient-to-br ${s.gradient} opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-700`} />
+
+              {/* Icon */}
+              <div className={`relative z-10 w-12 h-12 rounded-[var(--radius-lg)] bg-gradient-to-br ${s.gradient} p-2.5 mb-5 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                <s.icon className="w-full h-full text-white drop-shadow-md" />
+              </div>
+
+              {/* Animated Value */}
+              <div className="relative z-10 font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 tracking-tighter">
+                <AnimatedCounter
+                  target={s.value}
+                  duration={1800}
+                  suffix={s.suffix}
+                  decimals={s.label.includes('PM') ? 1 : 0}
+                />
+              </div>
+
+              {/* Label */}
+              <div className="relative z-10 text-[11px] sm:text-xs text-[var(--text-secondary)] font-semibold uppercase tracking-[0.15em] group-hover:text-[var(--text-primary)] transition-colors">
+                {s.label}
+              </div>
             </motion.div>
           ))}
         </div>

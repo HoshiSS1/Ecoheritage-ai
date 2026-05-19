@@ -246,7 +246,7 @@ export function HeritageMapPage() {
                 </div>
 
                 {/* List */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-4">
+                <div data-lenis-prevent="true" className="flex-1 overflow-y-auto custom-scrollbar px-4 py-4">
                   <div className="space-y-2">
                     {filteredLocations.map((loc) => (
                       <motion.div
@@ -318,7 +318,7 @@ export function HeritageMapPage() {
             transition={{ type: 'spring', damping: 30, stiffness: 120 }}
             className="absolute top-16 sm:top-20 right-0 bottom-0 z-[85] w-full md:w-[50%] lg:w-[35%] bg-[#020b07] border-l border-white/10 shadow-[-30px_0_120px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col"
           >
-            <div ref={detailPanelRef} className="flex-1 overflow-y-auto no-scrollbar pb-28">
+            <div ref={detailPanelRef} data-lenis-prevent="true" className="flex-1 overflow-y-auto no-scrollbar pb-28">
               {/* HERO */}
               <div className="h-[35vh] relative shrink-0 group overflow-hidden">
                 <img

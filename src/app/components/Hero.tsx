@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Sparkles, Leaf, ArrowRight, Play } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useAirQuality } from '../utils/useAirQuality';
+import { AnimatedCounter } from './AnimatedCounter';
 import heroImage from '../../assets/hero/vietnamese_herbs_ai_hero_1777022882110.png';
 
 export function Hero() {
@@ -117,19 +118,32 @@ export function Hero() {
           {/* 3D Floating Mini Stats */}
           <div className="grid grid-cols-3 gap-4 sm:gap-8 mt-12 sm:mt-16 pt-6 sm:pt-8 relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            {heroStats.map((s, i) => (
-              <motion.div
-                key={s.label}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 + i * 0.15, duration: 0.8, ease: "easeOut" }}
-                className="relative group"
-              >
-                <div className="font-display text-xl sm:text-3xl lg:text-4xl text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{s.num}</div>
-                <div className="text-[11px] sm:text-[12px] text-amber-300 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black mb-0.5">{s.label}</div>
-                <div className="text-[11px] sm:text-[11px] text-emerald-200/60 uppercase tracking-widest font-bold">{s.sub}</div>
-              </motion.div>
-            ))}
+            {heroStats.map((s, i) => {
+              const numericValue = Number(s.num.replace(/[^0-9.]/g, ''));
+              const hasPlus = s.num.includes('+');
+              const hasPercent = s.num.includes('%');
+              return (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + i * 0.15, duration: 0.8, ease: "easeOut" }}
+                  className="relative group"
+                >
+                  <div className="font-display text-xl sm:text-3xl lg:text-4xl text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    {!isNaN(numericValue) && numericValue > 0 ? (
+                      <AnimatedCounter target={numericValue} duration={2000} decimals={Number.isInteger(numericValue) ? 0 : 1} />
+                    ) : (
+                      s.num
+                    )}
+                    {hasPlus && '+'}
+                    {hasPercent && '%'}
+                  </div>
+                  <div className="text-[11px] sm:text-[12px] text-amber-300 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black mb-0.5">{s.label}</div>
+                  <div className="text-[11px] sm:text-[11px] text-emerald-200/60 uppercase tracking-widest font-bold">{s.sub}</div>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
 
