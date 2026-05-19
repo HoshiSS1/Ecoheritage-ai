@@ -245,8 +245,8 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
 
                 {/* Footer / Disclaimer */}
                 <div className="mt-8">
-                  <p className="text-[10px] text-[var(--text-disabled)] italic flex items-center justify-center gap-1.5 uppercase tracking-widest font-bold">
-                    <Info className="w-3.5 h-3.5" />
+                  <p className="text-[10px] text-amber-400/80 italic flex items-center justify-center gap-1.5 uppercase tracking-widest font-bold">
+                    <Info className="w-3.5 h-3.5 text-amber-400" />
                     Tham vấn ý kiến chuyên gia trước khi sử dụng
                   </p>
                 </div>
