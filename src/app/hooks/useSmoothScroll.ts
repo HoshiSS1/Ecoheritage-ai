@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router';
 import Lenis from 'lenis';
 
 /**
@@ -10,6 +11,7 @@ import Lenis from 'lenis';
  */
 export function useSmoothScroll() {
   const lenisRef = useRef<Lenis | null>(null);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -21,6 +23,12 @@ export function useSmoothScroll() {
 
     lenisRef.current = lenis;
 
+    // Set up ResizeObserver to handle dynamic height changes (Suspense, lists expansion, etc.)
+    const resizeObserver = new ResizeObserver(() => {
+      lenis.resize();
+    });
+    resizeObserver.observe(document.body);
+
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
@@ -29,10 +37,23 @@ export function useSmoothScroll() {
     requestAnimationFrame(raf);
 
     return () => {
+      resizeObserver.disconnect();
       lenis.destroy();
       lenisRef.current = null;
     };
   }, []);
+
+  // Recalculate dimensions and scroll to top on route change
+  useEffect(() => {
+    if (lenisRef.current) {
+      // Small delay to allow the DOM to render the new content
+      const timer = setTimeout(() => {
+        lenisRef.current?.resize();
+        lenisRef.current?.scrollTo(0, { immediate: true });
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname]);
 
   return lenisRef;
 }

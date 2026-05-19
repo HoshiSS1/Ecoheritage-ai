@@ -113,7 +113,7 @@ export function EnvironmentChart() {
             {isLoading ? 'Đang đồng bộ dữ liệu...' : source === 'live' ? 'Hệ thống trực tuyến' : 'Chế độ ngoại tuyến'}
           </span>
         </div>
-        <div className="text-[10px] font-medium text-white/20 italic tracking-wide">
+        <div className="text-[13px] font-medium text-white/20 italic tracking-wide">
           {source === 'live' ? 'Dữ liệu được phân tích từ Open-Meteo Air Quality' : 'Hiển thị dữ liệu mẫu khi API không phản hồi'}
         </div>
       </div>

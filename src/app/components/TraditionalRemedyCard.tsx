@@ -37,6 +37,26 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
 
   const toggleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
+
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    const activeUser = sessionStorage.getItem('ecoheritage_active_user');
+    if (!activeUser) {
+      toast.error('Yêu cầu đăng nhập!', {
+        description: 'Vui lòng đăng nhập để lưu bài thuốc này vào tủ thuốc di sản cá nhân.',
+        duration: 5000,
+        style: {
+          fontSize: '15px',
+          fontWeight: 'bold',
+          padding: '18px 22px',
+          borderRadius: '18px',
+          background: 'linear-gradient(135deg, #2e0a0a 0%, #1a0505 100%)',
+          color: '#fff',
+          border: '1px solid rgba(239,68,68,0.3)',
+        },
+      });
+      return;
+    }
+
     try {
       const saved = JSON.parse(localStorage.getItem('ecoheritage_saved_remedies') || '[]');
       let next;
@@ -87,7 +107,7 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
           
           {/* Badge */}
           <div className="absolute top-4 left-4 z-20">
-            <StatusBadge variant="amber" label="Di sản Đà Nẵng" icon={Sparkles} pulse />
+            <StatusBadge variant="amber" label="Di sản Đà Nẵng" icon={Sparkles} />
           </div>
 
           {/* Heart Save Button */}

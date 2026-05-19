@@ -49,7 +49,7 @@ export function HealthAdviceCard({ icon: Icon, title, modernAdvice, traditionalA
           </div>
           <ul className="space-y-3 pl-1">
             {modernAdvice.map((advice, i) => (
-              <li key={i} className="text-sm sm:text-base text-[var(--text-secondary)] flex items-start gap-3 leading-relaxed font-medium">
+              <li key={i} className="text-sm sm:text-base text-[var(--text-secondary)] flex items-start gap-3 leading-relaxed font-bold">
                 <span className="text-sky-500 mt-1.5 text-[8px] flex-shrink-0">●</span>
                 <span className="group-hover/modern:text-[var(--text-primary)] transition-colors">{advice}</span>
               </li>
@@ -68,7 +68,7 @@ export function HealthAdviceCard({ icon: Icon, title, modernAdvice, traditionalA
           </div>
           <ul className="space-y-3 pr-1">
             {traditionalAdvice.map((advice, i) => (
-              <li key={i} className="text-sm sm:text-base text-[var(--text-secondary)] flex flex-row-reverse items-start gap-3 leading-relaxed font-medium text-right">
+              <li key={i} className="text-sm sm:text-base text-[var(--text-secondary)] flex flex-row-reverse items-start gap-3 leading-relaxed font-bold text-right">
                 <span className="text-emerald-500 mt-1 text-[10px] flex-shrink-0">✦</span>
                 <span className="group-hover/trad:text-amber-50 transition-colors">{advice}</span>
               </li>

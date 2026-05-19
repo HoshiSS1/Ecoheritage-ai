@@ -73,9 +73,8 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
                   </Link>
                 ) : (
                   <div className="relative group/sub">
-                    <Link 
-                      to={l.path}
-                      className={`relative text-[16px] font-bold transition-all duration-500 hover:text-amber-400 flex items-center gap-1.5 group/navitem ${
+                    <span 
+                      className={`relative text-[16px] font-bold transition-all duration-500 hover:text-amber-400 flex items-center gap-1.5 cursor-pointer group/navitem ${
                         isActive ? 'text-white' : 'text-white/70'
                       }`}
                     >
@@ -84,7 +83,7 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
                       <span className={`absolute -bottom-1 left-0 h-[2px] bg-amber-400 transition-all duration-500 ${
                         isActive ? 'w-full opacity-100 shadow-[0_0_10px_rgba(251,191,36,0.8)]' : 'w-0 opacity-0 group-hover/navitem:w-full group-hover/navitem:opacity-100'
                       }`} />
-                    </Link>
+                    </span>
 
                     {l.subItems && (
                       <div className="absolute top-full -left-6 pt-6 opacity-0 translate-y-3 invisible group-hover/sub:opacity-100 group-hover/sub:translate-y-0 group-hover/sub:visible transition-all duration-500 z-50">

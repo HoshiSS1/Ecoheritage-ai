@@ -408,7 +408,7 @@ export function HeritagePage() {
                         transition={{ duration: 0.2 }}
                         className="absolute top-full left-0 right-0 mt-2 bg-[#0a2e1f]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden z-50 origin-top"
                       >
-                        <div className="max-h-60 overflow-y-auto custom-scrollbar py-2">
+                        <div data-lenis-prevent="true" className="max-h-60 overflow-y-auto custom-scrollbar py-2">
                           {defaultRemedies.map(r => (
                             <button
                               key={r.id}

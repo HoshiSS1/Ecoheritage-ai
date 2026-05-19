@@ -14,7 +14,7 @@ body, html, #root {
   margin: 0;
   padding: 0;
   overflow-anchor: none;
-  scroll-behavior: smooth;
+  scroll-behavior: auto !important;
 }
 
 /* Fluidity & Hardware Acceleration */
@@ -81,7 +81,7 @@ p, span, a, button, li {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -238,4 +238,25 @@ body {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+}
+
+/* Lenis smooth scrolling resets */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  scroll-behavior: inherit;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

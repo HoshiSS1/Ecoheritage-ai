@@ -64,7 +64,7 @@ export function StatusBadge({ label, variant = 'emerald', pulse = false, icon: I
   const v = variants[variant];
 
   return (
-    <div className={`inline-flex items-center gap-2 rounded-full border ${v.bg} ${v.border} ${v.text} px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur-sm ${className}`}>
+    <div className={`inline-flex items-center gap-2 rounded-full border ${v.bg} ${v.border} ${v.text} px-3.5 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] backdrop-blur-sm ${className}`}>
       {pulse && (
         <span className="relative flex h-2 w-2">
           <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${v.dot} opacity-75`} />
