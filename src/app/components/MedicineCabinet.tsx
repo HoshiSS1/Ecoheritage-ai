@@ -2,6 +2,51 @@ import { Heart, ArrowRight, Leaf, Sparkles, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { GlassCard } from "./GlassCard";
+import * as REMEDY_IMAGES from "../remedyImages";
+
+const ID_TO_IMAGE_MAP: Record<string, string> = {
+  'tra-la-sen': 'traLaSenMatOngImage',
+  'siro-la-lot': 'siroLaLotMatOngImage',
+  'canh-kho-qua': 'canhKhoQuaXuongSenImage',
+  'nuoc-gung': 'nuocGungNgheMatOngImage',
+  'xong-hoi': 'xongHoiTinhDauBacHaImage',
+  'tra-atiso': 'traAtisoDoHatChiaImage',
+  'ngam-chan-ngai-cuu': 'ngamChanNgaiCuuImage',
+  'nuoc-tia-to': 'nuocTiaToDuongPheImage',
+  'che-vang': 'cheVangMatGanImage',
+  'toi-ngam-mat-ong': 'toiNgamMatOngImage',
+  'nuoc-dau-den': 'nuocDauDenRangImage',
+  'nha-dam-duong-phen': 'nhaDamDuongPhenImage',
+  'nuoc-rau-ma': 'nuocRauMaImage',
+  'tra-gung-duong-den': 'traGungDuongDenImage',
+  'chao-tia-to': 'chaoTiaToImage',
+  'nuoc-sa-chanh': 'nuocSaChanhImage',
+  'tra-tam-sen': 'traTamSenImage',
+  'nuoc-voi-tuoi': 'nuocVoiTuoiImage',
+  'tra-gung-mat-ong': 'traGungMatOngImage',
+  'nuoc-dau-van-rang': 'nuocDauVanRangImage',
+  'tra-hoa-cuc': 'traHoaCucImage',
+};
+
+const resolveRemedyImage = (remedy: any) => {
+  if (!remedy) return null;
+  const id = remedy.id;
+  
+  if (id && id in ID_TO_IMAGE_MAP) {
+    const varName = ID_TO_IMAGE_MAP[id];
+    if (varName in REMEDY_IMAGES) {
+      return (REMEDY_IMAGES as any)[varName];
+    }
+  }
+
+  const imageUrl = remedy.imageUrl;
+  if (imageUrl) {
+    if (imageUrl.startsWith('data:') || imageUrl.startsWith('http') || imageUrl.startsWith('/uploads') || imageUrl.startsWith('/')) {
+      return imageUrl;
+    }
+  }
+  return null;
+};
 
 interface Remedy {
   id:          string;
@@ -23,7 +68,7 @@ const IMAGES = [
 /* ── Remedy Card ──────────────────────────────────────────────────── */
 function RemedyCard({ remedy, index }: { remedy: Remedy; index: number }) {
   const [liked, setLiked] = useState(true);
-  const img = remedy.imageUrl ?? IMAGES[index % IMAGES.length];
+  const img = resolveRemedyImage(remedy) ?? IMAGES[index % IMAGES.length];
 
   return (
     <motion.div

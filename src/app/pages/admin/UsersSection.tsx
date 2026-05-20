@@ -43,11 +43,9 @@ export function UsersSection() {
       } catch { /* ignore */ }
     };
     loadUsers();
-    const interval = setInterval(loadUsers, 2000);
     window.addEventListener("storage", loadUsers);
     window.addEventListener("storage_sync", loadUsers);
     return () => {
-      clearInterval(interval);
       window.removeEventListener("storage", loadUsers);
       window.removeEventListener("storage_sync", loadUsers);
     };
@@ -159,12 +157,12 @@ export function UsersSection() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="relative group/avatar shrink-0">
-                        <div className="w-10 h-10 rounded-xl p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400 shadow-sm transition-transform group-hover/avatar:scale-105">
-                          <div className="w-full h-full rounded-[10px] bg-white p-[1px] overflow-hidden">
+                        <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400 shadow-sm transition-transform group-hover/avatar:scale-105">
+                          <div className="w-full h-full rounded-full bg-white overflow-hidden">
                             <img 
-                              src={localStorage.getItem(`avatar_${user.email}`) || getAvatarUrl(user.name || "Vô danh")} 
+                              src={getAvatarUrl(user.name || "Vô danh", user.email)} 
                               alt={user.name || "Avatar"} 
-                              className="w-full h-full object-cover grayscale-[0.2] contrast-110"
+                              className="w-full h-full object-cover rounded-full"
                             />
                           </div>
                         </div>

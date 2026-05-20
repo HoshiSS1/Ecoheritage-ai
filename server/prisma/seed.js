@@ -75,11 +75,54 @@ async function main() {
     console.log(`Created heritage: ${h.name}`);
   }
   
+  // Ánh xạ liên kết bài thuốc với di sản dược liệu tương thích dựa trên thực địa tự nhiên
+  const remedyToHeritageMap = {
+    'tra-la-sen': 'loc-11',       // Bảo Tàng Di Sản Đồng Đình (đầm sen rừng tự nhiên)
+    'siro-la-lot': 'loc-2',       // Làng Nghề Thuốc Nam Túy Loan (trồng lá lốt nhiều)
+    'canh-kho-qua': 'loc-12',     // Khu Sinh Thái Thảo Mộc Nam Ô (mướp đắng rừng)
+    'nuoc-gung': 'loc-7',         // Vùng Nguyên Liệu Cẩm Lệ (gừng tươi ven sông)
+    'xong-hoi': 'loc-7',          // Vùng Nguyên Liệu Cẩm Lệ (sả, chanh, bạc hà)
+    'tra-hoa-cuc': 'loc-10',      // Phố Đông Y Ông Ích Khiêm (nổi tiếng trà hoa cúc)
+    'tra-atiso': 'loc-5',         // Vườn Thảo Mộc Trung Tâm Hải Châu (atiso đỏ Hải Châu)
+    'ngam-chan-ngai-cuu': 'loc-3', // Trạm Dược Liệu Ngũ Hành Sơn (ngải cứu kẽ đá)
+    'nuoc-tia-to': 'loc-2',       // Làng Nghề Thuốc Nam Túy Loan (tía tô Túy Loan)
+    'che-vang': 'loc-1',          // Khu Bảo Tồn Thiên Nhiên Sơn Trà (chè dây, chè vằng quý Sơn Trà)
+    'toi-ngam-mat-ong': 'loc-7',  // Vùng Nguyên Liệu Cẩm Lệ
+    'nuoc-dau-den': 'loc-7',      // Vùng Nguyên Liệu Cẩm Lệ
+    'nha-dam-duong-phen': 'loc-7', // Vùng Nguyên Liệu Cẩm Lệ
+    'nuoc-rau-ma': 'loc-7',       // Vùng Nguyên Liệu Cẩm Lệ
+    'tra-gung-duong-den': 'loc-10', // Phố Đông Y Ông Ích Khiêm
+    'chao-tia-to': 'loc-12',      // Khu Sinh Thái Thảo Mộc Nam Ô
+    'nuoc-sa-chanh': 'loc-7',     // Vùng Nguyên Liệu Cẩm Lệ
+    'tra-tam-sen': 'loc-11',      // Bảo Tàng Di Sản Đồng Đình
+    'nuoc-voi-tuoi': 'loc-2',     // Làng Nghề Thuốc Nam Túy Loan
+    'tra-gung-mat-ong': 'loc-10', // Phố Đông Y Ông Ích Khiêm
+    'nuoc-dau-van-rang': 'loc-7',  // Vùng Nguyên Liệu Cẩm Lệ
+    'canh-bi-dao': 'loc-7',       // Vùng Nguyên Liệu Cẩm Lệ
+    'nuoc-ep-diep-ca': 'loc-7',    // Vùng Nguyên Liệu Cẩm Lệ
+    'che-hat-sen-long-nhan': 'loc-11', // Bảo Tàng Di Sản Đồng Đình
+    'sua-gao-lut-rang': 'loc-7',   // Vùng Nguyên Liệu Cẩm Lệ
+    'chanh-dao-mat-ong': 'loc-7'   // Vùng Nguyên Liệu Cẩm Lệ
+  };
+
   // Seed Remedies
   for (const r of remedies) {
+    const heritageSlug = remedyToHeritageMap[r.id];
+    let heritageId = null;
+
+    if (heritageSlug) {
+      const dbHeritage = await prisma.heritage.findUnique({
+        where: { slugId: heritageSlug }
+      });
+      if (dbHeritage) {
+        heritageId = dbHeritage.id;
+      }
+    }
+
     await prisma.remedy.create({
       data: {
         slugId: r.id,
+        heritageId: heritageId,
         name: r.name,
         category: r.category,
         ingredients: JSON.stringify(r.ingredients || []),
@@ -91,7 +134,7 @@ async function main() {
         imageUrl: typeof r.imageUrl === 'string' && r.imageUrl.startsWith('/') ? r.imageUrl : `/images/${r.id}.jpg`,
       }
     });
-    console.log(`Created remedy: ${r.name}`);
+    console.log(`Created remedy: ${r.name} linked to heritageId: ${heritageId}`);
   }
   
   console.log('Seeding finished.');

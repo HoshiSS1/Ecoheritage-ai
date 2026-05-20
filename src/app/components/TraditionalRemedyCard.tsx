@@ -6,6 +6,46 @@ import { Sparkles, Leaf, Info, X, ChevronRight, BookOpen, Clock, Heart } from 'l
 import { toast } from 'sonner';
 import { GlassCard } from './GlassCard';
 import { StatusBadge } from './StatusBadge';
+import * as REMEDY_IMAGES from '../remedyImages';
+
+const ID_TO_IMAGE_MAP: Record<string, string> = {
+  'tra-la-sen': 'traLaSenMatOngImage',
+  'siro-la-lot': 'siroLaLotMatOngImage',
+  'canh-kho-qua': 'canhKhoQuaXuongSenImage',
+  'nuoc-gung': 'nuocGungNgheMatOngImage',
+  'xong-hoi': 'xongHoiTinhDauBacHaImage',
+  'tra-atiso': 'traAtisoDoHatChiaImage',
+  'ngam-chan-ngai-cuu': 'ngamChanNgaiCuuImage',
+  'nuoc-tia-to': 'nuocTiaToDuongPheImage',
+  'che-vang': 'cheVangMatGanImage',
+  'toi-ngam-mat-ong': 'toiNgamMatOngImage',
+  'nuoc-dau-den': 'nuocDauDenRangImage',
+  'nha-dam-duong-phen': 'nhaDamDuongPhenImage',
+  'nuoc-rau-ma': 'nuocRauMaImage',
+  'tra-gung-duong-den': 'traGungDuongDenImage',
+  'chao-tia-to': 'chaoTiaToImage',
+  'nuoc-sa-chanh': 'nuocSaChanhImage',
+  'tra-tam-sen': 'traTamSenImage',
+  'nuoc-voi-tuoi': 'nuocVoiTuoiImage',
+  'tra-gung-mat-ong': 'traGungMatOngImage',
+  'nuoc-dau-van-rang': 'nuocDauVanRangImage',
+  'tra-hoa-cuc': 'traHoaCucImage',
+};
+
+const resolveRemedyImage = (id: string, imageUrl?: string) => {
+  if (id && id in ID_TO_IMAGE_MAP) {
+    const varName = ID_TO_IMAGE_MAP[id];
+    if (varName in REMEDY_IMAGES) {
+      return (REMEDY_IMAGES as any)[varName];
+    }
+  }
+  if (imageUrl) {
+    if (imageUrl.startsWith('data:') || imageUrl.startsWith('http') || imageUrl.startsWith('/uploads') || imageUrl.startsWith('/')) {
+      return imageUrl;
+    }
+  }
+  return null;
+};
 
 interface TraditionalRemedyCardProps {
   id: string;
@@ -88,9 +128,9 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
         
         {/* Image Section */}
         <div className="relative aspect-[4/3] overflow-hidden rounded-b-[var(--radius-xl)] z-10 border-b border-[var(--border-default)]">
-          {imageUrl ? (
+          {resolveRemedyImage(id, imageUrl) ? (
             <ImageWithFallback
-              src={imageUrl}
+              src={resolveRemedyImage(id, imageUrl)!}
               alt={name}
               className="w-full h-full object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-[2s] ease-out will-change-transform"
             />
@@ -199,7 +239,7 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
       {createPortal(
         <AnimatePresence>
           {isModalOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" style={{ margin: 0 }}>
+            <div className="fixed inset-0 flex items-center justify-center p-4 sm:p-6" style={{ margin: 0, zIndex: 9999 }}>
               {/* Backdrop */}
               <motion.div
                 initial={{ opacity: 0 }}
@@ -238,7 +278,7 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
                 </div>
 
                 {/* Body */}
-                <div className="p-5 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
+                <div data-lenis-prevent="true" className="p-5 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-6 flex items-center gap-2">
                     <Leaf className="w-3.5 h-3.5 text-emerald-400" /> Các bước thực hiện
                   </h4>

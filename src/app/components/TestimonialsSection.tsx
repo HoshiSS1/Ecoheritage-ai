@@ -54,10 +54,12 @@ export function TestimonialsSection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !comment.trim()) {
-      toast.error('Vui lòng nhập tên và lời góp ý của bạn!');
+    if (!comment.trim()) {
+      toast.error('Vui lòng nhập lời góp ý của bạn!');
       return;
     }
+
+    const finalName = name.trim() || 'Ẩn danh';
 
     setIsSubmitting(true);
     setTimeout(() => {
@@ -70,7 +72,7 @@ export function TestimonialsSection() {
       
       saveAdminFeedback({
         id: newId,
-        author: name,
+        author: finalName,
         authorEmail: userEmail,
         remedyUsed: 'Nền tảng EcoHeritage',
         content: comment,

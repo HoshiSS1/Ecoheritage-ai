@@ -119,14 +119,12 @@ export function AdminLayout() {
 
   useEffect(() => {
     pollPending();
-    const interval = setInterval(pollPending, 5000);
 
     const handleStorageChange = () => { pollPending(); };
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("storage_sync", handleStorageChange);
 
     return () => {
-      clearInterval(interval);
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("storage_sync", handleStorageChange);
     };
@@ -162,7 +160,7 @@ export function AdminLayout() {
       </div>
 
       {/* Nav */}
-      <div className="flex-1 space-y-2 overflow-y-auto custom-scrollbar pr-2">
+      <div data-lenis-prevent="true" className="flex-1 space-y-2 overflow-y-auto custom-scrollbar pr-2">
         <p className="px-4 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4 mt-2">Phân hệ điều hành</p>
 
         {canAccess("overview") && (
@@ -291,7 +289,7 @@ export function AdminLayout() {
                       <RefreshCw className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                  <div className="max-h-[300px] overflow-y-auto">
+                  <div data-lenis-prevent="true" className="max-h-[300px] overflow-y-auto">
                     {pendingNotifs.length === 0 ? (
                       <div className="px-4 py-8 text-center text-sm text-slate-500">
                         Không có thông báo mới nào

@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")!).render(
     <ScrollToTop />
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <App />
-      <Toaster position="bottom-right" richColors />
+      <Toaster position="bottom-right" richColors closeButton />
     </GoogleOAuthProvider>
   </BrowserRouter>
 );

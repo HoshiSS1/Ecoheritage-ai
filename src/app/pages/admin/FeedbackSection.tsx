@@ -51,12 +51,10 @@ export function FeedbackSection({ onPendingChange }: FeedbackSectionProps) {
 
     window.addEventListener('storage', syncFromStorage);
     window.addEventListener('storage_sync', syncFromStorage);
-    const interval = setInterval(syncFromStorage, 2000);
     
     return () => {
       window.removeEventListener('storage', syncFromStorage);
       window.removeEventListener('storage_sync', syncFromStorage);
-      clearInterval(interval);
     };
   }, []);
 

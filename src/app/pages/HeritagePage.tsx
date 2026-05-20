@@ -168,8 +168,8 @@ export function HeritagePage() {
       finalName = fbName.trim();
     }
 
-    if (finalName === 'Khách' && !fbName.trim() && !activeUser) {
-      toast.error('Vui lòng nhập đầy đủ tên và nhận xét của bạn!');
+    if (!fbComment.trim()) {
+      toast.error('Vui lòng nhập nội dung nhận xét của bạn!');
       return;
     }
 

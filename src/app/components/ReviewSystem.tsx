@@ -228,7 +228,7 @@ export function ReviewSystem({ remedyId, remedyName }: ReviewSystemProps) {
           Cộng đồng nói gì ({reviews.length})
         </h5>
         
-        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+        <div data-lenis-prevent="true" className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
           <AnimatePresence mode="popLayout">
             {reviews.length === 0 ? (
               <motion.p

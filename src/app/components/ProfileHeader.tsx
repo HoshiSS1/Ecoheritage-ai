@@ -12,7 +12,7 @@ interface ProfileHeaderProps {
 }
 
 const AVATAR_SRC =
-  "https://images.unsplash.com/photo-1734669578512-91222908a263?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400";
+  `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#059669"/><stop offset="50%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs><rect width="128" height="128" rx="64" fill="url(#g)"/><text x="64" y="64" text-anchor="middle" dominant-baseline="central" font-family="Inter,system-ui,sans-serif" font-weight="700" font-size="52" fill="white" opacity="0.95">U</text></svg>')}`;
 
 const WEEK_ACTIVITY = [
   { day: "T2", active: true  },

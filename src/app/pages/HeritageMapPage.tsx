@@ -1,19 +1,95 @@
 import React, { useState, useMemo, useLayoutEffect, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router';
-import { Search, Leaf, MapPin, ChevronLeft, ChevronRight, Share2, Activity, History as HistoryIcon, Star, Clock, Sprout, Navigation } from 'lucide-react';
+import { Search, Leaf, MapPin, ChevronLeft, ChevronRight, Share2, Activity, History as HistoryIcon, Star, Clock, Sprout, Navigation, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { HeritageMap } from '../components/HeritageMap';
 import { useHeritages } from '../hooks/useApi';
 import { useAirQuality } from '../utils/useAirQuality';
 import { LOCATIONS_STORAGE_KEY } from './admin/adminUtils';
+import { traditionalRemedies } from '../data';
+import * as REMEDY_IMAGES from '../remedyImages';
+
+const ID_TO_IMAGE_MAP: Record<string, string> = {
+  'tra-la-sen': 'traLaSenMatOngImage',
+  'siro-la-lot': 'siroLaLotMatOngImage',
+  'canh-kho-qua': 'canhKhoQuaXuongSenImage',
+  'nuoc-gung': 'nuocGungNgheMatOngImage',
+  'xong-hoi': 'xongHoiTinhDauBacHaImage',
+  'tra-atiso': 'traAtisoDoHatChiaImage',
+  'ngam-chan-ngai-cuu': 'ngamChanNgaiCuuImage',
+  'nuoc-tia-to': 'nuocTiaToDuongPheImage',
+  'che-vang': 'cheVangMatGanImage',
+  'toi-ngam-mat-ong': 'toiNgamMatOngImage',
+  'nuoc-dau-den': 'nuocDauDenRangImage',
+  'nha-dam-duong-phen': 'nhaDamDuongPhenImage',
+  'nuoc-rau-ma': 'nuocRauMaImage',
+  'tra-gung-duong-den': 'traGungDuongDenImage',
+  'chao-tia-to': 'chaoTiaToImage',
+  'nuoc-sa-chanh': 'nuocSaChanhImage',
+  'tra-tam-sen': 'traTamSenImage',
+  'nuoc-voi-tuoi': 'nuocVoiTuoiImage',
+  'tra-gung-mat-ong': 'traGungMatOngImage',
+  'nuoc-dau-van-rang': 'nuocDauVanRangImage',
+  'tra-hoa-cuc': 'traHoaCucImage',
+};
+
+const resolveRemedyImage = (remedy: any) => {
+  if (!remedy) return null;
+  const id = remedy.id || remedy.slugId;
+  
+  if (id && id in ID_TO_IMAGE_MAP) {
+    const varName = ID_TO_IMAGE_MAP[id];
+    if (varName in REMEDY_IMAGES) {
+      return (REMEDY_IMAGES as any)[varName];
+    }
+  }
+
+  const imageUrl = remedy.imageUrl;
+  if (imageUrl) {
+    if (imageUrl.startsWith('data:') || imageUrl.startsWith('http') || imageUrl.startsWith('/uploads') || imageUrl.startsWith('/')) {
+      return imageUrl;
+    }
+  }
+  return null;
+};
+
+const REMEDY_TO_HERITAGE_MAP: Record<string, string> = {
+  'tra-la-sen': 'loc-11',
+  'siro-la-lot': 'loc-2',
+  'canh-kho-qua': 'loc-12',
+  'nuoc-gung': 'loc-7',
+  'xong-hoi': 'loc-7',
+  'tra-hoa-cuc': 'loc-10',
+  'tra-atiso': 'loc-5',
+  'ngam-chan-ngai-cuu': 'loc-3',
+  'nuoc-tia-to': 'loc-2',
+  'che-vang': 'loc-1',
+  'toi-ngam-mat-ong': 'loc-7',
+  'nuoc-dau-den': 'loc-7',
+  'nha-dam-duong-phen': 'loc-7',
+  'nuoc-rau-ma': 'loc-7',
+  'tra-gung-duong-den': 'loc-10',
+  'chao-tia-to': 'loc-12',
+  'nuoc-sa-chanh': 'loc-7',
+  'tra-tam-sen': 'loc-11',
+  'nuoc-voi-tuoi': 'loc-2',
+  'tra-gung-mat-ong': 'loc-10',
+  'nuoc-dau-van-rang': 'loc-7',
+  'canh-bi-dao': 'loc-7',
+  'nuoc-ep-diep-ca': 'loc-7',
+  'che-hat-sen-long-nhan': 'loc-11',
+  'sua-gao-lut-rang': 'loc-7',
+  'chanh-dao-mat-ong': 'loc-7'
+};
 
 export function HeritageMapPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('Tất cả');
   const [activeLocationId, setActiveLocationId] = useState<string | null>(null);
   const [savedLocations, setSavedLocations] = useState<string[]>([]);
+  const [activeRemedy, setActiveRemedy] = useState<any | null>(null);
   const detailPanelRef = useRef<HTMLDivElement>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
     // Default collapsed on mobile (< 768px)
@@ -59,17 +135,26 @@ export function HeritageMapPage() {
 
   useEffect(() => {
     if (!loading && backendHeritages.length > 0) {
-      const mapped = backendHeritages.map((l: any) => ({
-        ...l,
-        position: l.position || [l.latitude, l.longitude],
-        image: l.image || l.imageUrl,
-        herbs: typeof l.herbs === 'string' ? l.herbs.split(',').map((h: string) => h.trim()) : l.herbs,
-        history: l.history || 'Nguồn gốc đang được cập nhật thêm thông tin chân thực từ người dân địa phương.',
-        comments: l.comments && l.comments.length > 0 ? l.comments : [
-          { user: 'Trần Bình', text: 'Không gian rất tốt, mọi người nên đến trải nghiệm!', rating: 5 },
-          { user: 'Ngọc Lan', text: 'Nhiều thảo dược quý, môi trường bảo tồn tuyệt vời.', rating: 4 }
-        ]
-      })).filter((l: any) => l.isVisible !== false);
+      const mapped = backendHeritages.map((l: any) => {
+        let remedies = l.remedies;
+        if (!remedies || remedies.length === 0) {
+          remedies = traditionalRemedies.filter(
+            (r) => REMEDY_TO_HERITAGE_MAP[r.id] === l.slugId || REMEDY_TO_HERITAGE_MAP[r.id] === l.id
+          );
+        }
+        return {
+          ...l,
+          position: l.position || [l.latitude, l.longitude],
+          image: l.image || l.imageUrl,
+          herbs: typeof l.herbs === 'string' ? l.herbs.split(',').map((h: string) => h.trim()) : l.herbs,
+          history: l.history || 'Nguồn gốc đang được cập nhật thêm thông tin chân thực từ người dân địa phương.',
+          remedies: remedies || [],
+          comments: l.comments && l.comments.length > 0 ? l.comments : [
+            { user: 'Trần Bình', text: 'Không gian rất tốt, mọi người nên đến trải nghiệm!', rating: 5 },
+            { user: 'Ngọc Lan', text: 'Nhiều thảo dược quý, môi trường bảo tồn tuyệt vời.', rating: 4 }
+          ]
+        };
+      }).filter((l: any) => l.isVisible !== false);
       setLocations(mapped);
     }
   }, [backendHeritages, loading]);
@@ -144,6 +229,25 @@ export function HeritageMapPage() {
   }, [activeLocationId]);
 
   const toggleSaveLocation = (locId: string) => {
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    const activeUser = sessionStorage.getItem('ecoheritage_active_user');
+    if (!activeUser) {
+      toast.error('Yêu cầu đăng nhập!', {
+        description: 'Vui lòng đăng nhập để lưu địa điểm này vào danh sách quan tâm.',
+        duration: 5000,
+        style: {
+          fontSize: '15px',
+          fontWeight: 'bold',
+          padding: '18px 22px',
+          borderRadius: '18px',
+          background: 'linear-gradient(135deg, #2e0a0a 0%, #1a0505 100%)',
+          color: '#fff',
+          border: '1px solid rgba(239,68,68,0.3)',
+        },
+      });
+      return;
+    }
+
     let newSaved = [...savedLocations];
     if (newSaved.includes(locId)) {
       newSaved = newSaved.filter(id => id !== locId);
@@ -444,6 +548,58 @@ export function HeritageMapPage() {
                   </div>
                 )}
 
+                {/* SECTION 2.5: Bài thuốc y lý cổ truyền */}
+                {activeLoc.remedies && activeLoc.remedies.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1 h-4 bg-emerald-400 rounded-full" />
+                      <h3 className="text-[13px] font-black uppercase text-white tracking-[0.2em]">Bài thuốc cổ truyền liên quan</h3>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
+                      {activeLoc.remedies.map((remedy: any) => (
+                        <div
+                          key={remedy.id}
+                          onClick={() => setActiveRemedy(remedy)}
+                          className="bg-white/[0.02] border border-white/5 hover:bg-white/[0.06] hover:border-emerald-500/20 rounded-2xl p-4 transition-all duration-300 flex items-start gap-4 group cursor-pointer"
+                        >
+                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 shrink-0 group-hover:scale-105 transition-transform duration-500 relative">
+                            {resolveRemedyImage(remedy) ? (
+                              <img
+                                src={resolveRemedyImage(remedy) || undefined}
+                                alt={remedy.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-emerald-500/10 flex items-center justify-center text-2xl">
+                                {remedy.image || '🍵'}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1 gap-2">
+                              <h4 className="font-bold text-[14px] text-white group-hover:text-emerald-400 transition-colors uppercase tracking-tight truncate">
+                                {remedy.name}
+                              </h4>
+                              <span className="px-2 py-0.5 bg-amber-400/10 border border-amber-400/25 text-amber-400 rounded text-[9px] font-bold uppercase tracking-wider shrink-0">
+                                {remedy.category}
+                              </span>
+                            </div>
+                            <p className="text-[12px] text-white/60 line-clamp-2 leading-relaxed mb-3">
+                              {remedy.benefits}
+                            </p>
+                            <button
+                              type="button"
+                              className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition-colors"
+                            >
+                              Xem bài thuốc <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* SECTION 4: Thông tin tham quan */}
                 <div className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 space-y-5">
                   <div className="flex items-center gap-2">
@@ -551,6 +707,141 @@ export function HeritageMapPage() {
               </div>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* GLASSMORPHIC REMEDY DETAIL MODAL */}
+      <AnimatePresence>
+        {activeRemedy && (
+          <div className="fixed inset-0 flex items-center justify-center p-4 sm:p-6 md:p-8" style={{ zIndex: 9999 }}>
+            {/* Backdrop Blur */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveRemedy(null)}
+              className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            />
+            
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 180 }}
+              className="relative w-full max-w-2xl bg-[#03130c]/95 border border-emerald-500/20 rounded-[2rem] shadow-[0_30px_100px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col max-h-[85vh] z-10"
+            >
+              {/* Glowing Background Art */}
+              <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
+              <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-amber-500/10 blur-[100px] pointer-events-none" />
+
+              {/* Close Button */}
+              <button
+                onClick={() => setActiveRemedy(null)}
+                className="absolute top-6 right-6 z-30 w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:bg-emerald-500 hover:text-[#051a11] hover:border-emerald-400 text-white flex items-center justify-center transition-all duration-300"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Modal Body */}
+              <div data-lenis-prevent="true" className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 md:p-10 space-y-8 z-10">
+                {/* Header Info */}
+                <div className="flex items-center gap-4 pt-4 sm:pt-0">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-lg">
+                    {resolveRemedyImage(activeRemedy) ? (
+                      <img
+                        src={resolveRemedyImage(activeRemedy) || undefined}
+                        alt={activeRemedy.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-emerald-500/20 to-emerald-700/10 flex items-center justify-center text-4xl sm:text-5xl">
+                        {activeRemedy.image || '🍵'}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <span className="px-3 py-1 bg-amber-400/10 border border-amber-400/25 text-amber-400 rounded-md text-[10px] font-black uppercase tracking-widest inline-block mb-2">
+                      {activeRemedy.category}
+                    </span>
+                    <h2 className="text-xl sm:text-3xl font-display font-black text-white uppercase tracking-tight leading-tight">
+                      {activeRemedy.name}
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Callout benefits */}
+                <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-transparent border-l-4 border-emerald-500">
+                  <p className="text-[13px] text-emerald-100 font-bold uppercase tracking-wider mb-1.5 opacity-60">
+                    ✨ Tác dụng đặc trưng
+                  </p>
+                  <p className="text-[14px] sm:text-[15px] text-white/90 font-semibold leading-relaxed">
+                    {activeRemedy.benefits}
+                  </p>
+                </div>
+
+                {/* Ingredients Grid */}
+                {activeRemedy.ingredients && activeRemedy.ingredients.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-black uppercase text-white/40 tracking-[0.2em] flex items-center gap-2">
+                      <Sprout className="w-4 h-4 text-emerald-400" /> Thành phần dược liệu
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {activeRemedy.ingredients.map((ing: string, i: number) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1.5 bg-white/5 border border-white/10 hover:border-emerald-500/30 rounded-xl text-white text-[12px] font-bold transition-colors"
+                        >
+                          {ing}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Steps Timeline */}
+                {activeRemedy.steps && activeRemedy.steps.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-black uppercase text-white/40 tracking-[0.2em] flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-amber-400" /> Quy trình bào chế & Sử dụng
+                    </h3>
+                    <div className="relative pl-6 space-y-6 border-l border-white/10">
+                      {activeRemedy.steps.map((step: string, i: number) => (
+                        <div key={i} className="relative group">
+                          {/* Timeline dot */}
+                          <div className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-[#03130c] border-2 border-emerald-500 flex items-center justify-center group-hover:scale-125 group-hover:bg-emerald-500 transition-all">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:bg-white" />
+                          </div>
+                          
+                          {/* Step Content */}
+                          <div>
+                            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest block mb-1">
+                              Bước {i + 1}
+                            </span>
+                            <p className="text-[13px] sm:text-[14px] text-white/80 leading-relaxed font-medium">
+                              {step}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Usage Detail */}
+                {activeRemedy.usage && (
+                  <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                    <h4 className="text-[10px] font-black text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                      💡 Hướng dẫn sử dụng
+                    </h4>
+                    <p className="text-[13px] text-white/80 leading-relaxed font-medium italic">
+                      {activeRemedy.usage}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

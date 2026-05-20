@@ -224,7 +224,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                      {avatarPreview ? (
                         <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                      ) : (
-                        <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full object-cover grayscale-[0.2]" />
+                        <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full object-cover" />
                      )}
                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm" onClick={() => avatarInputRef.current?.click()}>
                         <Camera className="w-6 h-6 text-white" />

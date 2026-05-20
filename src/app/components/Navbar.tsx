@@ -139,7 +139,7 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
                   {userAvatar ? (
                     <img src={userAvatar} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full object-cover grayscale-[0.2]" />
+                    <img src={getAvatarUrl(user.name, user.email)} alt={user.name} className="w-full h-full object-cover" />
                   )}
                 </div>
                 <span className="text-sm font-bold text-white tracking-tight">{user.name}</span>
@@ -209,7 +209,7 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               className="lg:hidden absolute top-[90px] left-4 right-4 bg-[#0a2e1f]/98 shadow-[0_40px_80px_rgba(0,0,0,1)] rounded-[2.5rem] border border-[var(--border-default)] overflow-hidden z-[120]"
             >
-              <div className="px-6 py-8 flex flex-col gap-2 relative max-h-[75vh] overflow-y-auto custom-scrollbar">
+              <div data-lenis-prevent="true" className="px-6 py-8 flex flex-col gap-2 relative max-h-[75vh] overflow-y-auto custom-scrollbar">
             <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-[50px] rounded-full" />
             
             {navLinks.map((l) => (

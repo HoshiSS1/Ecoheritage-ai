@@ -65,8 +65,6 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   const triggerSuccessConfetti = () => {
     confetti({
       particleCount: 120,
@@ -196,9 +194,10 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
       const usersRaw = localStorage.getItem('ecoheritage_users');
       const users = usersRaw ? JSON.parse(usersRaw) : [];
       const hashedPassword = await hashPassword(password);
+      const normalizedEmail = email.toLowerCase().trim();
 
       if (isLogin) {
-        const user = users.find((u: any) => u.email === email && u.password === hashedPassword);
+        const user = users.find((u: any) => u.email.toLowerCase().trim() === normalizedEmail && u.password === hashedPassword);
         if (user) {
           if (user.status === "banned") {
             setError('Tài khoản của bạn đã bị khóa do vi phạm chính sách cộng đồng. Liên hệ Admin để biết thêm chi tiết.');
@@ -212,14 +211,14 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
           toast.error('Đăng nhập thất bại.');
         }
       } else {
-        const existingUser = users.find((u: any) => u.email === email);
+        const existingUser = users.find((u: any) => u.email.toLowerCase().trim() === normalizedEmail);
         if (existingUser) {
           setError('Email này đã được đăng ký.');
           toast.error('Email đã tồn tại.');
         } else {
           const newUser = {
             name,
-            email,
+            email: normalizedEmail,
             password: hashedPassword,
             provider: "email",
             createdAt: new Date().toISOString(),
@@ -245,59 +244,60 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="absolute inset-0 bg-black/80 backdrop-blur-md"
-        />
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center p-4 sm:p-6" style={{ zIndex: 9999 }}>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/75 backdrop-blur-lg"
+          />
 
-        {/* Modal Content */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.92, y: 30 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-md bg-[#0a1913]/95 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_0_80px_-15px_rgba(52,211,153,0.3)] border border-white/10 max-h-[90vh] flex flex-col isolate"
-        >
-          {/* Decorative background shapes */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/15 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/15 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0" />
-
-          {/* Close button */}
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onClose(); }}
-            aria-label="Đóng"
-            title="Đóng"
-            className="absolute top-5 right-5 p-2.5 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all z-50 cursor-pointer"
+          {/* Modal Content */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 30 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="relative w-full max-w-[420px] bg-[#0d1612]/50 backdrop-blur-2xl rounded-[1.5rem] shadow-[0_0_80px_-15px_rgba(52,211,153,0.25)] border border-white/10 max-h-[90vh] flex flex-col isolate"
           >
-            <X className="w-5 h-5" />
-          </button>
+            {/* Decorative background shapes */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none z-0" />
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-500/10 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none z-0" />
 
-          <div className="p-8 sm:p-10 relative z-10 overflow-y-auto overflow-x-hidden flex-1 rounded-[2.5rem] custom-scrollbar">
+            {/* Close button */}
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onClose(); }}
+              aria-label="Đóng"
+              title="Đóng"
+              className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-[#0d1612]/90 backdrop-blur-md border border-white/15 text-white/70 hover:text-emerald-400 hover:border-emerald-500/40 hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] transition-all z-50 cursor-pointer shadow-lg group"
+            >
+              <X className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+            </button>
+
+            <div data-lenis-prevent="true" className="pt-8 pb-7 px-6 sm:pt-10 sm:pb-9 sm:px-8 relative z-10 overflow-y-auto overflow-x-hidden flex-1 rounded-[1.5rem] custom-scrollbar">
             {/* Logo at top */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-5">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', delay: 0.1 }}
-                className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.4)]"
+                className="w-11 h-11 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]"
               >
-                <Leaf className="w-8 h-8 text-white" />
+                <Leaf className="w-6 h-6 text-white" />
               </motion.div>
             </div>
 
-            <div className="text-center mb-7">
-              <h2 className="font-display text-3xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-amber-200 mb-2">
+            <div className="text-center mb-6">
+              <h2 className="font-display text-2xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-amber-200 mb-2">
                 {isForgotPassword 
                   ? (forgotPasswordStep === 'email' ? 'Khôi phục mật khẩu' : forgotPasswordStep === 'otp' ? 'Xác thực mã OTP' : 'Đặt mật khẩu mới')
                   : isLogin ? 'Chào mừng trở lại' : 'Tạo tài khoản mới'}
               </h2>
-              <p className="text-sm text-emerald-100/50">
+              <p className="text-xs text-emerald-100/50">
                 {isForgotPassword
                   ? (forgotPasswordStep === 'email' ? 'Nhập email để nhận mã xác thực' : forgotPasswordStep === 'otp' ? `Mã đã gửi tới ${email}` : 'Vui lòng nhập mật khẩu mới bảo mật hơn')
                   : isLogin
@@ -308,27 +308,43 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
 
             {/* Toggle Login/Register */}
             {!isForgotPassword && (
-              <div className="flex p-1 bg-black/40 rounded-2xl mb-7 border border-white/5">
+              <div className="relative flex p-1 bg-black/50 rounded-xl mb-6 border border-white/5 shadow-inner">
                 <button
                   type="button"
                   onClick={() => setIsLogin(true)}
-                  className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${isLogin ? 'bg-gradient-to-r from-emerald-500/20 to-emerald-500/10 border border-emerald-500/50 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.15)]' : 'text-white/40 hover:text-white/70'
-                    }`}
+                  className={`relative flex-1 py-2 text-xs font-bold rounded-lg transition-colors duration-300 z-10 ${
+                    isLogin ? 'text-white' : 'text-white/40 hover:text-white/70'
+                  }`}
                 >
+                  {isLogin && (
+                    <motion.div
+                      layoutId="activeTabPill"
+                      className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg shadow-[0_2px_10px_rgba(16,185,129,0.3)] z-[-1]"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
                   Đăng nhập
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsLogin(false)}
-                  className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${!isLogin ? 'bg-gradient-to-r from-amber-500/20 to-amber-500/10 border border-amber-500/50 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.15)]' : 'text-white/40 hover:text-white/70'
-                    }`}
+                  className={`relative flex-1 py-2 text-xs font-bold rounded-lg transition-colors duration-300 z-10 ${
+                    !isLogin ? 'text-white' : 'text-white/40 hover:text-white/70'
+                  }`}
                 >
+                  {!isLogin && (
+                    <motion.div
+                      layoutId="activeTabPill"
+                      className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg shadow-[0_2px_10px_rgba(16,185,129,0.3)] z-[-1]"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
                   Đăng ký
                 </button>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <AnimatePresence mode="popLayout">
                 {!isLogin && !isForgotPassword && (
                   <motion.div
@@ -345,7 +361,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       placeholder="Họ và tên"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/60 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)] transition-all"
+                      className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)] transition-all"
                     />
                   </motion.div>
                 )}
@@ -362,7 +378,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     placeholder="Địa chỉ Email hoặc Tên đăng nhập"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/60 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)] transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)] transition-all"
                   />
                 </div>
               )}
@@ -383,7 +399,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     maxLength={6}
-                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-amber-500/30 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-amber-500/60 focus:shadow-[0_0_0_3px_rgba(245,158,11,0.15)] transition-all text-center tracking-[0.5em] placeholder:tracking-normal font-bold"
+                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-amber-500/20 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-amber-500/40 focus:shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all text-center tracking-[0.5em] placeholder:tracking-normal font-bold"
                   />
                 </motion.div>
               )}
@@ -404,7 +420,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       placeholder="Mật khẩu mới"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full pl-11 pr-12 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/60 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)] transition-all"
+                      className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)] transition-all"
                     />
                     <button
                       type="button"
@@ -440,9 +456,9 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       placeholder="Xác nhận mật khẩu mới"
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      className={`w-full pl-11 pr-4 py-3.5 bg-white/5 border rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none transition-all ${confirmNewPassword && newPassword !== confirmNewPassword
-                          ? 'border-rose-500/50 focus:shadow-[0_0_0_3px_rgba(244,63,94,0.15)]'
-                          : 'border-white/10 focus:border-emerald-500/60 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)]'
+                      className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition-all ${confirmNewPassword && newPassword !== confirmNewPassword
+                          ? 'border-rose-500/30 focus:border-rose-500/50 focus:shadow-[0_0_15px_rgba(244,63,94,0.2)]'
+                          : 'border-white/10 focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)]'
                         }`}
                     />
                   </div>
@@ -466,7 +482,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       placeholder="Mật khẩu"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-11 pr-12 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/60 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)] transition-all"
+                      className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)] transition-all"
                     />
                     <button
                       type="button"
@@ -511,9 +527,9 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                         placeholder="Xác nhận mật khẩu"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className={`w-full pl-11 pr-12 py-3.5 bg-white/5 border rounded-2xl text-sm text-white placeholder-white/30 focus:outline-none transition-all ${confirmPassword && password !== confirmPassword
-                            ? 'border-rose-500/50 focus:shadow-[0_0_0_3px_rgba(244,63,94,0.15)]'
-                            : 'border-white/10 focus:border-emerald-500/60 focus:shadow-[0_0_0_3px_rgba(16,185,129,0.15)]'
+                        className={`w-full pl-10 pr-12 py-3 bg-white/5 border rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition-all ${confirmPassword && password !== confirmPassword
+                            ? 'border-rose-500/30 focus:border-rose-500/50 focus:shadow-[0_0_15px_rgba(244,63,94,0.2)]'
+                            : 'border-white/10 focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)]'
                           }`}
                       />
                       <button
@@ -532,7 +548,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-rose-400 text-xs text-center font-medium bg-rose-500/10 border border-rose-500/20 rounded-xl py-2.5 px-4"
+                  className="text-rose-400 text-xs text-center font-medium bg-rose-500/10 border border-rose-500/20 rounded-lg py-2 px-3"
                 >
                   {error}
                 </motion.p>
@@ -561,7 +577,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
 
               <button
                 type="submit"
-                className="relative w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-2xl font-bold shadow-[0_0_30px_rgba(16,185,129,0.25)] flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden group"
+                className="relative w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl font-bold text-sm shadow-[0_0_30px_rgba(16,185,129,0.25)] flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden group"
               >
                 <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 {isForgotPassword 
@@ -569,12 +585,11 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                   : isLogin ? 'Đăng nhập' : 'Tạo tài khoản'}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
-
               {!isForgotPassword && (
                 <div className="pt-5 mt-5 border-t border-white/10 flex flex-col items-center">
-                  <p className="text-xs text-white/30 uppercase tracking-widest mb-4">Hoặc tiếp tục với</p>
+                  <p className="text-[10px] text-white/30 uppercase tracking-widest mb-2">Hoặc tiếp tục với</p>
 
-                  <div className="w-full flex justify-center items-center py-2">
+                  <div className="w-full flex justify-center items-center">
                     <GoogleLogin
                       theme="filled_black"
                       shape="pill"
@@ -650,8 +665,9 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
               )}
             </form>
           </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
+      )}
     </AnimatePresence>
   );
 }

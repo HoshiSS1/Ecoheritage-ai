@@ -396,8 +396,9 @@ export function ChatWidget({ user }: ChatWidgetProps) {
     <>
       <button
         onClick={handleOpen}
-        className={`fixed bottom-6 right-4 md:bottom-8 md:right-6 z-[90] p-3.5 md:p-4 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)] hover:scale-110 transition-all duration-300 ${isOpen && !isMinimized ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
+        className={`fixed bottom-6 right-4 md:bottom-8 md:right-6 p-3.5 md:p-4 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)] hover:scale-110 transition-all duration-300 ${isOpen && !isMinimized ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
           }`}
+        style={{ zIndex: 9997 }}
       >
         <MessageCircle className="w-6 h-6 md:w-7 md:h-7 text-[#051a11]" />
         <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -405,7 +406,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
           <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
         </span>
       </button>
-
+ 
       <AnimatePresence>
         {isOpen && !isMinimized && (
           <motion.div
@@ -413,12 +414,13 @@ export function ChatWidget({ user }: ChatWidgetProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className={`fixed z-[91] bg-[#0a1913]/98 border border-white/10 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isExpanded
-                ? 'inset-0 md:bottom-6 md:right-6 md:left-auto md:top-auto md:w-[80vw] md:max-w-[1200px] md:h-[85vh] rounded-none md:rounded-3xl'
-                : 'bottom-6 right-4 left-4 w-auto h-[75vh] md:h-[600px] max-h-[80vh] md:bottom-8 md:right-6 md:left-auto md:w-[400px] rounded-3xl'
+            style={{ zIndex: 9998 }}
+            className={`fixed bg-[#0a1913]/98 border border-white/10 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isExpanded
+                ? 'inset-0 sm:bottom-6 sm:right-6 sm:left-auto sm:top-auto sm:w-[80vw] sm:max-w-[1000px] sm:h-[80vh] rounded-none sm:rounded-2xl md:w-[80vw] md:max-w-[1100px] md:h-[82vh] md:rounded-3xl'
+                : 'bottom-4 right-4 left-4 w-auto h-[60vh] max-h-[70vh] rounded-2xl sm:bottom-6 sm:right-6 sm:left-auto sm:w-[360px] sm:h-[520px] sm:max-h-[80vh] sm:rounded-2xl md:bottom-8 md:right-6 md:w-[390px] md:h-[580px] md:max-h-[82vh] md:rounded-3xl'
               }`}
           >
-            <div className="bg-[#051a11] px-5 py-4 border-b border-white/10 flex items-center justify-between">
+            <div className="bg-[#051a11] px-4 py-3 sm:px-5 sm:py-4 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg">
@@ -460,8 +462,8 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                 </button>
               </div>
             </div>
-
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
+ 
+            <div data-lenis-prevent="true" className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 sm:space-y-4 custom-scrollbar">
               {messages.map((msg, idx) => (
                 <motion.div
                   key={`${msg.from}-${idx}`}
@@ -470,7 +472,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[92%] rounded-2xl px-4 py-3 text-[14px] md:text-[15px] leading-[1.7] shadow-md ${msg.from === 'user'
+                    className={`max-w-[92%] rounded-2xl px-3 py-2 sm:px-4 sm:py-3 text-[14px] md:text-[15px] leading-[1.7] shadow-md ${msg.from === 'user'
                       ? 'bg-amber-400 text-[#051a11] font-medium rounded-br-sm'
                       : 'bg-white/10 text-[#F8FAFC] border border-white/5 rounded-bl-sm'
                       }`}
@@ -495,7 +497,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                             </p>
                           ))}
                         </div>
-
+ 
                         {msg.relatedHeritage?.length ? (
                           <div className="pt-3 mt-4 border-t border-white/10">
                             <div className="mb-3 text-[10px] uppercase tracking-[0.35em] text-amber-300/70 font-bold flex items-center gap-2">
@@ -528,7 +530,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   </div>
                 </motion.div>
               ))}
-
+ 
               {isTyping && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
                   <div className="bg-white/10 border border-white/5 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1.5 items-center">
@@ -540,9 +542,9 @@ export function ChatWidget({ user }: ChatWidgetProps) {
               )}
               <div ref={messagesEndRef} />
             </div>
-
-            <div className="p-4 bg-[#051a11] border-t border-white/5">
-              <div className="flex gap-2 overflow-x-auto pb-3 custom-scrollbar">
+ 
+            <div className="p-3 sm:p-4 bg-[#051a11] border-t border-white/5">
+              <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-3 custom-scrollbar">
                 {suggestions.map((s) => (
                   <button
                     key={s}
@@ -553,7 +555,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   </button>
                 ))}
               </div>
-
+ 
               <div className="relative flex items-center">
                 <input
                   type="text"
@@ -561,7 +563,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Hỏi AI về sức khỏe..."
-                  className="w-full bg-[#0a2e1f] border border-white/10 rounded-full py-3 md:py-3.5 pl-4 pr-12 text-[14px] md:text-[15px] text-[#F8FAFC] placeholder-[#F8FAFC]/50 focus:outline-none focus:border-amber-400/50 transition-colors"
+                  className="w-full bg-[#0a2e1f] border border-white/10 rounded-full py-2.5 sm:py-3.5 pl-4 pr-12 text-[14px] md:text-[15px] text-[#F8FAFC] placeholder-[#F8FAFC]/50 focus:outline-none focus:border-amber-400/50 transition-colors"
                 />
                 <button
                   onClick={() => handleSendMessage()}
@@ -571,7 +573,7 @@ export function ChatWidget({ user }: ChatWidgetProps) {
                   {isTyping ? <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" /> : <Send className="w-4 h-4 md:w-5 md:h-5" />}
                 </button>
               </div>
-              <p className="mt-6 text-[10px] md:text-[11px] text-white/40 italic text-center leading-tight px-4">
+              <p className="mt-4 sm:mt-6 text-[10px] md:text-[11px] text-white/40 italic text-center leading-tight px-4">
                 ⚠️ Lưu ý: EcoHeritage AI là trợ lý cung cấp thông tin tham khảo từ di sản dân gian. Vui lòng tham vấn ý kiến chuyên gia y tế trước khi sử dụng bài thuốc.
               </p>
             </div>

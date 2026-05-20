@@ -277,12 +277,12 @@ export function DashboardSection() {
               return feedback.map((f: any) => (
                 <div key={f.id} className="flex items-start gap-4 p-5 rounded-[1.5rem] bg-slate-50 border border-slate-100 hover:border-emerald-500/30 hover:bg-white hover:shadow-md transition-all group">
                   <div className="relative group/avatar shrink-0">
-                    <div className="w-12 h-12 rounded-2xl p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400 shadow-sm transition-transform group-hover/avatar:rotate-6">
-                      <div className="w-full h-full rounded-[14px] bg-white p-[1px] overflow-hidden">
+                    <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-emerald-500 to-amber-400 shadow-sm transition-transform group-hover/avatar:rotate-6">
+                      <div className="w-full h-full rounded-full bg-white overflow-hidden">
                         <img 
-                          src={getAvatarUrl(f.author)} 
+                          src={getAvatarUrl(f.author, f.authorEmail)} 
                           alt={f.author} 
-                          className="w-full h-full object-cover grayscale-[0.1] contrast-125"
+                          className="w-full h-full object-cover rounded-full"
                         />
                       </div>
                     </div>
@@ -313,12 +313,12 @@ export function DashboardSection() {
               return users.map((u: any) => (
                 <div key={u.email} className="flex items-center gap-4 p-5 rounded-[1.5rem] bg-slate-50 border border-slate-100 hover:border-amber-500/30 hover:bg-white hover:shadow-md transition-all group">
                   <div className="relative group/avatar shrink-0">
-                    <div className="w-12 h-12 rounded-2xl p-[2px] bg-gradient-to-tr from-amber-500 to-amber-600 shadow-sm transition-transform group-hover/avatar:-rotate-6">
-                      <div className="w-full h-full rounded-[14px] bg-white p-[1px] overflow-hidden">
+                    <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-amber-500 to-amber-600 shadow-sm transition-transform group-hover/avatar:-rotate-6">
+                      <div className="w-full h-full rounded-full bg-white overflow-hidden">
                         <img 
-                          src={localStorage.getItem(`avatar_${u.email}`) || getAvatarUrl(u.name)} 
+                          src={getAvatarUrl(u.name, u.email)} 
                           alt={u.name} 
-                          className="w-full h-full object-cover grayscale-[0.1] contrast-125"
+                          className="w-full h-full object-cover rounded-full"
                         />
                       </div>
                     </div>
