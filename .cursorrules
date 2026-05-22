@@ -1,0 +1,250 @@
+# EcoHeritage AI — Quy tắc cho AI Coding Assistant
+
+> File này định nghĩa các quy tắc bắt buộc cho bất kỳ AI coding assistant nào
+> (Cursor, Antigravity, Copilot, v.v.) khi làm việc trên codebase EcoHeritage-AI.
+> AI phải đọc và tuân thủ toàn bộ nội dung bên dưới trước khi thực hiện bất kỳ thay đổi nào.
+
+---
+
+## 1. Tổng quan Dự án
+
+- **Tên**: EcoHeritage AI
+- **Mục đích**: Nền tảng AI tư vấn sức khỏe dựa trên y học cổ truyền Việt Nam, tích hợp dữ liệu môi trường real-time
+- **Ngôn ngữ chính trong UI**: Tiếng Việt (vi-VN)
+- **Đối tượng**: Người dân Đà Nẵng, sinh viên, du khách quan tâm sức khỏe & di sản
+
+---
+
+## 2. Tech Stack — KHÔNG tự ý thay đổi
+
+### Frontend
+- React 18 (SPA, không dùng Next.js)
+- TypeScript 5.5 (strict mode)
+- Vite 6.3 (build tool)
+- Tailwind CSS 4.1 (via @tailwindcss/vite plugin)
+- React Router 7 (client-side routing)
+- shadcn/ui + Radix UI (component library)
+- Motion (framer-motion successor) cho animations
+- Recharts cho biểu đồ
+- Leaflet + React Leaflet cho bản đồ
+- Lucide React cho icons
+- Sonner cho toast notifications
+- Google Generative AI SDK (Gemini) cho chatbot
+
+### Backend
+- Express.js 4
+- Prisma 5 ORM
+- SQL Server (datasource provider: sqlserver)
+- TypeScript
+
+### Deployment
+- Vercel (frontend SPA)
+- OpenWeatherMap API (AQI data)
+- Google OAuth 2.0
+
+---
+
+## 3. Cấu trúc Thư mục — Quy tắc đặt file
+
+```
+src/
+├── main.tsx                     # Entry point — KHÔNG sửa trừ khi thêm provider
+├── app/
+│   ├── App.tsx                  # Root component + routing definitions
+│   ├── data.ts                  # Static remedy data
+│   ├── heritageData.ts          # Static heritage/location data
+│   ├── components/              # Shared presentational components
+│   │   ├── ui/                  # shadcn/ui primitives — KHÔNG sửa trực tiếp
+│   │   ├── navigation.ts        # Navigation config (menu items)
+│   │   └── [ComponentName].tsx  # PascalCase, 1 component/file
+│   ├── pages/                   # Route-level page components
+│   │   ├── admin/               # Admin portal sub-modules
+│   │   └── [PageName]Page.tsx   # Suffix "Page" cho page components
+│   ├── hooks/                   # Custom React hooks
+│   ├── utils/                   # Pure utility functions
+│   └── widgets/                 # Complex standalone widgets (ChatWidget)
+├── components/                  # Global shared components
+├── styles/                      # Global CSS files
+├── types/                       # TypeScript type definitions (.d.ts, interfaces)
+└── assets/                      # Static assets (images, SVGs)
+
+server/
+├── src/index.ts                 # Express server entry
+├── prisma/schema.prisma         # Database schema
+└── prisma/seed.js               # Seed data
+```
+
+### Quy tắc đặt file
+- **Component mới** → `src/app/components/` (shared) hoặc inline trong page
+- **Page mới** → `src/app/pages/[TenPage]Page.tsx`
+- **Admin module mới** → `src/app/pages/admin/[TenModule].tsx`
+- **Hook mới** → `src/app/hooks/use[TenHook].ts`
+- **Utility mới** → `src/app/utils/[tenUtil].ts` (camelCase)
+- **Type/Interface** → `src/types/[domain].ts`
+- **KHÔNG** tạo thư mục mới ngoài cấu trúc trên trừ khi được team leader chấp thuận
+
+---
+
+## 4. Quy ước Code
+
+### TypeScript
+- Luôn dùng TypeScript, KHÔNG viết file `.js` / `.jsx` trong `src/`
+- Bật strict mode, KHÔNG dùng `any` — dùng `unknown` rồi narrow type
+- Dùng `interface` cho object shapes, `type` cho unions/intersections
+- Export types riêng: `export type { ... }` hoặc `export interface ...`
+
+### React
+- Dùng **function components** + hooks — KHÔNG dùng class components
+- Component name = PascalCase, khớp tên file: `Navbar.tsx` → `export function Navbar()`
+- Props interface đặt tên: `[ComponentName]Props`
+- Dùng `React.memo()` cho components nhận props ổn định và render nặng
+- State management: React Context + `useState`/`useReducer` — KHÔNG thêm Redux/Zustand trừ khi được yêu cầu
+
+### Styling
+- Dùng **Tailwind CSS utility classes** là chính
+- Dùng `cn()` (từ `clsx` + `tailwind-merge`) để merge class names
+- KHÔNG viết inline styles trừ dynamic values (vd: `style={{ top: offset }}`)
+- KHÔNG viết file CSS riêng cho component — dùng Tailwind
+- Design tokens theo shadcn/ui theme (CSS variables trong `default_shadcn_theme.css`)
+
+### Naming
+| Loại | Convention | Ví dụ |
+|---|---|---|
+| Component | PascalCase | `HeritageCMS`, `ProfilePage` |
+| Hook | camelCase, prefix `use` | `useAirQuality` |
+| Utility function | camelCase | `formatDate`, `hashPassword` |
+| Constant | UPPER_SNAKE_CASE | `MAX_RETRIES`, `API_BASE_URL` |
+| Type / Interface | PascalCase | `HeritageLocation`, `UserProfile` |
+| File (component) | PascalCase.tsx | `Navbar.tsx`, `AuthModal.tsx` |
+| File (util/hook) | camelCase.ts | `airQuality.ts`, `useAirQuality.ts` |
+| CSS class (custom) | kebab-case | `glass-card`, `hero-gradient` |
+
+### Imports
+- Dùng path alias `@/` thay vì relative paths dài: `import { cn } from "@/lib/utils"`
+- Thứ tự import:
+  1. React / React DOM
+  2. Third-party libraries
+  3. Internal components (`@/app/components/...`)
+  4. Hooks, utils, types
+  5. Assets, styles
+- KHÔNG import default từ React: dùng `import { useState } from 'react'`
+
+---
+
+## 5. Quy tắc UI/UX
+
+### Design System
+- Palette chính: Xanh ngọc gradient (`#34d399` → `#059669`)
+- Dark mode friendly — luôn kiểm tra cả light/dark
+- Border radius: dùng token `rounded-xl`, `rounded-2xl` cho cards
+- Shadows: dùng `shadow-lg`, `shadow-xl` cho elevation
+- Glassmorphism: `backdrop-blur` + `bg-white/80` cho các panel nổi
+
+### Responsive
+- Mobile-first approach
+- Breakpoints: `sm:640px`, `md:768px`, `lg:1024px`, `xl:1280px`
+- Navigation phải hoạt động tốt trên cả desktop dropdown và mobile hamburger menu
+- Bản đồ Leaflet phải responsive (height thích ứng viewport)
+
+### Animations
+- Dùng `motion` (framer-motion) cho page transitions và component animations
+- Giữ animation nhẹ nhàng, tránh gây distraction
+- `duration` tiêu chuẩn: 200–400ms cho micro-interactions, 500–800ms cho page transitions
+- Luôn respect `prefers-reduced-motion`
+
+### Accessibility
+- Mọi interactive element phải có `aria-label` hoặc visible label
+- Đảm bảo keyboard navigation cho modal, dropdown, form
+- Color contrast ratio ≥ 4.5:1 (WCAG AA)
+- Images phải có `alt` text mô tả (tiếng Việt)
+
+---
+
+## 6. Quy tắc Backend / API
+
+### Prisma Schema
+- Model names: PascalCase singular (`User`, `Heritage`, `Remedy`, `Review`)
+- Field names: camelCase (`fullName`, `createdAt`, `imageUrl`)
+- Luôn có `id` (autoincrement Int) và `createdAt` (DateTime default now)
+- String fields dùng `@db.NVarChar(N)` hoặc `@db.NVarChar(Max)` cho SQL Server
+- Cascade delete cho child relations (`onDelete: Cascade`)
+
+### API Endpoints
+- RESTful: `GET /api/heritages`, `POST /api/remedies`, `PATCH /api/users/:id`
+- Response format: `{ success: boolean, data: T, error?: string }`
+- Validation ở server side — KHÔNG tin client data
+
+### Environment Variables
+- Frontend env vars: prefix `VITE_` (exposed to client)
+- Backend env vars: trong `server/.env` (KHÔNG prefix VITE_)
+- KHÔNG bao giờ commit file `.env` / `.env.local` — đã có trong `.gitignore`
+- API keys, passwords → chỉ qua env vars, KHÔNG hardcode
+
+---
+
+## 7. Quy tắc Git & Commit
+
+### Branch Naming
+```
+feature/ten-tinh-nang      # Tính năng mới
+fix/mo-ta-loi              # Sửa lỗi
+refactor/ten-module        # Tái cấu trúc
+docs/ten-tai-lieu          # Tài liệu
+hotfix/ten-loi-gap         # Sửa nóng production
+```
+
+### Commit Message Format
+```
+<type>(<scope>): <mô tả ngắn>
+
+[body — giải thích chi tiết nếu cần]
+```
+
+**Types**: `feat`, `fix`, `refactor`, `style`, `docs`, `chore`, `test`, `perf`
+
+**Ví dụ**:
+```
+feat(navbar): thêm dropdown "Kho tàng" với 2 submenu
+fix(profile): scroll-to-top khi vào trang ProfilePage
+refactor(admin): tách HeritageCMS thành AdminFormShell
+docs(readme): viết lại README.md chuyên nghiệp
+```
+
+### Pull Request
+- Mỗi PR giải quyết 1 vấn đề/feature
+- Title rõ ràng, có prefix type
+- Mô tả: What / Why / How
+- Assign reviewer trước khi merge
+
+---
+
+## 8. Quy tắc Bảo mật
+
+- KHÔNG log/expose API keys, passwords, tokens trong console hoặc UI
+- KHÔNG commit secrets — kiểm tra `.gitignore` trước khi push
+- Admin portal phải yêu cầu authentication
+- Sanitize user input trước khi render (chống XSS)
+- Dùng `crypto.ts` utility cho password hashing — KHÔNG lưu plaintext
+
+---
+
+## 9. Quy tắc Hiệu năng
+
+- Lazy load pages bằng `React.lazy()` + `Suspense` khi codebase phình to
+- Tối ưu Vite chunk splitting (đã config `manualChunks` trong vite.config.ts)
+- Dùng `React.memo`, `useMemo`, `useCallback` hợp lý — KHÔNG over-optimize
+- Images: dùng format WebP/AVIF khi có thể, set `loading="lazy"`
+- Pre-bundle heavy deps đã config trong `optimizeDeps.include`
+
+---
+
+## 10. Quy tắc khi AI thực hiện thay đổi
+
+1. **Đọc hiểu trước khi sửa** — Luôn đọc file hiện tại và các file liên quan trước khi edit
+2. **Giữ nguyên comments** — KHÔNG xóa comments/docstrings không liên quan đến thay đổi
+3. **Không phá vỡ existing code** — Chạy build check sau mỗi thay đổi lớn
+4. **Giải thích thay đổi** — Mỗi edit phải có Description rõ ràng
+5. **Một việc một lúc** — KHÔNG gộp nhiều features không liên quan vào 1 lần sửa
+6. **Respect TODO.md** — Kiểm tra TODO.md để biết thứ tự ưu tiên công việc
+7. **Tiếng Việt trong UI** — Mọi text hiển thị cho user phải bằng tiếng Việt
+8. **Tiếng Anh trong code** — Variable names, function names, comments kỹ thuật bằng tiếng Anh
