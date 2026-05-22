@@ -56,15 +56,16 @@ export function StatsSection() {
           title={<>Theo dõi chất lượng môi trường <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">theo thời gian thực</em></>}
         />
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8" style={{ perspective: '1200px' }}>
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 40, rotateX: 12, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ delay: i * 0.12, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: i * 0.12, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="group relative bg-[var(--eco-surface)]/60 backdrop-blur-xl rounded-[var(--radius-2xl)] p-5 sm:p-6 lg:p-8 border border-[var(--border-default)] shadow-[var(--shadow-md)] hover:shadow-[var(--shadow-xl)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+              style={{ transformPerspective: 1200 }}
             >
               {/* Hover gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

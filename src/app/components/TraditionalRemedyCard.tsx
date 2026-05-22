@@ -58,9 +58,10 @@ interface TraditionalRemedyCardProps {
   imageUrl?: string;
   steps?: string[];
   index?: number;
+  noReveal?: boolean;
 }
 
-export function TraditionalRemedyCard({ id, category, name, ingredients, benefits, usage, imageUrl, steps, index = 0 }: TraditionalRemedyCardProps) {
+export function TraditionalRemedyCard({ id, category, name, ingredients, benefits, usage, imageUrl, steps, index = 0, noReveal = false }: TraditionalRemedyCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -118,7 +119,8 @@ export function TraditionalRemedyCard({ id, category, name, ingredients, benefit
     <div id={id} className="h-full">
       <GlassCard
         glow="emerald"
-        delay={index * 0.15}
+        delay={noReveal ? 0 : index * 0.15}
+        noReveal={noReveal}
         className="group flex flex-col h-full !p-0 overflow-hidden cursor-pointer scroll-mt-32"
         onClick={() => setIsModalOpen(true)}
       >

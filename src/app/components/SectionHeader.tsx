@@ -33,10 +33,11 @@ export function SectionHeader({ icon: Icon, badge, title, subtitle, align = 'cen
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 24, rotateX: 6 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      style={{ transformPerspective: 1000 }}
       className={`${isCenter ? 'text-center' : 'text-left'} mb-12 sm:mb-16 ${className}`}
     >
       {/* Badge Pill */}

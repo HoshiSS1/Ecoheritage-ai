@@ -46,11 +46,12 @@ export function EnvironmentChart() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.98 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 40, scale: 0.98, rotateX: 6 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 1, type: "spring", bounce: 0.4 }}
       className="relative bg-[var(--eco-surface)]/40 backdrop-blur-2xl rounded-[var(--radius-3xl)] p-8 md:p-12 shadow-[var(--shadow-xl)] border border-[var(--border-default)] overflow-hidden"
+      style={{ transformPerspective: 1000 }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-amber-500/5 pointer-events-none" />
       

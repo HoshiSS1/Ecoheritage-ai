@@ -101,9 +101,11 @@ export function TestimonialsSection() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, rotateX: 6 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformPerspective: 1000 }}
           className="text-center mb-20 sm:mb-28"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-400 mb-8 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
@@ -114,15 +116,23 @@ export function TestimonialsSection() {
             Những <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-amber-200 not-italic font-bold italic drop-shadow-2xl">câu chuyện</em> <br />
             được chia sẻ
           </h2>
-          <div className="mt-8 w-24 h-1 bg-gradient-to-r from-emerald-500 to-amber-400 mx-auto rounded-full opacity-30" />
+          <motion.div 
+            initial={{ width: 0, opacity: 0 }}
+            whileInView={{ width: "6rem", opacity: 0.3 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 1, ease: "easeOut" }}
+            className="mt-8 h-1 bg-gradient-to-r from-emerald-500 to-amber-400 mx-auto rounded-full" 
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left: Feedback Form */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -40, rotateY: -6 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformPerspective: 1000 }}
             className="lg:col-span-4 glass-premium rounded-[2.5rem] p-8 relative overflow-hidden group"
           >
             <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-amber-500/20 transition-colors duration-700" />
@@ -254,10 +264,11 @@ export function TestimonialsSection() {
             {reviews.slice(0, 4).map((review, idx) => (
               <motion.div
                 key={review.id}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 40, rotateX: 8, scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transformPerspective: 1000 }}
                 className="glass-premium rounded-[2.5rem] p-6 sm:p-8 hover:bg-white/[0.08] transition-all duration-500 relative group flex flex-col h-full card-glow-hover"
               >
                 <MessageSquareQuote className="absolute top-6 right-6 w-16 h-16 text-white/[0.03] transform group-hover:scale-110 group-hover:text-emerald-500/[0.05] transition-all duration-700" />

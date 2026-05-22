@@ -51,7 +51,7 @@ function RemediesMarquee({ remedies }: { remedies: any[] }) {
           <div key={i} className="flex gap-8 items-stretch">
             {remedies.map((r, idx) => (
               <div key={`${r.name}-${i}-${idx}`} className="w-[280px] sm:w-[350px] shrink-0 h-full">
-                <TraditionalRemedyCard {...r} index={idx} />
+                <TraditionalRemedyCard {...r} index={idx} noReveal />
               </div>
             ))}
           </div>
@@ -198,9 +198,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="flex flex-col items-center text-center mb-16 sm:mb-24 max-w-4xl mx-auto px-4">
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: -20, rotateX: -4 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              style={{ transformPerspective: 800 }}
               className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-full text-[12px] uppercase tracking-[0.4em] font-black backdrop-blur-md shadow-[0_0_25px_rgba(16,185,129,0.25)] mb-8"
             >
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_#10b981]" />
@@ -209,10 +211,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
 
             <div className="relative">
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20, rotateX: 6 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
+                transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transformPerspective: 800 }}
                 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Theo dõi <em className="text-premium-gradient not-italic font-bold">nhịp thở</em> của <br className="hidden sm:block" />
@@ -226,10 +229,10 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 className="h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] rounded-full mb-8 mx-auto" 
               />
               <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="text-base sm:text-lg text-emerald-100/70 font-light max-w-2xl mx-auto"
               >
                 Nhận cảnh báo môi trường để chủ động bồi bổ cơ thể theo y học cổ truyền.
@@ -237,7 +240,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16 perspective-[1000px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16" style={{ perspective: '1200px' }}>
             {dynamicEnvironmentData && dynamicEnvironmentData.map((d, i) => (
               d && <EnvironmentCard key={d.title} {...d} index={i} />
             ))}
@@ -256,9 +259,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="flex flex-col items-center text-center mb-12 sm:mb-20 max-w-4xl mx-auto px-4">
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: -20, rotateX: -4 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              style={{ transformPerspective: 800 }}
               className="inline-flex items-center gap-3 bg-amber-500/10 border border-amber-500/30 text-amber-400 px-6 py-3 rounded-full text-[12px] uppercase tracking-[0.4em] font-black backdrop-blur-md shadow-[0_0_25px_rgba(245,158,11,0.25)] mb-8"
             >
               <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_12px_#f59e0b]" />
@@ -266,10 +271,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
             </motion.div>
             <div className="relative">
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20, rotateX: 6 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
+                transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transformPerspective: 800 }}
                 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Giao thoa y học: <br />
@@ -283,17 +289,17 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 className="h-1 bg-gradient-to-r from-amber-500 via-emerald-400 to-amber-500 shadow-[0_0_20px_rgba(251,191,36,0.4)] rounded-full mb-8 mx-auto"
               />
               <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="text-base sm:text-lg text-emerald-100/70 font-light max-w-2xl mx-auto"
               >
                 Kết hợp hài hòa giữa khoa học hiện đại và y lý dân gian.
               </motion.p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 perspective-[1000px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8" style={{ perspective: '1200px' }}>
             {healthAdvices.map((a, i) => (
               <HealthAdviceCard key={a.title} {...a} index={i} />
             ))}
@@ -311,9 +317,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <div className="flex flex-col items-center text-center mb-12 sm:mb-20 max-w-4xl mx-auto px-4">
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: -20, rotateX: -4 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              style={{ transformPerspective: 800 }}
               className="inline-flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-full text-[12px] uppercase tracking-[0.4em] font-black backdrop-blur-md shadow-[0_0_25px_rgba(16,185,129,0.25)] mb-8"
             >
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_12px_#10b981]" />
@@ -321,10 +329,11 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
             </motion.div>
             <div className="relative">
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20, rotateX: 6 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
+                transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transformPerspective: 800 }}
                 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Kho tàng <em className="text-amber-400 not-italic font-bold">bài thuốc</em> dân gian.
@@ -337,10 +346,10 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 className="h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] rounded-full mb-8 mx-auto"
               />
               <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="text-base sm:text-lg text-emerald-100/70 font-light max-w-2xl mx-auto"
               >
                 Số hóa tinh hoa y học dân gian để chăm sóc sức khỏe cộng đồng.
@@ -372,7 +381,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
           </div>
 
           <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: "easeOut" }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-8 sm:p-12 md:p-20 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 40, rotateX: 8 }} whileInView={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} style={{ transformPerspective: 1000 }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-8 sm:p-12 md:p-20 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
               <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-emerald-400 mb-6 drop-shadow-lg">Sẵn sàng sống xanh?</p>
               <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8 text-white drop-shadow-2xl break-words">
                 Khởi đầu lối <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">sống xanh</em> <br />

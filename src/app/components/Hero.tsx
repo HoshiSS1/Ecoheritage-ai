@@ -5,6 +5,24 @@ import { useAirQuality } from '../utils/useAirQuality';
 import { AnimatedCounter } from './AnimatedCounter';
 import heroImage from '../../assets/hero/vietnamese_herbs_ai_hero_1777022882110.png';
 
+/* ── CSS-only keyframes for background orbs & scroll indicator ──
+   Moved from motion `animate` loops to pure CSS to avoid
+   competing with Lenis' rAF and reduce GPU pressure on mount. */
+const heroCSS = `
+@keyframes heroOrb1 {
+  0%, 100% { transform: translateZ(0) scale(1) translateX(0); opacity: 0.3; }
+  50%      { transform: translateZ(0) scale(1.2) translateX(50px); opacity: 0.55; }
+}
+@keyframes heroOrb2 {
+  0%, 100% { transform: translateZ(0) scale(1.2) translateY(0); opacity: 0.2; }
+  50%      { transform: translateZ(0) scale(1) translateY(-50px); opacity: 0.45; }
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50%      { transform: translateY(10px); opacity: 1; }
+}
+`;
+
 export function Hero() {
   const { data: aqiData } = useAirQuality();
   const currentAqi = aqiData?.aqi ?? 40;
@@ -19,36 +37,39 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden bg-[#051a11] text-white min-h-[90vh] flex items-center pt-20 md:pt-28">
-      {/* Immersive 3D Background */}
+      {/* Inject CSS keyframes */}
+      <style>{heroCSS}</style>
+
+      {/* Immersive 3D Background — CSS animations instead of motion loops */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0a2e1f] via-[#051a11] to-[#020b07] opacity-90" />
         <div className="absolute inset-0 mix-blend-overlay opacity-30 bg-[url('/textures/stardust.png')]" />
         
-        {/* Dynamic Orbs */}
-        <motion.div
+        {/* Dynamic Orbs — CSS animation for GPU compositing */}
+        <div
           className="absolute top-[10%] -left-[10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-emerald-500/20 blur-[150px] mix-blend-screen"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3], x: [0, 50, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          style={{ animation: 'heroOrb1 15s ease-in-out infinite', willChange: 'transform, opacity' }}
         />
-        <motion.div
+        <div
           className="absolute bottom-[0%] -right-[10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] rounded-full bg-amber-500/10 blur-[150px] mix-blend-screen"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.5, 0.2], y: [0, -50, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          style={{ animation: 'heroOrb2 20s ease-in-out infinite', willChange: 'transform, opacity' }}
         />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full z-10">
-        {/* Left: Text Content */}
+        {/* Left: Text Content — Staggered mount with increasing delays */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="relative"
+          style={{ willChange: 'transform, opacity' }}
         >
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="inline-flex items-center gap-3 bg-white/5 border border-white/10 text-emerald-200 px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.3em] font-bold mb-8 backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.05)]"
           >
             <span className="relative flex h-3 w-3">
@@ -58,26 +79,40 @@ export function Hero() {
             Kho tàng Y lý Đà Nẵng x AI
           </motion.div>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-5xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full">
+          {/* Heading — delay 0.5s */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30, rotateX: 8 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ delay: 0.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="font-display text-4xl sm:text-5xl lg:text-5xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full"
+            style={{ perspective: '1000px' }}
+          >
             <span className="block text-white">Sống khỏe mỗi ngày</span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic mt-2 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
               cùng di sản thảo mộc.
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-[#F8FAFC]/95 mb-8 sm:mb-10 max-w-full xl:max-w-xl leading-relaxed font-medium drop-shadow-md">
-            <strong className="font-semibold tracking-wide text-white">EcoHeritage</strong> dùng AI kết nối tri thức thảo mộc với dữ liệu môi trường, giúp bạn chủ động chăm sóc sức khỏe.
-          </p>
-
-          {/* SOLUTION STATEMENT - HIGHLY PROMINENT */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
+          {/* Description — delay 0.7s */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-            className="relative mt-12 mb-12 group perspective-[1000px]"
+            transition={{ delay: 0.7, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="text-base sm:text-lg md:text-xl text-[#F8FAFC]/95 mb-8 sm:mb-10 max-w-full xl:max-w-xl leading-relaxed font-medium drop-shadow-md"
+          >
+            <strong className="font-semibold tracking-wide text-white">EcoHeritage</strong> dùng AI kết nối tri thức thảo mộc với dữ liệu môi trường, giúp bạn chủ động chăm sóc sức khỏe.
+          </motion.p>
+
+          {/* SOLUTION STATEMENT — delay 0.9s */}
+          <motion.div
+            initial={{ opacity: 0, y: 30, rotateX: 10 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ delay: 0.9, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="relative mt-12 mb-12 group"
+            style={{ perspective: '1000px' }}
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-60 transition-opacity duration-1000 animate-pulse" />
-            <div className="relative border border-white/10 bg-[#0a2e1f]/50 p-6 md:p-8 rounded-3xl backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] transform transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2 group-hover:rotate-x-2">
+            <div className="relative border border-white/10 bg-[#0a2e1f]/50 p-6 md:p-8 rounded-3xl backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] transform transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2">
               <div className="absolute -top-5 -left-5 bg-gradient-to-br from-emerald-400 to-emerald-600 border-[3px] border-[#051a11] p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
@@ -92,7 +127,13 @@ export function Hero() {
             </div>
           </motion.div>
 
-          <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-5 mt-8 sm:mt-10">
+          {/* Buttons — delay 1.1s */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-5 mt-8 sm:mt-10"
+          >
             <motion.button
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
@@ -113,9 +154,9 @@ export function Hero() {
               </div>
               Trò chuyện AI
             </motion.button>
-          </div>
+          </motion.div>
 
-          {/* 3D Floating Mini Stats */}
+          {/* 3D Floating Mini Stats — delay 1.3s+ */}
           <div className="grid grid-cols-3 gap-4 sm:gap-8 mt-12 sm:mt-16 pt-6 sm:pt-8 relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             {heroStats.map((s, i) => {
@@ -125,10 +166,11 @@ export function Hero() {
               return (
                 <motion.div
                   key={s.label}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 + i * 0.15, duration: 0.8, ease: "easeOut" }}
+                  initial={{ opacity: 0, y: 30, rotateX: 10 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{ delay: 1.3 + i * 0.15, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                   className="relative group"
+                  style={{ perspective: '800px' }}
                 >
                   <div className="font-display text-xl sm:text-3xl lg:text-4xl text-white mb-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                     {!isNaN(numericValue) && numericValue > 0 ? (
@@ -147,16 +189,17 @@ export function Hero() {
           </div>
         </motion.div>
 
-        {/* Right: Immersive 3D Visual */}
+        {/* Right: Immersive 3D Visual — delay 0.6s */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, rotateY: 20 }}
+          initial={{ opacity: 0, scale: 0.85, rotateY: 15 }}
           animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-          transition={{ duration: 1.5, delay: 0.4, type: "spring", bounce: 0.4 }}
-          className="relative hidden lg:flex items-center justify-center perspective-[1500px] w-full"
+          transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="relative hidden lg:flex items-center justify-center w-full"
+          style={{ perspective: '1500px', willChange: 'transform, opacity' }}
         >
           <div className="relative w-full max-w-[420px] xl:max-w-[480px]">
             {/* Main 3D Container */}
-            <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-white/10 transform-style-3d group w-full">
+            <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-white/10 group w-full">
               {/* Inner Glow */}
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-amber-500/20 mix-blend-overlay z-10 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
             
@@ -169,12 +212,13 @@ export function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#051a11] via-[#051a11]/40 to-transparent z-20" />
           </div>
 
-          {/* 3D Floating Glass Card: Live AQI */}
+          {/* 3D Floating Glass Card: Live AQI — delay 1.5s */}
           <motion.div
-            initial={{ opacity: 0, x: 50, y: 50, translateZ: 50 }}
-            animate={{ opacity: 1, x: 0, y: 0, translateZ: 100 }}
-            transition={{ delay: 1.2, duration: 1, type: "spring" }}
+            initial={{ opacity: 0, x: -40, y: 30, rotateY: -12 }}
+            animate={{ opacity: 1, x: 0, y: 0, rotateY: 0 }}
+            transition={{ delay: 1.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="absolute -left-6 xl:-left-16 top-16 bg-[#0a2e1f]/80 backdrop-blur-3xl border border-white/10 text-white rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-64 lg:w-72 z-30 hover:-translate-y-2 transition-transform duration-500"
+            style={{ willChange: 'transform, opacity' }}
           >
             <div className="absolute -top-3 -right-3 w-16 h-16 bg-emerald-500/30 rounded-full blur-xl" />
             <div className="flex items-center gap-3 mb-4">
@@ -198,12 +242,13 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* 3D Floating Glass Card: Remedy */}
+          {/* 3D Floating Glass Card: Remedy — delay 1.8s */}
           <motion.div
-            initial={{ opacity: 0, x: -50, y: -50, translateZ: 80 }}
-            animate={{ opacity: 1, x: 0, y: 0, translateZ: 120 }}
-            transition={{ delay: 1.5, duration: 1, type: "spring" }}
+            initial={{ opacity: 0, x: 40, y: -30, rotateY: 12 }}
+            animate={{ opacity: 1, x: 0, y: 0, rotateY: 0 }}
+            transition={{ delay: 1.8, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="absolute -right-4 xl:-right-10 bottom-12 bg-gradient-to-br from-amber-400/95 to-amber-600/95 backdrop-blur-2xl border border-white/20 text-[#051a11] rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-56 lg:w-64 z-40 hover:-translate-y-2 transition-transform duration-500"
+            style={{ willChange: 'transform, opacity' }}
           >
             <div className="absolute top-0 right-0 w-full h-full bg-[url('/textures/rice-paper.png')] opacity-30 mix-blend-overlay rounded-[2rem]" />
             <div className="relative z-10">
@@ -219,15 +264,14 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Modern Scroll Indicator */}
-      <motion.div
-        animate={{ y: [0, 10, 0], opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      {/* Modern Scroll Indicator — CSS animation instead of motion loop */}
+      <div
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 cursor-pointer"
+        style={{ animation: 'scrollBounce 2s ease-in-out infinite' }}
       >
         <span className="text-[9px] uppercase tracking-[0.5em] text-white/50 font-bold">Khám phá</span>
         <div className="w-px h-16 bg-gradient-to-b from-white/0 via-white/50 to-white/0" />
-      </motion.div>
+      </div>
     </section>
   );
 }

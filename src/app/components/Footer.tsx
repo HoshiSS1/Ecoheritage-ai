@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { Link } from 'react-router';
 import { Leaf, MapPin, Mail, Phone, Facebook, Instagram, Youtube, MessageSquareQuote, ShieldCheck, Activity } from 'lucide-react';
 import { navLinks } from './navigation';
@@ -16,9 +17,16 @@ export function Footer({ user, now }: FooterProps) {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16 mb-20 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16 mb-20 items-stretch" style={{ perspective: '1200px' }}>
           {/* Brand Column */}
-          <div className="lg:col-span-4 flex flex-col justify-between space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 40, rotateX: 6 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformPerspective: 800 }}
+            className="lg:col-span-4 flex flex-col justify-between space-y-8"
+          >
             <div className="space-y-6">
               <Link to="/" aria-label="Về trang chủ" title="Về trang chủ" className="flex items-center gap-4 group">
                 <div className="relative bg-gradient-to-br from-emerald-500 to-emerald-700 p-3.5 rounded-2xl shadow-[var(--shadow-glow-emerald)] group-hover:scale-110 transition-transform duration-500">
@@ -52,10 +60,17 @@ export function Footer({ user, now }: FooterProps) {
                 </a>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Discovery Links Column */}
-          <div className="lg:col-span-2">
+          <motion.div
+            initial={{ opacity: 0, y: 40, rotateX: 6 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformPerspective: 800 }}
+            className="lg:col-span-2"
+          >
             <h4 className="text-white font-bold mb-8 text-sm uppercase tracking-[0.2em] flex items-center gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[var(--shadow-glow-emerald)]" />
               <span className="text-premium-gradient">Khám phá</span>
@@ -70,10 +85,17 @@ export function Footer({ user, now }: FooterProps) {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Consultant Column */}
-          <div className="lg:col-span-3">
+          <motion.div
+            initial={{ opacity: 0, y: 40, rotateX: 6 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformPerspective: 800 }}
+            className="lg:col-span-3"
+          >
             <h4 className="text-white font-bold mb-8 text-sm uppercase tracking-[0.2em] flex items-center gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[var(--shadow-glow-amber)]" />
               <span className="text-premium-gradient">Tư vấn</span>
@@ -94,10 +116,17 @@ export function Footer({ user, now }: FooterProps) {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Quote Column */}
-          <div className="lg:col-span-3">
+          <motion.div
+            initial={{ opacity: 0, y: 40, rotateY: 8 }}
+            whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformPerspective: 800 }}
+            className="lg:col-span-3"
+          >
             <div className="bg-[var(--glass-bg)] backdrop-blur-2xl rounded-[2rem] p-7 relative overflow-hidden group h-full flex flex-col justify-center border border-[var(--border-default)] hover:border-[var(--border-hover)] transition-all duration-700 shadow-2xl">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-700" />
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none group-hover:bg-amber-500/20 transition-all duration-700" />
@@ -121,11 +150,17 @@ export function Footer({ user, now }: FooterProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-[var(--border-subtle)] flex flex-col lg:flex-row justify-between items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--text-disabled)]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="pt-10 border-t border-[var(--border-subtle)] flex flex-col lg:flex-row justify-between items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--text-disabled)]"
+        >
           <p>© 2026 EcoHeritage AI · Mọi quyền được bảo lưu</p>
           <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
             {user && (
@@ -142,7 +177,7 @@ export function Footer({ user, now }: FooterProps) {
               Cổng Admin
             </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     </footer>
   );

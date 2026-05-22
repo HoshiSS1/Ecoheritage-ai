@@ -52,19 +52,20 @@ export function HeritageStory() {
 
             {/* 3D Floating Quote Box */}
             <motion.div
-              initial={{ opacity: 0, y: 30, translateZ: 50 }}
-              whileInView={{ opacity: 1, y: 0, translateZ: 100 }}
+              initial={{ opacity: 0, y: 30, rotateX: 8 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6, duration: 0.8, type: "spring" }}
-              className="absolute -bottom-10 -right-4 lg:-right-12 bg-gradient-to-br from-[#0a2e1f]/90 to-[#051a11]/90 backdrop-blur-2xl text-white p-8 md:p-10 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)] max-w-sm border border-white/10 z-30 group-hover:-translate-y-2 transition-transform duration-500"
+              style={{ transformPerspective: 1000 }}
+              className="absolute -bottom-6 -right-2 lg:-right-8 bg-gradient-to-br from-[#0a2e1f]/90 to-[#051a11]/90 backdrop-blur-2xl text-white p-5 md:p-6 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.7)] max-w-[280px] border border-white/10 z-30 group-hover:-translate-y-2 transition-transform duration-500"
             >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/20 rounded-full blur-2xl" />
-              <div className="absolute -top-6 -left-6 bg-[#0a2e1f] border border-amber-400/30 w-12 h-12 rounded-full flex items-center justify-center shadow-lg text-amber-300 font-display text-4xl">"</div>
-              <div className="font-display italic text-xl sm:text-2xl leading-[1.4] drop-shadow-lg relative z-10 break-words max-w-full">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/15 rounded-full blur-xl" />
+              <div className="absolute -top-4 -left-4 bg-[#0a2e1f] border border-amber-400/30 w-9 h-9 rounded-full flex items-center justify-center shadow-lg text-amber-300 font-display text-2xl">"</div>
+              <div className="font-display italic text-base sm:text-lg leading-[1.4] drop-shadow-lg relative z-10 break-words max-w-full">
                 Nam dược trị Nam nhân — thuốc của đất Việt chữa người Việt.
               </div>
-              <div className="text-[10px] mt-6 text-amber-300/80 uppercase tracking-[0.4em] font-bold flex items-center gap-2 relative z-10">
-                <span className="w-6 h-[1px] bg-amber-300/50" /> Tuệ Tĩnh
+              <div className="text-[9px] mt-4 text-amber-300/80 uppercase tracking-[0.4em] font-bold flex items-center gap-2 relative z-10">
+                <span className="w-5 h-[1px] bg-amber-300/50" /> Tuệ Tĩnh
               </div>
             </motion.div>
           </motion.div>
@@ -99,10 +100,11 @@ export function HeritageStory() {
               {chapters.map((c, i) => (
                 <motion.div
                   key={c.title}
-                  initial={{ opacity: 0, x: 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, x: 40, rotateY: 8 }}
+                  whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: i * 0.2, duration: 0.8, type: "spring", bounce: 0.3 }}
+                  style={{ transformPerspective: 800 }}
                   className="flex gap-8 relative group cursor-default"
                 >
                   <div className="relative z-10 mt-1">
