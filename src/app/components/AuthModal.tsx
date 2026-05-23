@@ -613,17 +613,17 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                               description: 'Xác thực Google thành công. Chúc bạn trải nghiệm EcoHeritage AI thật vui!',
                               duration: 5000,
                               style: {
-                                fontSize: '16px',
+                                fontSize: '13px',
                                 fontWeight: 'bold',
-                                padding: '20px 24px',
-                                borderRadius: '20px',
+                                padding: '12px 16px',
+                                borderRadius: '12px',
                                 background: 'linear-gradient(135deg, #0a2e1f 0%, #051a11 100%)',
                                 color: '#fff',
                                 border: '1px solid rgba(16,185,129,0.3)',
-                                boxShadow: '0 20px 60px -15px rgba(16,185,129,0.35)',
+                                boxShadow: '0 12px 40px -10px rgba(16,185,129,0.25)',
                               },
                               // @ts-ignore - bypass sonner prop type issue
-                              descriptionClassName: 'text-emerald-400/80 text-[13px] font-normal mt-1',
+                              descriptionClassName: 'text-emerald-400/80 text-[11px] font-normal mt-1',
                             }
                           );
                           triggerSuccessConfetti();

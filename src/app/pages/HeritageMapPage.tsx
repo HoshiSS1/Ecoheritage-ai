@@ -236,10 +236,10 @@ export function HeritageMapPage() {
         description: 'Vui lòng đăng nhập để lưu địa điểm này vào danh sách quan tâm.',
         duration: 5000,
         style: {
-          fontSize: '15px',
+          fontSize: '13px',
           fontWeight: 'bold',
-          padding: '18px 22px',
-          borderRadius: '18px',
+          padding: '12px 16px',
+          borderRadius: '12px',
           background: 'linear-gradient(135deg, #2e0a0a 0%, #1a0505 100%)',
           color: '#fff',
           border: '1px solid rgba(239,68,68,0.3)',

@@ -124,7 +124,7 @@ export default function App() {
       description: 'Hẹn gặp lại bạn lần sau. Hãy luôn giữ gìn sức khỏe nhé!',
       duration: 7000,
       style: {
-        fontSize: '15px', fontWeight: 'bold', padding: '18px 22px', borderRadius: '18px',
+        fontSize: '13px', fontWeight: 'bold', padding: '12px 16px', borderRadius: '12px',
         background: 'linear-gradient(135deg, #0a2e1f 0%, #051a11 100%)',
         color: '#fff', border: '1px solid rgba(251,191,36,0.3)',
       },
@@ -176,7 +176,7 @@ export default function App() {
             description: 'Đăng nhập thành công. Chúc bạn trải nghiệm EcoHeritage AI thật tuyệt vời!',
             duration: 7000,
             style: {
-              fontSize: '15px', fontWeight: 'bold', padding: '18px 22px', borderRadius: '18px',
+              fontSize: '13px', fontWeight: 'bold', padding: '12px 16px', borderRadius: '12px',
               background: 'linear-gradient(135deg, #0a2e1f 0%, #051a11 100%)',
               color: '#fff', border: '1px solid rgba(16,185,129,0.3)',
             },
