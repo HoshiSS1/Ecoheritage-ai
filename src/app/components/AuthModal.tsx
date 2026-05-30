@@ -361,6 +361,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       placeholder="Họ và tên"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      autoComplete="name"
+                      aria-label="Họ và tên"
                       className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)] transition-all"
                     />
                   </motion.div>
@@ -374,10 +376,12 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     <Mail className="w-5 h-5 text-emerald-500/50" />
                   </div>
                   <input
-                    type="text"
-                    placeholder="Địa chỉ Email hoặc Tên đăng nhập"
+                    type="email"
+                    placeholder="Địa chỉ Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    aria-label="Địa chỉ email"
                     className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)] transition-all"
                   />
                 </div>
@@ -482,6 +486,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                       placeholder="Mật khẩu"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      autoComplete={isLogin ? "current-password" : "new-password"}
+                      aria-label="Mật khẩu"
                       className="w-full pl-10 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)] transition-all"
                     />
                     <button
@@ -527,6 +533,8 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                         placeholder="Xác nhận mật khẩu"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        autoComplete="new-password"
+                        aria-label="Xác nhận mật khẩu"
                         className={`w-full pl-10 pr-12 py-3 bg-white/5 border rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition-all ${confirmPassword && password !== confirmPassword
                             ? 'border-rose-500/30 focus:border-rose-500/50 focus:shadow-[0_0_15px_rgba(244,63,94,0.2)]'
                             : 'border-white/10 focus:border-emerald-500/40 focus:shadow-[0_0_15px_rgba(52,211,153,0.2)]'

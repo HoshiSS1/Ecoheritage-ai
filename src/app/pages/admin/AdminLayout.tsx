@@ -20,9 +20,9 @@ import {
 import { Link } from "react-router";
 import { toast } from "sonner";
 import {
-  AdminSectionId, ADMIN_USERNAME, ADMIN_SESSION_KEY,
+  AdminSectionId, ADMIN_SESSION_KEY,
   FEEDBACK_STORAGE_KEY, loadStoredState, loadAdminSession,
-  ADMIN_PASSWORD, shellCardClass,
+  shellCardClass,
 } from "./adminUtils";
 import { DashboardSection } from "./DashboardSection";
 import { HeritageCMS } from "./HeritageCMS";
@@ -256,7 +256,7 @@ export function AdminLayout() {
           <div className="flex items-center gap-4">
             <div className="hidden flex-col items-end sm:flex">
               <p className="text-xs font-black text-slate-900 truncate max-w-[150px]">
-                {sessionStorage.getItem(ADMIN_SESSION_KEY) ? JSON.parse(sessionStorage.getItem(ADMIN_SESSION_KEY) || "{}").email || ADMIN_USERNAME : ADMIN_USERNAME}
+                {(() => { try { const s = sessionStorage.getItem(ADMIN_SESSION_KEY); return s ? JSON.parse(s).email || 'admin' : 'admin'; } catch { return 'admin'; } })()}
               </p>
               <p className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
                 <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />

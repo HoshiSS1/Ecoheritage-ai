@@ -11,15 +11,19 @@ export function useHeritages() {
   const fetchHeritages = () => {
     setLoading(true);
     fetch(`${API_URL}/heritages`)
-      .then(res => res.json())
+      .then(res => {
+        // [FIX] Kiểm tra response OK trước khi parse JSON — tránh crash khi server trả HTML error
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then(data => {
-        if (data && data.length > 0) {
+        if (Array.isArray(data) && data.length > 0) {
           setHeritages(data);
         }
         setLoading(false);
       })
       .catch(err => {
-        console.error('Failed to fetch heritages:', err);
+        console.warn('API heritages không khả dụng, dùng dữ liệu mặc định:', err.message);
         setLoading(false);
       });
   };
@@ -38,15 +42,19 @@ export function useRemedies() {
   const fetchRemedies = () => {
     setLoading(true);
     fetch(`${API_URL}/remedies`)
-      .then(res => res.json())
+      .then(res => {
+        // [FIX] Kiểm tra response OK trước khi parse JSON
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then(data => {
-        if (data && data.length > 0) {
+        if (Array.isArray(data) && data.length > 0) {
           setRemedies(data);
         }
         setLoading(false);
       })
       .catch(err => {
-        console.error('Failed to fetch remedies:', err);
+        console.warn('API remedies không khả dụng, dùng dữ liệu mặc định:', err.message);
         setLoading(false);
       });
   };

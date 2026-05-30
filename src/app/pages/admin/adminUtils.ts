@@ -1,14 +1,5 @@
 import { FormEvent } from "react";
 import { toast } from "sonner";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 
 // ─── Types ───────────────────────────────────────────────
 export type AdminSectionId =
@@ -107,10 +98,8 @@ export const LOCATIONS_STORAGE_KEY = "ecoheritage_admin_locations_v" + DATA_VERS
 export const CLIMATE_CACHE_STORAGE_KEY = "ecoheritage_admin_climate_cache_v" + DATA_VERSION;
 export const VERSION_CHECK_KEY = "ecoheritage_data_version";
 
-export const ADMIN_USERNAME =
-  import.meta.env.VITE_ADMIN_PORTAL_USER || "admin";
-export const ADMIN_PASSWORD =
-  import.meta.env.VITE_ADMIN_PORTAL_PASSWORD || "ecoheritage-admin";
+// [SECURITY FIX] Admin credentials đã được chuyển sang backend .env
+// Admin login giờ gọi API /api/auth/login thay vì so sánh client-side
 export const DEFAULT_AQI_API_URL =
   import.meta.env.VITE_AQI_API_URL || "https://api.openweathermap.org/data/2.5";
 export const DEFAULT_OPENWEATHER_KEY =

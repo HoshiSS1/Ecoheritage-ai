@@ -1,8 +1,9 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 import fs from 'fs';
 import path from 'path';
 
@@ -62,7 +63,12 @@ function saveBase64Image(base64String: string | null | undefined, id: string): s
 }
 
 // --- TIỆN ÍCH KÝ VÀ XÁC THỰC JWT (Zero-Dependency) ---
-const JWT_SECRET = process.env.JWT_SECRET || 'ecoheritage-secure-jwt-secret-key-2026';
+// [SECURITY FIX] JWT_SECRET phải được cấu hình trong .env — không có fallback hardcoded
+if (!process.env.JWT_SECRET) {
+  console.error('❌ FATAL: JWT_SECRET chưa được cấu hình trong .env. Server không thể khởi động.');
+  process.exit(1);
+}
+const JWT_SECRET: string = process.env.JWT_SECRET;
 
 function signJwt(payload: any, expiresIn: string = '24h'): string {
   const header = { alg: 'HS256', typ: 'JWT' };
@@ -108,7 +114,7 @@ function verifyJwt(token: string): any {
 }
 
 // Middleware bảo mật xác thực Token cho các API tạo, sửa, xóa
-function authenticateToken(req: Request, res: Response, next: any) {
+function authenticateToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   
@@ -122,6 +128,21 @@ function authenticateToken(req: Request, res: Response, next: any) {
   }
   
   (req as any).user = user;
+  next();
+}
+
+// [SECURITY FIX] Middleware phân quyền — chỉ Admin/Super Admin mới truy cập được route CMS
+function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  const user = (req as any).user;
+  if (!user) {
+    return res.status(401).json({ error: 'Yêu cầu xác thực tài khoản.' });
+  }
+  
+  const allowedRoles = ['Super Admin', 'Admin', 'Editor'];
+  if (!allowedRoles.includes(user.role)) {
+    return res.status(403).json({ error: 'Bạn không có quyền thực hiện hành động này. Cần vai trò Admin trở lên.' });
+  }
+  
   next();
 }
 
@@ -197,14 +218,27 @@ app.get('/api/heritages', async (req: Request, res: Response) => {
 });
 
 // --- ĐĂNG NHẬP HỆ THỐNG SINH TOKEN JWT ---
+// [SECURITY FIX] Kiểm tra mật khẩu bằng bcrypt, không cho phép đăng nhập nếu sai password
 app.post('/api/auth/login', async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
     
-    // Kiểm tra tài khoản quản trị mặc định (ecoheritage-admin)
-    if (username === 'admin' && password === 'ecoheritage-admin') {
-      const token = signJwt({ role: 'Super Admin', username });
-      return res.json({ token, role: 'Super Admin' });
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Vui lòng nhập tên đăng nhập và mật khẩu.' });
+    }
+    
+    // [SECURITY FIX] Admin credentials từ biến môi trường, password so sánh bằng bcrypt
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+    
+    if (adminPasswordHash && username === adminUsername) {
+      const isMatch = await bcrypt.compare(password, adminPasswordHash);
+      if (isMatch) {
+        const token = signJwt({ role: 'Super Admin', username });
+        return res.json({ token, role: 'Super Admin' });
+      }
+      // Password sai → trả về lỗi
+      return res.status(401).json({ error: 'Thông tin tài khoản hoặc mật khẩu không chính xác.' });
     }
     
     // Kiểm tra tài khoản người dùng trong cơ sở dữ liệu
@@ -218,19 +252,25 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
     });
     
     if (user) {
-      // Vì là môi trường học tập, cho phép xác thực nhanh không cần băm phức tạp
+      // [SECURITY FIX] Kiểm tra password bằng bcrypt.compare
+      const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: 'Thông tin tài khoản hoặc mật khẩu không chính xác.' });
+      }
+      
       const token = signJwt({ userId: user.id, role: user.role, email: user.email });
       return res.json({ token, role: user.role });
     }
     
     res.status(401).json({ error: 'Thông tin tài khoản hoặc mật khẩu không chính xác.' });
   } catch (error) {
+    console.error('[Auth Error]', error);
     res.status(500).json({ error: 'Lỗi xác thực hệ thống.' });
   }
 });
 
-// Create Heritage (Secured with JWT & Base64 Image upload)
-app.post('/api/heritages', authenticateToken, async (req: Request, res: Response) => {
+// Create Heritage (Secured with JWT + Admin Role + Base64 Image upload)
+app.post('/api/heritages', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   try {
     const data = req.body;
     const slugId = data.id || `loc-${Date.now()}`;
@@ -271,8 +311,8 @@ app.post('/api/heritages', authenticateToken, async (req: Request, res: Response
   }
 });
 
-// Update Heritage (Secured with JWT & Base64 Image upload)
-app.put('/api/heritages/:id', authenticateToken, async (req: Request, res: Response) => {
+// Update Heritage (Secured with JWT + Admin Role + Base64 Image upload)
+app.put('/api/heritages/:id', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const data = req.body;
@@ -304,8 +344,8 @@ app.put('/api/heritages/:id', authenticateToken, async (req: Request, res: Respo
   }
 });
 
-// Delete Heritage (Secured with JWT)
-app.delete('/api/heritages/:id', authenticateToken, async (req: Request, res: Response) => {
+// Delete Heritage (Secured with JWT + Admin Role)
+app.delete('/api/heritages/:id', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     await prisma.heritage.delete({ where: { slugId: id } });
@@ -342,8 +382,8 @@ app.get('/api/remedies', async (req: Request, res: Response) => {
   }
 });
 
-// Create Remedy (Secured with JWT & Base64 Image upload)
-app.post('/api/remedies', authenticateToken, async (req: Request, res: Response) => {
+// Create Remedy (Secured with JWT + Admin Role + Base64 Image upload)
+app.post('/api/remedies', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   try {
     const data = req.body;
     const slugId = data.id || `rem-${Date.now()}`;
@@ -372,8 +412,8 @@ app.post('/api/remedies', authenticateToken, async (req: Request, res: Response)
   }
 });
 
-// Update Remedy (Secured with JWT & Base64 Image upload)
-app.put('/api/remedies/:id', authenticateToken, async (req: Request, res: Response) => {
+// Update Remedy (Secured with JWT + Admin Role + Base64 Image upload)
+app.put('/api/remedies/:id', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const data = req.body;
@@ -400,8 +440,8 @@ app.put('/api/remedies/:id', authenticateToken, async (req: Request, res: Respon
   }
 });
 
-// Delete Remedy (Secured with JWT)
-app.delete('/api/remedies/:id', authenticateToken, async (req: Request, res: Response) => {
+// Delete Remedy (Secured with JWT + Admin Role)
+app.delete('/api/remedies/:id', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     await prisma.remedy.delete({ where: { slugId: id } });

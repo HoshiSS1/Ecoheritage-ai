@@ -1,17 +1,12 @@
-import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Leaf, Menu, X, MapPin, Mail, Phone, Facebook, Instagram, Youtube, 
-  Activity, LogOut, User, ShieldCheck, MessageSquareQuote, Heart, 
-  BookOpen, Map as MapIcon, ArrowUp, ArrowRight, ChevronDown 
-} from 'lucide-react';
-import { Routes, Route, Link, useLocation, useNavigate } from 'react-router';
+import { ArrowUp } from 'lucide-react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { AuthModal } from './components/AuthModal';
 import { ChatWidget } from './widgets/ChatWidget';
 import { AQIAlertPopup } from './components/AQIAlertPopup';
 import { ScrollProgress } from './components/ScrollProgress';
-import { getAvatarUrl } from './utils/avatarUtils';
 import { createSeedFeedback, createSeedUsers } from './pages/admin/adminData';
 import { FEEDBACK_STORAGE_KEY } from './pages/admin/adminUtils';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
@@ -42,7 +37,7 @@ function BackToTop({ visible }: { visible: boolean }) {
           exit={{ opacity: 0, y: 18, scale: 0.9 }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           aria-label="Lên đầu trang"
-          className="fixed bottom-24 right-4 z-[85] inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/30 bg-[#0a2e1f]/90 text-emerald-100 shadow-[0_18px_45px_rgba(0,0,0,0.35)] backdrop-blur-xl transition hover:border-amber-300/60 hover:bg-amber-400 hover:text-[#051a11] sm:bottom-8 sm:right-8"
+          className="fixed bottom-[88px] right-4 z-[85] inline-flex h-11 w-11 items-center justify-center rounded-full border border-emerald-300/30 bg-[#0a2e1f]/90 text-emerald-100 shadow-[0_18px_45px_rgba(0,0,0,0.35)] backdrop-blur-xl transition hover:border-amber-300/60 hover:bg-amber-400 hover:text-[#051a11] sm:bottom-8 sm:right-8 sm:h-12 sm:w-12"
         >
           <ArrowUp className="h-5 w-5" />
         </motion.button>

@@ -3,12 +3,14 @@ import { Lock, User, ArrowRight, ShieldCheck, Sparkles, Database, Globe, ArrowLe
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { 
-  ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_SESSION_KEY, 
+  ADMIN_SESSION_KEY, 
   REMEDIES_STORAGE_KEY, LOCATIONS_STORAGE_KEY, loadStoredState 
 } from "./admin/adminUtils";
 import { createSeedRemedies, createSeedLocations } from "./admin/adminData";
 import AdminLayout from "./admin/AdminLayout";
 import { hashPassword } from "../utils/crypto";
+
+const API_URL = 'http://localhost:5000/api';
 
 export default function AdminPortalPage() {
   const [username, setUsername] = useState("");
@@ -65,7 +67,7 @@ export default function AdminPortalPage() {
     return <AdminLayout />;
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (Date.now() < lockoutUntil) {
       const remaining = Math.ceil((lockoutUntil - Date.now()) / 60000);
@@ -77,49 +79,35 @@ export default function AdminPortalPage() {
     }
     setIsLoading(true);
 
-    setTimeout(async () => {
-      let role = null;
-      let userEmail = username;
-
-      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        role = "Super Admin";
-      } else {
-        const rawUsers = localStorage.getItem("ecoheritage_users");
-        if (rawUsers) {
-          const users = JSON.parse(rawUsers);
-          const hashedPassword = await hashPassword(password);
-          // Allow login via email OR name
-          const user = users.find((u: any) => 
-            (u.email === username || u.name === username) && u.password === hashedPassword
-          );
-          if (user) {
-            if (user.status === "banned") {
-              toast.error("Tài khoản đã bị vô hiệu hóa", {
-                description: "Vui lòng liên hệ Super Admin để biết thêm chi tiết.",
-                style: { borderLeft: "4px solid #ef4444" }
-              });
-              setIsLoading(false);
-              return;
-            }
-            if (user.role === "Member" || !user.role) {
-              toast.error("Truy cập bị từ chối", {
-                description: "Tài khoản của bạn không có quyền truy cập hệ thống quản trị.",
-                style: { borderLeft: "4px solid #ef4444" }
-              });
-              setIsLoading(false);
-              return;
-            }
-            role = user.role;
-          }
+    try {
+      // [SECURITY FIX] Gọi API backend xác thực, không so sánh client-side
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.token) {
+        const role = data.role;
+        
+        // Kiểm tra quyền truy cập admin
+        if (role === 'Member' || role === 'User') {
+          toast.error('Truy cập bị từ chối', {
+            description: 'Tài khoản của bạn không có quyền truy cập hệ thống quản trị.',
+            style: { borderLeft: '4px solid #ef4444' }
+          });
+          setIsLoading(false);
+          return;
         }
-      }
-
-      if (role) {
+        
         const sessionData = { 
           authenticated: true, 
           timestamp: Date.now(),
           role: role,
-          email: userEmail
+          email: username,
+          token: data.token
         };
         sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(sessionData));
         
@@ -129,10 +117,11 @@ export default function AdminPortalPage() {
 
         toast.success(`Xác thực thành công!`, {
           description: `Đăng nhập với vai trò: ${role}`,
-          style: { borderLeft: "4px solid #10b981" }
+          style: { borderLeft: '4px solid #10b981' }
         });
         window.location.reload();
       } else {
+        // Login thất bại
         const newAttempts = loginAttempts + 1;
         setLoginAttempts(newAttempts);
         if (newAttempts >= 5) {
@@ -144,14 +133,20 @@ export default function AdminPortalPage() {
             style: { borderLeft: '4px solid #ef4444' }
           });
         } else {
-          toast.error('Thông tin xác thực không chính xác', {
+          toast.error(data.error || 'Thông tin xác thực không chính xác', {
             description: `Vui lòng kiểm tra lại (${5 - newAttempts} lần thử còn lại).`,
             style: { borderLeft: '4px solid #ef4444' }
           });
         }
-        setIsLoading(false);
       }
-    }, 1200);
+    } catch (error) {
+      toast.error('Lỗi kết nối', {
+        description: 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra backend đang chạy.',
+        style: { borderLeft: '4px solid #ef4444' }
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -161,7 +156,7 @@ export default function AdminPortalPage() {
       setIsLoading(false);
 
       if (forgotStep === 'email') {
-        const isSuperAdmin = resetEmail === ADMIN_USERNAME || resetEmail === "admin@ecoheritage.vn";
+        const isSuperAdmin = resetEmail === "admin" || resetEmail === "admin@ecoheritage.vn";
         if (isSuperAdmin) {
           toast.info('Tài khoản Super Admin', {
             description: 'Mật khẩu Super Admin được quản lý qua cấu hình hệ thống. Vui lòng liên hệ kỹ thuật viên.',
@@ -350,9 +345,10 @@ export default function AdminPortalPage() {
                         <User className="h-5 w-5" />
                       </div>
                       <input
-                        type="text"
+                        type="email"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
+                        autoComplete="email"
                         className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
                         placeholder="Nhập email của bạn..."
                         required
@@ -470,6 +466,8 @@ export default function AdminPortalPage() {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
+                    autoComplete="username"
+                    aria-label="Email hoặc Tên người dùng"
                     className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-6 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
                     placeholder="Email hoặc Tên người dùng..."
                     required
@@ -487,6 +485,8 @@ export default function AdminPortalPage() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                    aria-label="Mật khẩu"
                     className="w-full rounded-2xl bg-slate-50 border border-slate-200 py-5 pl-14 pr-14 text-slate-900 placeholder:text-slate-300 focus:border-emerald-500/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-base shadow-sm"
                     placeholder="Password"
                     required
