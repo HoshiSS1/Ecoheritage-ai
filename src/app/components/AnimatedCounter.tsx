@@ -32,9 +32,16 @@ export function AnimatedCounter({
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
   const [displayValue, setDisplayValue] = useState(0);
+  const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
     if (!isInView) return;
+
+    // Nếu đã chạy hiệu ứng xong 1 lần, lập tức cập nhật giá trị tĩnh mới mà không chạy lại từ 0
+    if (hasAnimatedRef.current) {
+      setDisplayValue(target);
+      return;
+    }
 
     let startTime: number | null = null;
     let animationFrame: number;
@@ -51,6 +58,8 @@ export function AnimatedCounter({
 
       if (progress < 1) {
         animationFrame = requestAnimationFrame(animate);
+      } else {
+        hasAnimatedRef.current = true; // Khóa hiệu ứng sau khi hoàn thành
       }
     };
 

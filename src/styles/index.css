@@ -260,3 +260,75 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   3D Premium Card Flip & Aurora Glow Animation
+   ═══════════════════════════════════════════════════════════════════ */
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.card-flip-container {
+  perspective: 1200px;
+  width: 100%;
+  height: 380px;
+  cursor: pointer;
+  position: relative;
+}
+
+.card-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Trigger lật khi hover trên PC hoặc có class active trên Mobile */
+.card-flip-container:hover .card-flip-inner,
+.card-flip-container.is-flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.card-flip-front,
+.card-flip-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius-xl);
+  transform: translateZ(0); /* Kích hoạt tăng tốc phần cứng */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-flip-back {
+  transform: rotateY(180deg);
+}
+
+/* Hiệu ứng Ambient Aurora Glow chuyển động mượt sau các thẻ */
+@keyframes aurora-pulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1) translate(0px, 0px) rotate(0deg);
+  }
+  33% {
+    opacity: 0.3;
+    transform: scale(1.1) translate(10px, -10px) rotate(3deg);
+  }
+  66% {
+    opacity: 0.2;
+    transform: scale(0.95) translate(-10px, 10px) rotate(-3deg);
+  }
+}
+
+.aurora-glow {
+  animation: aurora-pulse 8s ease-in-out infinite;
+  will-change: transform, opacity;
+  filter: blur(50px);
+}
+
