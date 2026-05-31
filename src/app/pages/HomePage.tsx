@@ -240,7 +240,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16" style={{ perspective: '1200px' }}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-12 sm:mb-16" style={{ perspective: '1200px' }}>
             {dynamicEnvironmentData && dynamicEnvironmentData.map((d, i) => (
               d && <EnvironmentCard key={d.title} {...d} index={i} />
             ))}

@@ -94,6 +94,14 @@ export function EnvironmentChart() {
   const [chartData, setChartData] = useState<EnvironmentTrendPoint[]>(fallbackChartData);
   const [isLoading, setIsLoading] = useState(false);
   const [source, setSource] = useState<'live' | 'fallback'>('fallback');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -126,14 +134,14 @@ export function EnvironmentChart() {
       whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 1, type: "spring", bounce: 0.4 }}
-      className="relative bg-[var(--eco-surface)]/40 backdrop-blur-2xl rounded-[var(--radius-3xl)] p-8 md:p-12 shadow-[var(--shadow-xl)] border border-[var(--border-default)] overflow-hidden"
+      className="relative bg-[var(--eco-surface)]/40 backdrop-blur-2xl rounded-[1.5rem] sm:rounded-[var(--radius-3xl)] p-4 sm:p-8 md:p-12 shadow-[var(--shadow-xl)] border border-[var(--border-default)] overflow-hidden"
       style={{ transformPerspective: 1000 }}
     >
       {/* Quầng sáng Aurora Glow di chuyển sau biểu đồ tạo sức sống */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-amber-500/5 pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[60%] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none aurora-glow" />
       
-      <div className="relative z-10 mb-10">
+      <div className="relative z-10 mb-8 sm:mb-10">
         <SectionHeader
           icon={TrendingUp}
           badge="Xu hướng"
@@ -144,9 +152,9 @@ export function EnvironmentChart() {
         />
       </div>
 
-      <div className="relative z-10 w-full h-[400px]">
+      <div className="relative z-10 w-full" style={{ height: isMobile ? '240px' : '400px' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 10, right: isMobile ? 10 : 30, left: isMobile ? -25 : 0, bottom: 0 }}>
             <defs>
               <linearGradient id="aqiG" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.25} />
@@ -174,9 +182,9 @@ export function EnvironmentChart() {
             </defs>
             
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-            <XAxis dataKey="time" stroke="rgba(255,255,255,0.4)" fontSize={12} tickMargin={15} tickLine={false} axisLine={false} />
-            <YAxis yAxisId="left" stroke="rgba(255,255,255,0.4)" fontSize={12} tickMargin={15} tickLine={false} axisLine={false} domain={[0, 160]} />
-            <YAxis yAxisId="right" orientation="right" stroke="rgba(255,255,255,0.4)" fontSize={12} tickMargin={15} tickLine={false} axisLine={false} domain={[0, 12]} />
+            <XAxis dataKey="time" stroke="rgba(255,255,255,0.4)" fontSize={isMobile ? 10 : 12} tickMargin={10} tickLine={false} axisLine={false} />
+            <YAxis yAxisId="left" stroke="rgba(255,255,255,0.4)" fontSize={isMobile ? 9 : 12} tickMargin={isMobile ? 6 : 15} tickLine={false} axisLine={false} domain={[0, 160]} />
+            <YAxis yAxisId="right" orientation="right" stroke="rgba(255,255,255,0.4)" fontSize={12} tickMargin={15} tickLine={false} axisLine={false} domain={[0, 12]} hide={isMobile} />
             
             <Tooltip content={<CustomTooltip />} />
             

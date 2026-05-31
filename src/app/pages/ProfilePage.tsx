@@ -203,7 +203,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
           animate={{ opacity: 1, y: 0 }}
           className="relative mb-20"
         >
-          <div className="h-[28rem] sm:h-[32rem] rounded-[3.5rem] overflow-hidden relative border border-white/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] group/banner">
+          <div className="h-[22rem] sm:h-[32rem] rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden relative border border-white/5 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] group/banner">
             {coverPreview ? (
                <img src={coverPreview} alt="Cover" className="absolute inset-0 w-full h-[65%] object-cover z-0" />
             ) : (
@@ -217,7 +217,7 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
             <div className="absolute inset-0 h-[65%] bg-gradient-to-t from-[#020b07] via-[#051a11]/20 to-transparent opacity-60 z-10 pointer-events-none" />
             
             {/* User Info Glass Container */}
-            <div className="absolute bottom-4 sm:bottom-12 left-4 right-4 sm:right-auto sm:left-12 z-20 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-10 bg-black/60 backdrop-blur-3xl p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:max-w-[600px]">
+            <div className="absolute bottom-4 sm:bottom-12 left-4 right-4 sm:right-auto sm:left-12 z-20 flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-10 bg-black/60 backdrop-blur-3xl p-4 sm:p-10 rounded-[1.5rem] sm:rounded-[3rem] border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:max-w-[600px]">
                <div className="relative group/avatar cursor-pointer shrink-0">
                   <div className="absolute -inset-2 bg-emerald-500/20 blur-xl rounded-full opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-500" />
                   <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full border-4 border-white/10 overflow-hidden relative shadow-2xl">
@@ -272,11 +272,11 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-3 space-y-6">
-            <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-4 backdrop-blur-2xl shadow-2xl overflow-hidden relative group">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+          <div className="lg:col-span-3 space-y-6 w-full">
+            <div className="bg-white/5 border border-white/10 rounded-[1.5rem] sm:rounded-[2.5rem] p-3 sm:p-4 backdrop-blur-2xl shadow-2xl overflow-hidden relative group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-blue-500" />
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto no-scrollbar scroll-smooth pb-1 sm:pb-0">
                 {[
                   { id: 'overview', label: 'Tổng quan', icon: Layout },
                   { id: 'security', label: 'Bảo mật', icon: Lock },
@@ -286,13 +286,13 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${
+                    className={`flex items-center gap-2 sm:gap-4 px-4 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 shrink-0 whitespace-nowrap ${
                       activeTab === tab.id 
-                        ? 'bg-emerald-500 text-[#051a11] shadow-lg shadow-emerald-500/20 translate-x-2' 
+                        ? 'bg-emerald-500 text-[#051a11] shadow-lg shadow-emerald-500/20 lg:translate-x-2' 
                         : 'text-white/40 hover:text-white hover:bg-white/5'
                     }`}
                   >
-                    <tab.icon className={`w-5 h-5 ${activeTab === tab.id ? 'text-[#051a11]' : 'text-emerald-500/50'}`} />
+                    <tab.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${activeTab === tab.id ? 'text-[#051a11]' : 'text-emerald-500/50'}`} />
                     {tab.label}
                   </button>
                 ))}
@@ -327,53 +327,53 @@ export function ProfilePage({ user, onLogout, onAvatarChange }: ProfilePageProps
                     </div>
 
                     {/* Environment Insight Card (Modern Bento) */}
-                    <div className="bg-gradient-to-br from-[#0a2e1f] to-[#051a11] border border-emerald-500/20 rounded-[3rem] p-8 sm:p-10 shadow-2xl relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-[#0a2e1f] to-[#051a11] border border-emerald-500/20 rounded-[1.5rem] sm:rounded-[3rem] p-5 sm:p-10 shadow-2xl relative overflow-hidden group">
                        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-700" />
                        
-                       <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-                          <div className="flex-1">
+                       <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-10 relative z-10">
+                          <div className="flex-1 w-full">
                              <div className="inline-flex items-center gap-2 text-amber-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4">
                                 <Activity className="w-4 h-4 animate-pulse" /> Trí tuệ Sức khỏe AI
                              </div>
-                             <h3 className="text-3xl sm:text-4xl font-black text-white leading-tight mb-6">Chào {user.name.split(' ')[0]}, hôm nay <br /> không khí khá <span className="text-emerald-400">tuyệt vời</span>.</h3>
-                             <p className="text-emerald-100/40 text-sm font-medium leading-relaxed max-w-md mb-8">
+                             <h3 className="text-2xl sm:text-4xl font-black text-white leading-tight mb-4 sm:mb-6">Chào {user.name.split(' ')[0]}, hôm nay <br /> không khí khá <span className="text-emerald-400">tuyệt vời</span>.</h3>
+                             <p className="text-emerald-100/40 text-sm font-medium leading-relaxed max-w-md mb-6 sm:mb-8">
                                 Chỉ số AQI hiện tại là {aqiData?.aqi || '—'}. Một chén trà <strong>Chè Dây</strong> vào buổi sáng sẽ giúp hệ tiêu hóa của bạn khỏe mạnh hơn trong tiết trời này.
                              </p>
-                             <div className="flex gap-4">
-                                <div className="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-2xl border border-white/10">
-                                   <Droplets className="w-5 h-5 text-blue-400" />
+                             <div className="flex gap-3 sm:gap-4">
+                                <div className="flex items-center gap-2.5 sm:gap-3 bg-white/5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border border-white/10">
+                                   <Droplets className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
                                    <div>
-                                      <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Độ ẩm</p>
-                                      <p className="text-sm font-bold text-white">{aqiData?.humidity || '—'}%</p>
+                                      <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-white/30">Độ ẩm</p>
+                                      <p className="text-xs sm:text-sm font-bold text-white">{aqiData?.humidity || '—'}%</p>
                                    </div>
                                 </div>
-                                <div className="flex items-center gap-3 bg-white/5 px-5 py-3 rounded-2xl border border-white/10">
-                                   <Sun className="w-5 h-5 text-amber-400" />
+                                <div className="flex items-center gap-2.5 sm:gap-3 bg-white/5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border border-white/10">
+                                   <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
                                    <div>
-                                      <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Chỉ số UV</p>
-                                      <p className="text-sm font-bold text-white">{aqiData?.uvIndex !== undefined ? aqiData.uvIndex : '0'}</p>
+                                      <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-white/30">Chỉ số UV</p>
+                                      <p className="text-xs sm:text-sm font-bold text-white">{aqiData?.uvIndex !== undefined ? aqiData.uvIndex : '0'}</p>
                                    </div>
                                 </div>
                              </div>
                           </div>
-                          <div className="w-full md:w-64 h-64 bg-white/5 rounded-[2.5rem] border border-white/10 flex flex-col items-center justify-center p-8 relative shadow-inner">
+                          <div className="w-full md:w-64 h-56 md:h-64 bg-white/5 rounded-[2rem] sm:rounded-[2.5rem] border border-white/10 flex flex-col items-center justify-center p-6 sm:p-8 relative shadow-inner">
                              <div className="absolute inset-0 bg-emerald-500/5 blur-3xl rounded-full" />
-                             <div className="text-5xl font-black tracking-tighter text-white mb-2 relative z-10">{aqiData?.aqi || '—'}</div>
-                             <div className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400 relative z-10">AQI Hiện tại</div>
-                             <div className="mt-8 w-full h-2 bg-white/10 rounded-full overflow-hidden relative z-10">
+                             <div className="text-4xl sm:text-5xl font-black tracking-tighter text-white mb-1.5 relative z-10">{aqiData?.aqi || '—'}</div>
+                             <div className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.3em] text-emerald-400 relative z-10">AQI Hiện tại</div>
+                             <div className="mt-6 sm:mt-8 w-full h-1.5 sm:h-2 bg-white/10 rounded-full overflow-hidden relative z-10">
                                 <motion.div 
                                   initial={{ width: 0 }}
                                   animate={{ width: `${Math.min((aqiData?.aqi || 0), 100)}%` }}
                                   className="h-full bg-gradient-to-r from-emerald-500 to-amber-400" 
                                 />
                              </div>
-                             <div className="mt-4 w-full h-10 opacity-70 flex items-end justify-between px-2 relative z-10" title="Biến thiên AQI trong ngày">
+                             <div className="mt-3 sm:mt-4 w-full h-8 sm:h-10 opacity-70 flex items-end justify-between px-2 relative z-10" title="Biến thiên AQI trong ngày">
                                <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible drop-shadow-md" preserveAspectRatio="none">
                                   <polyline points="0,20 20,15 40,25 60,10 80,18 100,5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-400" />
                                   <polyline points="0,20 20,15 40,25 60,10 80,18 100,5 100,30 0,30" fill="currentColor" className="text-emerald-500/20" />
                                </svg>
                              </div>
-                             <p className="mt-3 text-[10px] font-bold text-white/50 uppercase tracking-widest text-center relative z-10">Chất lượng không khí tốt</p>
+                             <p className="mt-2.5 text-[9px] sm:text-[10px] font-bold text-white/50 uppercase tracking-widest text-center relative z-10">Chất lượng không khí tốt</p>
                           </div>
                        </div>
                     </div>

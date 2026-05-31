@@ -84,7 +84,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30, rotateX: 8 }}
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ delay: 0.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display text-4xl sm:text-5xl lg:text-5xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full"
+            className="font-display text-3xl sm:text-5xl lg:text-5xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full"
             style={{ perspective: '1000px' }}
           >
             <span className="block text-white">Sống khỏe mỗi ngày</span>
@@ -194,12 +194,12 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.85, rotateY: 15 }}
           animate={{ opacity: 1, scale: 1, rotateY: 0 }}
           transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="relative hidden lg:flex items-center justify-center w-full"
+          className="relative flex items-center justify-center w-full mt-16 lg:mt-0"
           style={{ perspective: '1500px', willChange: 'transform, opacity' }}
         >
-          <div className="relative w-full max-w-[420px] xl:max-w-[480px]">
+          <div className="relative w-[90vw] max-w-[340px] sm:max-w-[420px] xl:max-w-[480px]">
             {/* Main 3D Container */}
-            <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-white/10 group w-full">
+            <div className="relative aspect-[4/5] rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-white/10 group w-full">
               {/* Inner Glow */}
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-amber-500/20 mix-blend-overlay z-10 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
             
@@ -217,7 +217,7 @@ export function Hero() {
             initial={{ opacity: 0, x: -40, y: 30, rotateY: -12 }}
             animate={{ opacity: 1, x: 0, y: 0, rotateY: 0 }}
             transition={{ delay: 1.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute -left-6 xl:-left-16 top-16 bg-[#0a2e1f]/80 backdrop-blur-3xl border border-white/10 text-white rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-64 lg:w-72 z-30 hover:-translate-y-2 transition-transform duration-500"
+            className="absolute -left-2 sm:-left-6 lg:-left-16 top-10 lg:top-16 bg-[#0a2e1f]/80 backdrop-blur-3xl border border-white/10 text-white rounded-[1.25rem] sm:rounded-[2rem] p-3 sm:p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-48 sm:w-64 lg:w-72 z-30 hover:-translate-y-2 transition-transform duration-500"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="absolute -top-3 -right-3 w-16 h-16 bg-emerald-500/30 rounded-full blur-xl" />
@@ -230,14 +230,14 @@ export function Hero() {
             </div>
             <div className="flex items-end justify-between mb-2">
               <div className="min-w-0">
-                <div className="font-display text-3xl sm:text-4xl font-bold tracking-tighter drop-shadow-xl text-white truncate">{currentAqi}</div>
+                <div className="font-display text-2xl sm:text-4xl font-bold tracking-tighter drop-shadow-xl text-white truncate">{currentAqi}</div>
                 <div className="text-[10px] sm:text-xs text-amber-300 font-bold uppercase tracking-widest mt-1 drop-shadow-md">US AQI — {currentStatus}</div>
               </div>
-              <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-3 rounded-2xl shadow-lg">
-                <Leaf className="w-8 h-8 text-white" />
+              <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-2 sm:p-3 rounded-2xl shadow-lg">
+                <Leaf className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-white/20 text-[12px] lg:text-[13px] text-white italic font-medium leading-relaxed drop-shadow-sm">
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/20 text-[11px] sm:text-[13px] text-white italic font-medium leading-relaxed drop-shadow-sm">
               Độ ẩm {currentHumidity}%, UV {currentUv}. Gợi ý chăm sóc thay đổi theo dữ liệu môi trường thật.
             </div>
           </motion.div>
@@ -247,17 +247,17 @@ export function Hero() {
             initial={{ opacity: 0, x: 40, y: -30, rotateY: 12 }}
             animate={{ opacity: 1, x: 0, y: 0, rotateY: 0 }}
             transition={{ delay: 1.8, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute -right-4 xl:-right-10 bottom-12 bg-gradient-to-br from-amber-400/95 to-amber-600/95 backdrop-blur-2xl border border-white/20 text-[#051a11] rounded-[2rem] p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-56 lg:w-64 z-40 hover:-translate-y-2 transition-transform duration-500"
+            className="absolute -right-2 sm:-right-4 lg:-right-10 bottom-8 lg:bottom-12 bg-gradient-to-br from-amber-400/95 to-amber-600/95 backdrop-blur-2xl border border-white/20 text-[#051a11] rounded-[1.25rem] sm:rounded-[2rem] p-3 sm:p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-44 sm:w-56 lg:w-64 z-40 hover:-translate-y-2 transition-transform duration-500"
             style={{ willChange: 'transform, opacity' }}
           >
-            <div className="absolute top-0 right-0 w-full h-full bg-[url('/textures/rice-paper.png')] opacity-30 mix-blend-overlay rounded-[2rem]" />
+            <div className="absolute top-0 right-0 w-full h-full bg-[url('/textures/rice-paper.png')] opacity-30 mix-blend-overlay rounded-[1.5rem] sm:rounded-[2rem]" />
             <div className="relative z-10">
-              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-inner border border-white/30 backdrop-blur-sm relative overflow-hidden">
-                <Leaf className="w-6 h-6 text-[#051a11]" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl mb-3 sm:mb-4 shadow-inner border border-white/30 backdrop-blur-sm relative overflow-hidden">
+                <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-[#051a11]" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 to-transparent" />
               </div>
-              <div className="font-display text-lg sm:text-xl leading-tight font-bold mb-1 drop-shadow-sm">Gợi ý dược liệu</div>
-              <div className="text-[13px] font-semibold text-[#051a11] leading-relaxed mt-2">Siro lá lốt mật ong — giải pháp vàng cho họng hắt hơi ngày bụi.</div>
+              <div className="font-display text-base sm:text-xl leading-tight font-bold mb-1 drop-shadow-sm">Gợi ý dược liệu</div>
+              <div className="text-[11px] sm:text-[13px] font-semibold text-[#051a11] leading-relaxed mt-1 sm:mt-2">Siro lá lốt mật ong — giải pháp vàng cho họng hắt hơi ngày bụi.</div>
             </div>
           </motion.div>
           </div>

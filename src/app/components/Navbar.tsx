@@ -35,8 +35,8 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
       animate={{ y: 0, opacity: 1 }}
       className={`fixed top-0 left-0 right-0 z-[120] transition-all duration-500 ${
         scrolled 
-          ? 'bg-[#020b07]/90 backdrop-blur-2xl shadow-[0_10px_50px_rgba(0,0,0,0.8)] border-b border-[var(--border-subtle)]' 
-          : 'bg-[#0a1913]/60 backdrop-blur-md border-b border-transparent'
+          ? 'bg-[#020b07]/90 backdrop-blur-2xl shadow-[0_10px_50px_rgba(0,0,0,0.8)] border-b border-[var(--border-subtle)] hardware-accelerate' 
+          : 'bg-[#0a1913]/60 backdrop-blur-md border-b border-transparent hardware-accelerate'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between relative">
@@ -207,7 +207,7 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
               initial={{ opacity: 0, y: -20, scale: 0.95 }} 
               animate={{ opacity: 1, y: 0, scale: 1 }} 
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              className="lg:hidden absolute top-[90px] left-4 right-4 bg-[#0a2e1f]/98 shadow-[0_40px_80px_rgba(0,0,0,1)] rounded-[2.5rem] border border-[var(--border-default)] overflow-hidden z-[120]"
+              className="lg:hidden absolute top-16 sm:top-20 left-4 right-4 bg-[#0a2e1f]/98 shadow-[0_40px_80px_rgba(0,0,0,1)] rounded-[2.5rem] border border-[var(--border-default)] overflow-hidden z-[120]"
             >
               <div data-lenis-prevent="true" className="px-6 py-8 flex flex-col gap-2 relative max-h-[75vh] overflow-y-auto custom-scrollbar">
             <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/10 blur-[50px] rounded-full" />
@@ -222,7 +222,7 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
                         key={sub.name}
                         to={sub.path}
                         onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-5 text-white/90 hover:text-white hover:bg-emerald-500/10 font-bold text-lg px-5 py-5 rounded-[1.5rem] transition-all group"
+                        className="flex items-center gap-5 text-white/90 hover:text-white hover:bg-emerald-500/10 font-bold text-lg px-5 py-3 rounded-[1.5rem] transition-all group"
                       >
                         <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
                           <sub.icon className="w-5 h-5" />
@@ -243,7 +243,7 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
                           document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
                         }
                       }}
-                      className="text-white/90 hover:text-amber-400 font-bold text-[15px] uppercase tracking-widest px-6 py-5 rounded-[1.5rem] hover:bg-white/5 transition-all"
+                      className="text-white/90 hover:text-amber-400 font-bold text-[15px] uppercase tracking-widest px-6 py-3 rounded-[1.5rem] hover:bg-white/5 transition-all"
                     >
                       {l.name}
                     </a>
@@ -251,7 +251,7 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
                     <Link
                       to={l.path}
                       onClick={() => setMenuOpen(false)}
-                      className="text-white/90 hover:text-amber-400 font-bold text-[15px] uppercase tracking-widest px-6 py-5 rounded-[1.5rem] hover:bg-white/5 transition-all"
+                      className="text-white/90 hover:text-amber-400 font-bold text-[15px] uppercase tracking-widest px-6 py-3 rounded-[1.5rem] hover:bg-white/5 transition-all"
                     >
                       {l.name}
                     </Link>
@@ -261,19 +261,19 @@ export function Navbar({ scrolled, user, userAvatar, onLogout, onOpenAuth }: Nav
               </div>
             ))}
 
-            <div className="mt-6 pt-8 pb-12 border-t border-white/10 space-y-4">
+            <div className="mt-6 pt-6 pb-8 border-t border-white/10 space-y-4">
               {user ? (
                 <div className="grid grid-cols-2 gap-4">
-                  <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white py-5 rounded-3xl font-bold transition-all border border-white/10 text-xs uppercase tracking-widest">
+                  <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white py-3.5 rounded-3xl font-bold transition-all border border-white/10 text-xs uppercase tracking-widest">
                     <User className="w-4 h-4 text-emerald-400" />
                     Hồ sơ
                   </Link>
-                  <button onClick={() => { onLogout(); setMenuOpen(false); }} className="flex items-center justify-center gap-3 bg-rose-500/5 hover:bg-rose-500/10 text-rose-400 py-5 rounded-3xl font-bold transition-all border border-rose-500/10 text-xs uppercase tracking-widest">
+                  <button onClick={() => { onLogout(); setMenuOpen(false); }} className="flex items-center justify-center gap-3 bg-rose-500/5 hover:bg-rose-500/10 text-rose-400 py-3.5 rounded-3xl font-bold transition-all border border-rose-500/10 text-xs uppercase tracking-widest">
                     <LogOut className="w-4 h-4" /> Thoát
                   </button>
                 </div>
               ) : (
-                <button onClick={() => { onOpenAuth(); setMenuOpen(false); }} className="w-full bg-gradient-to-r from-amber-500 to-amber-300 text-[#0a2e1f] py-6 rounded-[2rem] font-black uppercase tracking-[0.25em] text-xs shadow-2xl shadow-amber-500/40 active:scale-95 transition-all">Đăng nhập</button>
+                <button onClick={() => { onOpenAuth(); setMenuOpen(false); }} className="w-full bg-gradient-to-r from-amber-500 to-amber-300 text-[#0a2e1f] py-4 rounded-[2rem] font-black uppercase tracking-[0.25em] text-xs shadow-2xl shadow-amber-500/40 active:scale-95 transition-all">Đăng nhập</button>
               )}
             </div>
               </div>

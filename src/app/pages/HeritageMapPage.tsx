@@ -96,6 +96,15 @@ export function HeritageMapPage() {
     if (typeof window !== 'undefined') return window.innerWidth >= 768;
     return true;
   });
+  const [isMobile, setIsMobile] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useAirQuality();
 
@@ -207,7 +216,12 @@ export function HeritageMapPage() {
   }, [searchTerm, activeFilter, locations, savedLocations]);
 
   const handleLocationSelect = (locId: string) => {
-    setActiveLocationId((prev) => (prev === locId ? null : locId));
+    setActiveLocationId((prev) => {
+      if (prev !== locId) {
+        setIsExpanded(false);
+      }
+      return prev === locId ? null : locId;
+    });
   };
 
   const getAQILevel = (score: number) => {
@@ -266,13 +280,13 @@ export function HeritageMapPage() {
   return (
     <div className="bg-[#051a11] h-screen relative overflow-hidden font-body">
       {/* HEADER TITLE */}
-      <div className="absolute top-[70px] sm:top-[100px] left-1/2 -translate-x-1/2 z-[50] pointer-events-none text-center w-full px-4">
+      <div className="absolute top-[72px] sm:top-[100px] left-0 sm:left-1/2 -translate-x-0 sm:-translate-x-1/2 z-[50] pointer-events-none text-left sm:text-center w-full sm:w-auto px-4 pl-16 sm:pl-4">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-[#051a11]/90 backdrop-blur-2xl border border-emerald-500/20 rounded-full py-2 px-5 sm:py-3 sm:px-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] inline-block relative"
+          className="bg-[#051a11]/90 backdrop-blur-2xl border border-emerald-500/20 rounded-full py-2 px-5 sm:py-3 sm:px-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] inline-block relative pointer-events-auto"
         >
-          <h1 className="font-display text-[10px] sm:text-sm md:text-lg text-white font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase relative pb-2 sm:pb-3">
+          <h1 className="font-display text-[9px] sm:text-sm md:text-lg text-white font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase relative pb-1 sm:pb-3">
             Bản đồ dược liệu <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200">Đà Nẵng</span>
             <motion.div 
               initial={{ width: 0, opacity: 0 }}
@@ -286,10 +300,10 @@ export function HeritageMapPage() {
 
       <Link 
         to="/"
-        className="absolute top-[70px] sm:top-[100px] left-4 sm:left-6 md:left-12 z-[80] w-10 h-10 sm:w-12 sm:h-12 bg-[#051a11]/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-[#051a11] transition-all shadow-2xl group"
+        className="absolute top-[72px] sm:top-[100px] left-4 sm:left-6 md:left-12 z-[80] w-9.5 h-9.5 sm:w-12 sm:h-12 bg-[#051a11]/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-[#051a11] transition-all shadow-2xl group"
         title="Về trang chủ"
       >
-        <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
       </Link>
 
       {/* SIDEBAR */}
@@ -361,7 +375,7 @@ export function HeritageMapPage() {
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0">
-                            <img src={loc.image} alt={loc.name || 'Ảnh địa điểm'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <img src={loc.image} alt={loc.name || 'Ảnh địa điểm'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" decoding="async" />
 
                           </div>
                           <div className="flex-1 min-w-0">
@@ -416,19 +430,34 @@ export function HeritageMapPage() {
       <AnimatePresence>
         {activeLoc && (
           <motion.div
-            initial={{ x: '100%', opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: '100%', opacity: 0 }}
+            initial={isMobile ? { y: '100%' } : { x: '100%', opacity: 0 }}
+            animate={isMobile ? { y: 0 } : { x: 0, opacity: 1 }}
+            exit={isMobile ? { y: '100%' } : { x: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 30, stiffness: 120 }}
-            className="absolute top-16 sm:top-20 right-0 bottom-0 z-[85] w-full md:w-[50%] lg:w-[35%] bg-[#020b07] border-l border-white/10 shadow-[-30px_0_120px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col"
+            style={isMobile ? { height: isExpanded ? '85vh' : '32vh' } : {}}
+            className={`fixed md:absolute z-[85] bg-[#020b07] border-white/10 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] md:shadow-[-30px_0_120px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col transition-all duration-500 ${
+              isMobile 
+                ? 'bottom-0 left-0 right-0 top-auto rounded-t-[2.5rem] border-t' 
+                : 'top-16 sm:top-20 right-0 bottom-0 w-full md:w-[50%] lg:w-[35%] border-l'
+            }`}
           >
+            {isMobile && (
+              <div 
+                className="w-full py-3 shrink-0 flex items-center justify-center cursor-pointer border-b border-white/5 active:bg-white/5 transition-colors"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                <div className="w-12 h-1 bg-white/20 rounded-full" />
+              </div>
+            )}
+            
             <div ref={detailPanelRef} data-lenis-prevent="true" className="flex-1 overflow-y-auto no-scrollbar pb-28">
               {/* HERO */}
-              <div className="h-[35vh] relative shrink-0 group overflow-hidden">
+              <div className={`relative shrink-0 group overflow-hidden ${isMobile ? (isExpanded ? 'h-[25vh]' : 'h-0 hidden') : 'h-[35vh]'}`}>
                 <img
                   src={activeLoc.image}
                   alt={activeLoc.name || 'Ảnh địa điểm'}
                   className="w-full h-full object-cover transition-transform duration-[3000ms] group-hover:scale-110"
+                  loading="lazy" decoding="async"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-[#020b07] via-[#020b07]/20 to-black/40" />
@@ -483,8 +512,46 @@ export function HeritageMapPage() {
                 </div>
               </div>
 
-              <div className="p-8 lg:p-10 space-y-10 relative">
-                {/* SECTION 0: Tổng quan di sản */}
+              {isMobile && !isExpanded && (
+                <div className="p-6 pb-2 space-y-3 relative z-10 flex flex-col justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 bg-emerald-500 text-[#051a11] rounded text-[8px] font-black uppercase tracking-widest shadow-sm">{activeLoc.type}</span>
+                    <span className="px-2.5 py-0.5 bg-amber-500/20 border border-amber-500/30 rounded text-[8px] font-black text-amber-400 uppercase flex items-center gap-1"><Clock className="w-2.5 h-2.5" /> {activeLoc.bestTime}</span>
+                  </div>
+                  <h2 className="text-lg font-display font-black text-white uppercase tracking-tight leading-snug">{activeLoc.name}</h2>
+                  <div className="flex items-center gap-1.5 text-white/40">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400/70" />
+                    <span className="text-[9px] font-bold uppercase tracking-wider truncate max-w-[280px]">{activeLoc.address}</span>
+                  </div>
+                  <button 
+                    onClick={() => setIsExpanded(true)}
+                    className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-[10px] font-black text-amber-400 uppercase tracking-widest mt-2 flex items-center justify-center gap-1.5"
+                  >
+                    <span>Xem chi tiết di sản & bài thuốc</span>
+                    <ChevronRight className="w-3.5 h-3.5 rotate-90" />
+                  </button>
+                </div>
+              )}
+
+              {(!isMobile || isExpanded) && (
+                <div className="p-8 lg:p-10 space-y-10 relative">
+                  {isMobile && (
+                    <div className="flex items-center justify-between pb-4 border-b border-white/5">
+                      <button 
+                        onClick={() => setIsExpanded(false)}
+                        className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white flex items-center gap-1"
+                      >
+                        <ChevronLeft className="w-4 h-4 -rotate-90" /> Thu gọn
+                      </button>
+                      <button 
+                        onClick={() => setActiveLocationId(null)}
+                        className="text-[10px] font-black uppercase tracking-widest text-rose-400 hover:text-rose-300 flex items-center gap-1"
+                      >
+                        Đóng bản tin
+                      </button>
+                    </div>
+                  )}
+                  {/* SECTION 0: Tổng quan di sản */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-4 bg-emerald-500 rounded-full" />
@@ -568,6 +635,7 @@ export function HeritageMapPage() {
                                 src={resolveRemedyImage(remedy) || undefined}
                                 alt={remedy.name}
                                 className="w-full h-full object-cover"
+                                loading="lazy" decoding="async"
                               />
                             ) : (
                               <div className="w-full h-full bg-emerald-500/10 flex items-center justify-center text-2xl">
@@ -676,6 +744,7 @@ export function HeritageMapPage() {
                   <p className="text-[8px] font-black text-white uppercase tracking-[0.3em]">EcoHeritage Platform © 2026</p>
                 </div>
               </div>
+            )}
             </div>
 
             {/* STICKY ACTION BAR */}
@@ -753,6 +822,7 @@ export function HeritageMapPage() {
                         src={resolveRemedyImage(activeRemedy) || undefined}
                         alt={activeRemedy.name}
                         className="w-full h-full object-cover"
+                        loading="lazy" decoding="async"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-emerald-500/20 to-emerald-700/10 flex items-center justify-center text-4xl sm:text-5xl">

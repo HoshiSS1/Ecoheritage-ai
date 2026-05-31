@@ -15,9 +15,10 @@ export function useSmoothScroll() {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.5,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       touchMultiplier: 1.5,
+      wheelMultiplier: 1.2,
       infinite: false,
     });
 

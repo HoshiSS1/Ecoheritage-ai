@@ -332,3 +332,13 @@ html.lenis, html.lenis body {
   filter: blur(50px);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   Performance Utilities
+   ═══════════════════════════════════════════════════════════════════ */
+.hardware-accelerate {
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+

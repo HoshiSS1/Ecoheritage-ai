@@ -542,19 +542,19 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                 </div>
               </div>
 
-              <div className="relative z-10 flex flex-col justify-center min-h-full px-6 sm:px-10 md:px-12 py-10 md:py-12">
+              <div className="relative z-10 flex flex-col justify-center min-h-full px-5 sm:px-10 md:px-12 py-6 sm:py-10 md:py-12">
                 {/* Close button */}
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); onClose(); }}
                   aria-label="Đóng"
-                  className="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100/80 transition-all z-50 cursor-pointer group"
+                  className="absolute top-3 right-3 sm:top-5 sm:right-5 w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100/80 transition-all z-50 cursor-pointer group"
                 >
                   <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" strokeWidth={1.8} />
                 </button>
 
                 {/* Mobile brand header */}
-                <div className="flex justify-center mb-6 md:hidden">
+                <div className="flex justify-center mb-4 md:hidden">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-[0_8px_30px_rgba(16,185,129,0.3)] relative">
                     <div className="absolute -inset-1 bg-emerald-400/20 rounded-2xl blur-md animate-pulse" />
                     <Leaf className="w-7 h-7 text-white relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" strokeWidth={2} />
@@ -578,7 +578,7 @@ export function AuthModal({ isOpen, onClose, onLoginSuccess }: AuthModalProps) {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="text-[26px] sm:text-[30px] font-extrabold tracking-tight leading-tight"
+                    className="text-[22px] sm:text-[30px] font-extrabold tracking-tight leading-tight"
                   >
                     {isForgotPassword
                       ? (forgotPasswordStep === 'email' ? <><span className="text-gray-900">Khôi phục </span><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">mật khẩu</span></> : forgotPasswordStep === 'otp' ? <><span className="text-gray-900">Xác thực </span><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">OTP</span></> : <><span className="text-gray-900">Mật khẩu </span><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">mới</span></>)

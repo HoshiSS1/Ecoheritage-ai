@@ -163,7 +163,7 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
             glow={s.glow}
             delay={index * 0.1}
             hoverLift={false} // Tắt hover nâng để tránh giật hình khi lật 3D
-            className="group flex flex-col h-full p-5 sm:p-6 cursor-default border border-white/10 relative overflow-hidden"
+            className="group flex flex-col h-full p-3.5 sm:p-6 cursor-default border border-white/10 relative overflow-hidden"
           >
             {/* Quầng sáng Aurora chuyển động phía sau */}
             <div className={`absolute -top-20 -right-20 w-56 h-56 rounded-full bg-gradient-to-br ${s.ring} opacity-25 blur-3xl pointer-events-none aurora-glow`} />
@@ -171,7 +171,7 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
             <div className="flex-1 flex flex-col justify-between relative z-10">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
-                <div className={`relative w-12 h-12 rounded-[var(--radius-lg)] bg-gradient-to-br ${s.ring} p-2.5 shadow-lg transform group-hover:rotate-12 transition-transform duration-500`}>
+                <div className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-[var(--radius-lg)] bg-gradient-to-br ${s.ring} p-2 sm:p-2.5 shadow-lg transform group-hover:rotate-12 transition-transform duration-500`}>
                   <div className="absolute inset-0 bg-white/20 rounded-[var(--radius-lg)] opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Icon className="w-full h-full text-white relative z-10 drop-shadow-md" />
                 </div>
@@ -185,7 +185,7 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
               {/* Title & Value */}
               <div className="my-auto py-2">
                 <p className="text-[10px] sm:text-xs text-[var(--text-secondary)] font-bold uppercase tracking-[0.2em] mb-2">{title}</p>
-                <div className="font-display text-5xl sm:text-6xl font-bold text-white tracking-tighter group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-emerald-200 transition-all duration-500 leading-none truncate max-w-full">
+                <div className="font-display text-3xl sm:text-6xl font-bold text-white tracking-tighter group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-emerald-200 transition-all duration-500 leading-none truncate max-w-full">
                   {isNumeric ? (
                     <AnimatedCounter target={numValue} duration={1500} suffix={suffix} decimals={Number.isInteger(numValue) ? 0 : 1} />
                   ) : (
@@ -211,7 +211,7 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
             glow={s.glow}
             noReveal={true}
             hoverLift={false}
-            className="flex flex-col h-full p-5 sm:p-6 cursor-default border border-white/10 bg-[#030d08]/60 backdrop-blur-2xl relative overflow-hidden"
+            className="flex flex-col h-full p-3.5 sm:p-6 cursor-default border border-white/10 bg-[#030d08]/60 backdrop-blur-2xl relative overflow-hidden"
           >
             {/* Quầng sáng Aurora chuyển động phía sau */}
             <div className={`absolute -bottom-20 -left-20 w-56 h-56 rounded-full bg-gradient-to-br ${s.ring} opacity-15 blur-3xl pointer-events-none aurora-glow`} />
@@ -225,7 +225,7 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
 
               {/* Description (Đã tăng kích cỡ to rõ ràng, vừa vặn mắt người nhìn theo screenshot hình 1) */}
               <div className="flex-1 flex flex-col justify-start overflow-y-auto custom-scrollbar max-h-[110px] mb-4 pr-1">
-                <p className="text-[13px] sm:text-[14px] text-white/95 leading-relaxed font-normal tracking-wide drop-shadow-sm">
+                <p className="text-[12px] sm:text-[14px] text-white/95 leading-relaxed font-normal tracking-wide drop-shadow-sm">
                   {description}
                 </p>
               </div>
@@ -233,25 +233,25 @@ export function EnvironmentCard({ icon: Icon, title, value, status, description,
               {/* WOW Remedy Section (Đã tăng cỡ chữ bài thuốc lên to rõ, nổi bật) */}
               {remedy && (
                 <div 
-                  className="border border-amber-500/25 bg-amber-500/5 p-3.5 rounded-xl mb-4 hover:bg-amber-500/10 hover:border-amber-500/40 transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="border border-amber-500/25 bg-amber-500/5 p-2 sm:p-3.5 rounded-xl mb-4 hover:bg-amber-500/10 hover:border-amber-500/40 transition-all duration-300 transform hover:-translate-y-0.5"
                   onClick={(e) => {
                     // Ngăn chặn việc bấm vào bài thuốc làm lật ngược lại thẻ
                     e.stopPropagation();
                   }}
                 >
-                  <div className="flex items-center gap-1.5 mb-1.5 text-[10px] sm:text-[11px] font-black text-amber-300 uppercase tracking-wider">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <div className="flex items-center gap-1.5 mb-1.5 text-[9px] sm:text-[11px] font-black text-amber-300 uppercase tracking-wider">
+                    <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 animate-pulse" />
                     <span>Dược liệu khuyến nghị</span>
                   </div>
-                  <h4 className="text-[14px] sm:text-[15px] font-extrabold text-white mb-1 tracking-tight">{remedy.name}</h4>
-                  <p className="text-[12px] sm:text-[13px] text-white/80 font-normal leading-relaxed line-clamp-2">{remedy.benefit}</p>
+                  <h4 className="text-[12px] sm:text-[15px] font-extrabold text-white mb-1 tracking-tight">{remedy.name}</h4>
+                  <p className="text-[10px] sm:text-[13px] text-white/80 font-normal leading-relaxed line-clamp-2">{remedy.benefit}</p>
                   
                   <Link 
                     to={remedy.link}
-                    className="inline-flex items-center gap-1 text-[12px] sm:text-[13px] font-extrabold text-amber-300 hover:text-amber-200 mt-2.5 transition-colors group/remedy-btn"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-[13px] font-extrabold text-amber-300 hover:text-amber-200 mt-2.5 transition-colors group/remedy-btn"
                   >
                     <span>Khám phá kho thảo dược</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover/remedy-btn:translate-x-0.5 transition-transform" />
+                    <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 transform group-hover/remedy-btn:translate-x-0.5 transition-transform" />
                   </Link>
                 </div>
               )}
