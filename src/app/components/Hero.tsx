@@ -36,7 +36,7 @@ export function Hero() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[#051a11] text-white min-h-[90vh] flex items-center pt-20 md:pt-28">
+    <section className="relative overflow-hidden bg-[#051a11] text-white min-h-[80vh] flex items-center pt-16 md:pt-20 pb-16 md:pb-20">
       {/* Inject CSS keyframes */}
       <style>{heroCSS}</style>
 
@@ -56,7 +56,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full z-10">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full z-10">
         {/* Left: Text Content — Staggered mount with increasing delays */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -70,7 +70,7 @@ export function Hero() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-3 bg-white/5 border border-white/10 text-emerald-200 px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.3em] font-bold mb-8 backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.05)]"
+            className="inline-flex items-center gap-3 bg-white/5 border border-white/10 text-emerald-200 px-5 py-2.5 rounded-full text-[11px] uppercase tracking-[0.3em] font-bold mb-4 backdrop-blur-xl shadow-[0_0_30px_rgba(255,255,255,0.05)]"
           >
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -84,11 +84,11 @@ export function Hero() {
             initial={{ opacity: 0, y: 30, rotateX: 8 }}
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ delay: 0.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display text-3xl sm:text-5xl lg:text-5xl xl:text-7xl leading-[1.08] mb-6 sm:mb-8 tracking-tight drop-shadow-2xl break-words max-w-full"
+            className="font-display text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-[1.22] mb-3 sm:mb-4 tracking-normal drop-shadow-2xl break-words max-w-full"
             style={{ perspective: '1000px' }}
           >
-            <span className="block text-white">Sống khỏe mỗi ngày</span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic mt-2 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+            <span className="block text-white whitespace-nowrap">Sống khỏe mỗi ngày</span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic mt-2 filter drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] whitespace-nowrap">
               cùng di sản thảo mộc.
             </span>
           </motion.h1>
@@ -98,7 +98,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg md:text-xl text-[#F8FAFC]/95 mb-8 sm:mb-10 max-w-full xl:max-w-xl leading-relaxed font-medium drop-shadow-md"
+            className="text-base sm:text-lg md:text-xl text-[#F8FAFC]/95 mb-4 sm:mb-5 max-w-full xl:max-w-xl leading-relaxed font-medium drop-shadow-md"
           >
             <strong className="font-semibold tracking-wide text-white">EcoHeritage</strong> dùng AI kết nối tri thức thảo mộc với dữ liệu môi trường, giúp bạn chủ động chăm sóc sức khỏe.
           </motion.p>
@@ -108,12 +108,12 @@ export function Hero() {
             initial={{ opacity: 0, y: 30, rotateX: 10 }}
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ delay: 0.9, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="relative mt-12 mb-12 group"
+            className="relative mt-5 mb-5 group"
             style={{ perspective: '1000px' }}
           >
             <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-60 transition-opacity duration-1000 animate-pulse" />
-            <div className="relative border border-white/10 bg-[#0a2e1f]/50 p-6 md:p-8 rounded-3xl backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] transform transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2">
-              <div className="absolute -top-5 -left-5 bg-gradient-to-br from-emerald-400 to-emerald-600 border-[3px] border-[#051a11] p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+            <div className="relative border border-white/10 bg-[#0a2e1f]/50 p-4 md:p-5 rounded-3xl backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] transform transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2">
+              <div className="absolute -top-4 -left-4 bg-gradient-to-br from-emerald-400 to-emerald-600 border-[3px] border-[#051a11] p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
               <p className="text-[11px] uppercase tracking-[0.4em] text-emerald-300 mb-4 font-black ml-6 drop-shadow-md">
@@ -132,7 +132,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-5 mt-8 sm:mt-10"
+            className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-5 mt-4 sm:mt-5"
           >
             <motion.button
               whileHover={{ scale: 1.03, y: -2 }}
@@ -157,7 +157,7 @@ export function Hero() {
           </motion.div>
 
           {/* 3D Floating Mini Stats — delay 1.3s+ */}
-          <div className="grid grid-cols-3 gap-4 sm:gap-8 mt-12 sm:mt-16 pt-6 sm:pt-8 relative">
+          <div className="grid grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8 pt-4 sm:pt-4 relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             {heroStats.map((s, i) => {
               const numericValue = Number(s.num.replace(/[^0-9.]/g, ''));
