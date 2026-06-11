@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { traditionalRemedies as defaultRemedies } from '../data';
 import { HERITAGE_LOCATIONS as defaultHeritages } from '../heritageData';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 
 export function useHeritages() {
   const [heritages, setHeritages] = useState(defaultHeritages);

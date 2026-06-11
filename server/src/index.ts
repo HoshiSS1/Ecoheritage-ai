@@ -55,8 +55,10 @@ function saveBase64Image(base64String: string | null | undefined, id: string): s
     fs.writeFileSync(filepath, buffer);
     console.log(`[Image CMS] Đã lưu ảnh Base64 thành tập tin: ${filepath}`);
     
-    return `http://localhost:5000/uploads/${filename}`;
+    const baseUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+    return `${baseUrl}/uploads/${filename}`;
   } catch (error) {
+
     console.error('[Image CMS] Lỗi lưu ảnh Base64:', error);
     return base64String;
   }
