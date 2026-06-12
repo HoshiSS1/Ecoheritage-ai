@@ -14,6 +14,11 @@ export function useSmoothScroll() {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    // Disable Lenis smooth scroll on mobile viewports (< 768px) to use native GPU-accelerated OS momentum scroll.
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.5,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

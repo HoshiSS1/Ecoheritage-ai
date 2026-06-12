@@ -168,3 +168,19 @@
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* ─── Tối ưu hóa hiệu năng và độ mượt trên Mobile (Màn hình < 768px) ─── */
+@media (max-width: 767px) {
+  :root {
+    --glass-blur:       10px; /* Giảm độ mờ của glassmorphism giúp GPU hiển thị cực kỳ mượt mà */
+    --glass-bg:         rgba(255, 255, 255, 0.05); /* Tăng nhẹ độ đục để giữ nguyên độ tương phản */
+    --glass-bg-hover:   rgba(255, 255, 255, 0.08);
+
+    /* Rút ngắn nhẹ các khoảng thời gian chuyển tiếp giúp giao diện phản hồi nhanh và nhạy bén hơn */
+    --duration-normal:   200ms;
+    --duration-slow:     350ms;
+    --duration-reveal:   500ms;
+    --duration-dramatic: 800ms;
+  }
+}
+
