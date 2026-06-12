@@ -216,7 +216,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 viewport={{ once: true }}
                 transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 style={{ transformPerspective: 800 }}
-                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.25] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Theo dõi <em className="text-premium-gradient not-italic font-bold">nhịp thở</em> của <br className="hidden sm:block" />
                 thành phố hôm nay
@@ -276,7 +276,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 viewport={{ once: true }}
                 transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 style={{ transformPerspective: 800 }}
-                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.25] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Giao thoa y học: <br />
                 <em className="text-amber-400 not-italic font-bold">Hiện đại & Cổ truyền.</em>
@@ -334,7 +334,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
                 viewport={{ once: true }}
                 transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 style={{ transformPerspective: 800 }}
-                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.1] font-bold drop-shadow-xl mb-8 break-words"
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-[1.25] font-bold drop-shadow-xl mb-8 break-words"
               >
                 Kho tàng <em className="text-amber-400 not-italic font-bold">bài thuốc</em> dân gian.
               </motion.h2>
@@ -383,7 +383,7 @@ export function HomePage({ setIsAuthOpen }: { setIsAuthOpen: (v: boolean) => voi
           <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
             <motion.div initial={{ opacity: 0, scale: 0.9, y: 40, rotateX: 8 }} whileInView={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} style={{ transformPerspective: 1000 }} className="bg-[#0a2e1f]/40 backdrop-blur-2xl border border-white/10 p-8 sm:p-12 md:p-20 rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_80px_rgba(0,0,0,0.5)]">
               <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-emerald-400 mb-6 drop-shadow-lg">Sẵn sàng sống xanh?</p>
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8 text-white drop-shadow-2xl break-words">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.25] mb-8 text-white drop-shadow-2xl break-words">
                 Khởi đầu lối <em className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200 not-italic">sống xanh</em> <br />
                 cùng <em className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-200 not-italic">EcoHeritage</em>
               </h2>

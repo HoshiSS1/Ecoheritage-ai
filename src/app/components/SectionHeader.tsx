@@ -47,7 +47,7 @@ export function SectionHeader({ icon: Icon, badge, title, subtitle, align = 'cen
       </div>
 
       {/* Title */}
-      <h2 className="font-display text-white font-bold tracking-tight leading-[1.1] break-words max-w-full" style={{ fontSize: 'var(--text-display)' }}>
+      <h2 className="font-display text-white font-bold tracking-tight leading-[1.25] break-words max-w-full" style={{ fontSize: 'var(--text-display)' }}>
         {title}
       </h2>
 
