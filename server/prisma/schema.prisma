@@ -3,46 +3,46 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlserver"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
   id           Int      @id @default(autoincrement())
-  fullName     String   @db.NVarChar(100)
-  email        String   @unique @db.NVarChar(255)
-  passwordHash String   @db.NVarChar(255)
-  role         String   @default("User") @db.NVarChar(20)
-  avatarUrl    String?  @db.NVarChar(500)
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("User")
+  avatarUrl    String?
   createdAt    DateTime @default(now())
   reviews      Review[]
 }
 
 model Heritage {
   id             Int      @id @default(autoincrement())
-  name           String   @db.NVarChar(255)
-  description    String?  @db.NVarChar(Max)
+  name           String
+  description    String?
   latitude       Float?
   longitude      Float?
-  category       String?  @db.NVarChar(100)
-  imageUrl       String?  @db.NVarChar(500)
+  category       String?
+  imageUrl       String?
   createdAt      DateTime @default(now())
-  address        String?  @db.NVarChar(500)
+  address        String?
   aqi            Int?
-  bestTime       String?  @db.NVarChar(255)
-  color          String?  @db.NVarChar(50)
-  contact        String?  @db.NVarChar(255)
-  folkTip        String?  @db.NVarChar(Max)
-  herbs          String?  @db.NVarChar(Max)
-  history        String?  @db.NVarChar(Max)
+  bestTime       String?
+  color          String?
+  contact        String?
+  folkTip        String?
+  herbs          String?
+  history        String?
   humidity       Int?
-  level          String?  @db.NVarChar(100)
-  medicinalPower String?  @db.NVarChar(100)
+  level          String?
+  medicinalPower String?
   rating         Float?
-  regulations    String?  @db.NVarChar(Max)
+  regulations    String?
   reviewsCount   Int?     @default(0)
-  slugId         String   @unique @db.NVarChar(100)
-  status         String?  @db.NVarChar(100)
+  slugId         String   @unique
+  status         String?
   remedies       Remedy[]
   reviews        Review[]
 }
@@ -50,17 +50,17 @@ model Heritage {
 model Remedy {
   id          Int       @id @default(autoincrement())
   heritageId  Int?
-  name        String    @db.NVarChar(255)
-  ingredients String?   @db.NVarChar(Max)
-  imageUrl    String?   @db.NVarChar(500)
+  name        String
+  ingredients String?
+  imageUrl    String?
   createdAt   DateTime  @default(now())
-  benefits    String?   @db.NVarChar(Max)
-  category    String?   @db.NVarChar(100)
-  imageEmoji  String?   @db.NVarChar(50)
-  keywords    String?   @db.NVarChar(Max)
-  slugId      String    @unique @db.NVarChar(100)
-  steps       String?   @db.NVarChar(Max)
-  usage       String?   @db.NVarChar(Max)
+  benefits    String?
+  category    String?
+  imageEmoji  String?
+  keywords    String?
+  slugId      String    @unique
+  steps       String?
+  usage       String?
   heritage    Heritage? @relation(fields: [heritageId], references: [id], onDelete: Cascade)
 }
 
@@ -69,9 +69,9 @@ model Review {
   userId     Int?
   heritageId Int?
   rating     Int
-  comment    String?   @db.NVarChar(Max)
+  comment    String?
   createdAt  DateTime  @default(now())
-  guestName  String?   @db.NVarChar(100)
+  guestName  String?
   heritage   Heritage? @relation(fields: [heritageId], references: [id], onDelete: Cascade)
   user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
