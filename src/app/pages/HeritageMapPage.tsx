@@ -301,23 +301,25 @@ export function HeritageMapPage() {
   return (
     <div className="bg-[#051a11] h-screen relative overflow-hidden font-body">
       {/* HEADER TITLE */}
-      <div className="hidden md:block absolute top-[72px] sm:top-[100px] left-0 sm:left-1/2 -translate-x-0 sm:-translate-x-1/2 z-[50] pointer-events-none text-left sm:text-center w-full sm:w-auto px-4 pl-16 sm:pl-4">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-[#051a11]/90 backdrop-blur-2xl border border-emerald-500/20 rounded-full py-2 px-5 sm:py-3 sm:px-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] inline-block relative pointer-events-auto"
-        >
-          <h1 className="font-display text-[9px] sm:text-sm md:text-lg text-white font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase relative pb-1 sm:pb-3">
-            Bản đồ dược liệu <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200">Đà Nẵng</span>
-            <motion.div 
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "6rem", opacity: 1 }}
-              transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_15px_rgba(251,191,36,0.4)] rounded-full" 
-            />
-          </h1>
-        </motion.div>
-      </div>
+      {(!activeLocationId || !isMobile) && (
+        <div className="absolute top-[72px] sm:top-[100px] left-0 sm:left-1/2 -translate-x-0 sm:-translate-x-1/2 z-[50] pointer-events-none text-left sm:text-center w-full sm:w-auto px-4 pl-16 sm:pl-4">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#051a11]/90 backdrop-blur-2xl border border-emerald-500/20 rounded-full py-2 px-5 sm:py-3 sm:px-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] inline-block relative pointer-events-auto"
+          >
+            <h1 className="font-display text-[9px] sm:text-sm md:text-lg text-white font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase relative pb-1 sm:pb-3">
+              Bản đồ dược liệu <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200">Đà Nẵng</span>
+              <motion.div 
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "6rem", opacity: 1 }}
+                transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 shadow-[0_0_15px_rgba(251,191,36,0.4)] rounded-full" 
+              />
+            </h1>
+          </motion.div>
+        </div>
+      )}
 
       {(!activeLocationId || !isMobile) && (
         <Link 
