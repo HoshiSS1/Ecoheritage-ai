@@ -14,12 +14,16 @@ const getIconSvg = (type: string) => {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.8a7 7 0 0 1-9 8.2z"></path></svg>`;
 };
 
-const createCustomIcon = (color: string, type: string) => {
-  return L.divIcon({
+const iconCache: Record<string, L.DivIcon> = {};
+const createCustomIcon = (color: string, type: string, isSelected: boolean) => {
+  const key = `${color}-${type}-${isSelected}`;
+  if (iconCache[key]) return iconCache[key];
+
+  const icon = L.divIcon({
     className: 'custom-div-icon',
     html: `
       <div class="marker-pin-wrapper group">
-        <div class="marker-pulse" style="background-color: ${color}"></div>
+        ${isSelected ? `<div class="marker-pulse" style="background-color: ${color}"></div>` : ''}
         <div class="marker-pin" style="background-color: ${color}; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 8px 25px rgba(0,0,0,0.25); border: 3px solid white;">
           ${getIconSvg(type)}
         </div>
@@ -29,6 +33,9 @@ const createCustomIcon = (color: string, type: string) => {
     iconAnchor: [22, 22],
     popupAnchor: [0, -22]
   });
+
+  iconCache[key] = icon;
+  return icon;
 };
 
 function MapUpdater({ selectedLocationId, markers }: { selectedLocationId: string | null, markers: any[] }) {
@@ -45,13 +52,12 @@ function MapUpdater({ selectedLocationId, markers }: { selectedLocationId: strin
         if (!isNaN(lat) && !isNaN(lon)) {
           const offsetLat = lat + 0.005;
           map.flyTo([offsetLat, lon], 15, { 
-            duration: 2,
-            easeLinearity: 0.1
+            duration: 1.5,
           });
         }
       }
     } else if (!selectedLocationId) {
-      map.flyTo([16.0544, 108.2022], 12.5, { duration: 1.5 });
+      map.flyTo([16.0544, 108.2022], 12.5, { duration: 1.2 });
     }
   }, [selectedLocationId, markers, map]);
   
@@ -116,13 +122,15 @@ export function HeritageMap({ selectedLocationId, onLocationSelect, data: propsD
         resolvedPosition = [Number(loc.position[0]), Number(loc.position[1])];
       }
 
+      const isSelected = loc.id === selectedLocationId;
+
       return {
         ...loc,
         position: resolvedPosition,
-        icon: createCustomIcon(loc.color || '#10b981', loc.type || 'Khu bảo tồn')
+        icon: createCustomIcon(loc.color || '#10b981', loc.type || 'Khu bảo tồn', isSelected)
       };
     });
-  }, [propsData]);
+  }, [propsData, selectedLocationId]);
 
   if (!mounted) return <div className="h-full w-full bg-slate-100 animate-pulse" />;
 
@@ -142,7 +150,10 @@ export function HeritageMap({ selectedLocationId, onLocationSelect, data: propsD
       <style>{`
         /* VISION: CLEAN GOOGLE MAP EXPERIENCE */
         .leaflet-container { background: #f8fafc !important; outline: none; }
+        .leaflet-zoom-animated { will-change: transform; }
+        .leaflet-marker-icon { will-change: transform; }
         .marker-pin-wrapper { position: relative; }
+        .marker-pin { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
         .marker-pulse {
           position: absolute;
           top: 50%;
