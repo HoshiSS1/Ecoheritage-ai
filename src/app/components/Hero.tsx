@@ -217,28 +217,28 @@ export function Hero() {
             initial={{ opacity: 0, x: -40, y: 30, rotateY: -12 }}
             animate={{ opacity: 1, x: 0, y: 0, rotateY: 0 }}
             transition={{ delay: 1.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute -left-2 sm:-left-6 lg:-left-16 top-10 lg:top-16 bg-[#0a2e1f]/80 backdrop-blur-3xl border border-white/10 text-white rounded-[1.25rem] sm:rounded-[2rem] p-3 sm:p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-48 sm:w-64 lg:w-72 z-30 hover:-translate-y-2 transition-transform duration-500"
+            className="absolute -left-2 sm:-left-6 lg:-left-16 top-6 sm:top-10 lg:top-16 bg-[#0a2e1f]/80 backdrop-blur-3xl border border-white/10 text-white rounded-[1rem] sm:rounded-[2rem] p-2.5 sm:p-5 lg:p-6 shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-[41vw] sm:w-64 lg:w-72 z-30 hover:-translate-y-2 transition-transform duration-500"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="absolute -top-3 -right-3 w-16 h-16 bg-emerald-500/30 rounded-full blur-xl" />
-            <div className="flex items-center gap-3 mb-4">
-              <span className="relative flex h-3 w-3">
+            <div className="flex items-center gap-1.5 sm:gap-3 mb-2 sm:mb-4">
+              <span className="relative flex h-1.5 w-1.5 sm:h-3 sm:w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 sm:h-3 sm:w-3 bg-emerald-500 shadow-[0_0_10px_#10b981]"></span>
               </span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-white font-bold drop-shadow-md">Đà Nẵng · Trực tiếp</span>
+              <span className="text-[7px] sm:text-[10px] uppercase tracking-[0.25em] sm:tracking-[0.3em] text-white font-bold drop-shadow-md">Đà Nẵng · Trực tiếp</span>
             </div>
-            <div className="flex items-end justify-between mb-2">
+            <div className="flex items-end justify-between mb-1 sm:mb-2">
               <div className="min-w-0">
-                <div className="font-display text-2xl sm:text-4xl font-bold tracking-tighter drop-shadow-xl text-white truncate">{currentAqi}</div>
-                <div className="text-[10px] sm:text-xs text-amber-300 font-bold uppercase tracking-widest mt-1 drop-shadow-md">US AQI — {currentStatus}</div>
+                <div className="font-display text-lg sm:text-4xl font-bold tracking-tighter drop-shadow-xl text-white truncate">{currentAqi}</div>
+                <div className="text-[8px] sm:text-[10px] text-amber-300 font-bold uppercase tracking-widest mt-0.5 sm:mt-1 drop-shadow-md truncate">US AQI — {currentStatus}</div>
               </div>
-              <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-2 sm:p-3 rounded-2xl shadow-lg">
-                <Leaf className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+              <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-1.5 sm:p-3 rounded-lg sm:rounded-2xl shadow-lg">
+                <Leaf className="w-4.5 h-4.5 sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
-            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/20 text-[11px] sm:text-[13px] text-white italic font-medium leading-relaxed drop-shadow-sm">
-              Độ ẩm {currentHumidity}%, UV {currentUv}. Gợi ý chăm sóc thay đổi theo dữ liệu môi trường thật.
+            <div className="mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-white/20 text-[8px] sm:text-[13px] text-white italic font-medium leading-normal sm:leading-relaxed drop-shadow-sm line-clamp-3 sm:line-clamp-none">
+              Độ ẩm {currentHumidity}%, UV {currentUv}. <span className="hidden xs:inline">Gợi ý chăm sóc thay đổi theo dữ liệu môi trường thật.</span>
             </div>
           </motion.div>
 
@@ -247,17 +247,17 @@ export function Hero() {
             initial={{ opacity: 0, x: 40, y: -30, rotateY: 12 }}
             animate={{ opacity: 1, x: 0, y: 0, rotateY: 0 }}
             transition={{ delay: 1.8, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute -right-2 sm:-right-4 lg:-right-10 bottom-8 lg:bottom-12 bg-gradient-to-br from-amber-400/95 to-amber-600/95 backdrop-blur-2xl border border-white/20 text-[#051a11] rounded-[1.25rem] sm:rounded-[2rem] p-3 sm:p-5 lg:p-6 shadow-[0_30px_60px_rgba(0,0,0,0.6)] w-44 sm:w-56 lg:w-64 z-40 hover:-translate-y-2 transition-transform duration-500"
+            className="absolute -right-2 sm:-right-4 lg:-right-10 bottom-6 sm:bottom-8 lg:bottom-12 bg-gradient-to-br from-amber-400/95 to-amber-600/95 backdrop-blur-2xl border border-white/20 text-[#051a11] rounded-[1rem] sm:rounded-[2rem] p-2.5 sm:p-5 lg:p-6 shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-[39vw] sm:w-56 lg:w-64 z-40 hover:-translate-y-2 transition-transform duration-500"
             style={{ willChange: 'transform, opacity' }}
           >
             <div className="absolute top-0 right-0 w-full h-full bg-[url('/textures/rice-paper.png')] opacity-30 mix-blend-overlay rounded-[1.5rem] sm:rounded-[2rem]" />
             <div className="relative z-10">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl mb-3 sm:mb-4 shadow-inner border border-white/30 backdrop-blur-sm relative overflow-hidden">
-                <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-[#051a11]" />
+              <div className="w-7 h-7 sm:w-12 sm:h-12 bg-white/20 rounded-lg sm:rounded-2xl flex items-center justify-center text-lg sm:text-2xl mb-2 sm:mb-4 shadow-inner border border-white/30 backdrop-blur-sm relative overflow-hidden">
+                <Leaf className="w-4 h-4 sm:w-6 sm:h-6 text-[#051a11]" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 to-transparent" />
               </div>
-              <div className="font-display text-base sm:text-xl leading-tight font-bold mb-1 drop-shadow-sm">Gợi ý dược liệu</div>
-              <div className="text-[11px] sm:text-[13px] font-semibold text-[#051a11] leading-relaxed mt-1 sm:mt-2">Siro lá lốt mật ong — giải pháp vàng cho họng hắt hơi ngày bụi.</div>
+              <div className="font-display text-xs sm:text-xl leading-tight font-bold mb-0.5 sm:mb-1 drop-shadow-sm">Gợi ý dược liệu</div>
+              <div className="text-[8px] sm:text-[13px] font-semibold text-[#051a11] leading-normal sm:leading-relaxed mt-1.5 sm:mt-2 line-clamp-3 sm:line-clamp-none">Siro lá lốt mật ong — giải pháp vàng cho họng hắt hơi ngày bụi.</div>
             </div>
           </motion.div>
           </div>

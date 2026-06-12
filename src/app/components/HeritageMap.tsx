@@ -71,10 +71,12 @@ function MapResizer() {
   return null;
 }
 
-function ZoomControls() {
+function ZoomControls({ hasActiveLocation }: { hasActiveLocation: boolean }) {
   const map = useMap();
   return (
-    <div className="absolute bottom-32 right-6 z-[1000] flex flex-col gap-2 pointer-events-auto">
+    <div className={`absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 z-[1000] flex flex-col gap-2 pointer-events-auto transition-all duration-500 ${
+      hasActiveLocation ? 'md:right-[calc(50%+1.5rem)] lg:right-[calc(35%+1.5rem)]' : ''
+    }`}>
       <div className="bg-white border border-black/5 rounded-2xl flex flex-col overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
         <button 
           className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-slate-50 transition-all font-medium text-xl"
@@ -174,7 +176,7 @@ export function HeritageMap({ selectedLocationId, onLocationSelect, data: propsD
         
         <MapUpdater selectedLocationId={selectedLocationId || null} markers={markers} />
         <MapResizer />
-        <ZoomControls />
+        <ZoomControls hasActiveLocation={!!selectedLocationId} />
 
         {markers.map((loc: any) => (
           <Marker 

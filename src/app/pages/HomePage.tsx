@@ -45,6 +45,9 @@ function RemediesMarquee({ remedies }: { remedies: any[] }) {
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleMouseEnter}
+        onTouchEnd={handleMouseLeave}
+        onTouchCancel={handleMouseLeave}
         className="px-4"
       >
         {[...Array(2)].map((_, i) => (

@@ -286,8 +286,7 @@ html.lenis, html.lenis body {
   will-change: transform;
 }
 
-/* Trigger lật khi hover trên PC hoặc có class active trên Mobile */
-.card-flip-container:hover .card-flip-inner,
+/* Trigger lật khi có class is-flipped */
 .card-flip-container.is-flipped .card-flip-inner {
   transform: rotateY(180deg);
 }

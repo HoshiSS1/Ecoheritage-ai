@@ -98,12 +98,33 @@ export function HeritageMapPage() {
   });
   const [isMobile, setIsMobile] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const mapSearchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/') {
+        const target = e.target as HTMLElement;
+        if (
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable
+        ) {
+          return;
+        }
+        e.preventDefault();
+        mapSearchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   useAirQuality();
@@ -309,7 +330,7 @@ export function HeritageMapPage() {
       {/* SIDEBAR */}
       <div className="absolute top-[110px] sm:top-[120px] md:top-[160px] left-2 right-2 sm:left-4 sm:right-4 md:left-6 md:right-auto bottom-16 sm:bottom-8 z-[80] flex pointer-events-none">
         <AnimatePresence mode="wait">
-          {isSidebarOpen && !activeLocationId && (
+          {isSidebarOpen && (!activeLocationId || !isMobile) && (
             <motion.div
               initial={{ x: -500, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -321,17 +342,30 @@ export function HeritageMapPage() {
                 {/* Search Pill */}
                 <div className="p-6 pb-4 shrink-0">
                   <div className="relative group mb-4">
-                    <div className="relative bg-white/5 border border-white/10 rounded-xl flex items-center group-focus-within:border-emerald-500/50 transition-all">
+                    {/* Glowing background */}
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-amber-400 rounded-xl blur opacity-15 group-focus-within:opacity-45 transition-opacity pointer-events-none" />
+                    
+                    <div className="relative bg-[#020b07]/90 border border-white/10 rounded-xl flex items-center focus-within:border-emerald-500/50 focus-within:ring-1 focus-within:ring-emerald-500/20 transition-all">
                       <div className="pl-4">
-                        <Search className="w-3.5 h-3.5 text-emerald-400/40" />
+                        <Search className="w-3.5 h-3.5 text-emerald-400/60 group-focus-within:text-emerald-400 transition-colors" />
                       </div>
                       <input
+                        ref={mapSearchInputRef}
                         type="text"
-                        placeholder="Tìm dược liệu..."
+                        placeholder="Tìm địa điểm, dược liệu..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-transparent border-none py-3.5 px-4 text-[14px] text-white placeholder-white/20 focus:outline-none"
+                        className="w-full bg-transparent border-none py-3 px-3 text-[14px] text-white placeholder-white/30 focus:outline-none font-medium"
                       />
+                      {searchTerm && (
+                        <button
+                          onClick={() => setSearchTerm('')}
+                          className="pr-4 text-white/40 hover:text-white transition-colors cursor-pointer"
+                          title="Xóa tìm kiếm"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -414,7 +448,7 @@ export function HeritageMapPage() {
           )}
         </AnimatePresence>
 
-        {!activeLocationId && (
+        {(!activeLocationId || !isMobile) && (
           <div className="flex items-center pointer-events-auto h-full pl-2">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -434,7 +468,7 @@ export function HeritageMapPage() {
             animate={isMobile ? { y: 0 } : { x: 0, opacity: 1 }}
             exit={isMobile ? { y: '100%' } : { x: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 30, stiffness: 120 }}
-            style={isMobile ? { height: isExpanded ? '85vh' : '32vh' } : {}}
+            style={isMobile ? { height: isExpanded ? '85vh' : '265px' } : {}}
             className={`fixed md:absolute z-[85] bg-[#020b07] border-white/10 shadow-[0_-20px_60px_rgba(0,0,0,0.8)] md:shadow-[-30px_0_120px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col transition-all duration-500 ${
               isMobile 
                 ? 'bottom-0 left-0 right-0 top-auto rounded-t-[2.5rem] border-t' 
@@ -448,6 +482,20 @@ export function HeritageMapPage() {
               >
                 <div className="w-12 h-1 bg-white/20 rounded-full" />
               </div>
+            )}
+            
+            {isMobile && !isExpanded && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveLocationId(null);
+                }}
+                className="absolute top-3 right-4 z-[90] w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 active:scale-95 transition-all"
+                title="Đóng bản tin"
+              >
+                <X className="w-4 h-4" />
+              </button>
             )}
             
             <div ref={detailPanelRef} data-lenis-prevent="true" className="flex-1 overflow-y-auto no-scrollbar pb-28">
@@ -513,7 +561,7 @@ export function HeritageMapPage() {
               </div>
 
               {isMobile && !isExpanded && (
-                <div className="p-6 pb-2 space-y-3 relative z-10 flex flex-col justify-between">
+                <div className="p-5 pb-24 space-y-2 relative z-10 flex flex-col justify-between h-full">
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-0.5 bg-emerald-500 text-[#051a11] rounded text-[8px] font-black uppercase tracking-widest shadow-sm">{activeLoc.type}</span>
                     <span className="px-2.5 py-0.5 bg-amber-500/20 border border-amber-500/30 rounded text-[8px] font-black text-amber-400 uppercase flex items-center gap-1"><Clock className="w-2.5 h-2.5" /> {activeLoc.bestTime}</span>
