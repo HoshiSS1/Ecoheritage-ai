@@ -16,6 +16,32 @@ export function HeritagePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const topRef = useRef<HTMLDivElement>(null);
   const [heritageReviews, setHeritageReviews] = useState<any[]>([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Keyboard shortcut listener for '/' to focus search input
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/') {
+        // Ignore if focus is in an editable element (inputs, textareas, etc.)
+        const target = e.target as HTMLElement;
+        if (
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable
+        ) {
+          return;
+        }
+
+        // Prevent slash from being typed into the search bar upon initial focus
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Feedback Form State
   const [fbName, setFbName] = useState('');
@@ -239,38 +265,80 @@ export function HeritagePage() {
           </motion.p>
         </div>
 
-        {/* Search & Filter */}
-        <div className="mb-8 sm:mb-12 space-y-4 sm:space-y-6">
-          <div className="relative max-w-xl mx-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm bài thuốc, công dụng, dược liệu..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:border-emerald-400/50 transition-all"
-            />
+        {/* Search & Filter (Mobile & Desktop Responsive) */}
+        <div className="mb-10 sm:mb-16 space-y-6 sm:space-y-8 flex flex-col items-center w-full px-2">
+          
+          {/* Centered Search Bar */}
+          <div className="relative w-full max-w-xl group px-4 sm:px-0">
+            {/* Ambient colorful background glow */}
+            <div className={`absolute -inset-1 bg-gradient-to-r from-emerald-500 via-amber-400 to-emerald-500 rounded-2xl blur-xl transition-all duration-700 pointer-events-none opacity-20 ${isSearchFocused ? 'opacity-65 scale-[1.01]' : 'group-hover:opacity-40'}`} />
+
+            <div className={`relative flex items-center bg-[#0a2e1f]/60 backdrop-blur-2xl border rounded-2xl px-4 py-3.5 transition-all duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.6)] ${isSearchFocused ? 'border-amber-400 shadow-[0_0_25px_rgba(251,191,36,0.15)]' : 'border-white/10 group-hover:border-white/20'}`}>
+              
+              {/* Search Icon */}
+              <Search className={`w-5 h-5 transition-colors duration-300 mr-3 shrink-0 ${isSearchFocused ? 'text-amber-400' : 'text-white/40'}`} />
+              
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Tìm kiếm bài thuốc, công dụng..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                className="w-full bg-transparent text-white placeholder-white/30 focus:outline-none text-sm sm:text-base font-medium pr-10"
+              />
+
+              {/* Action Buttons & Badges */}
+              <div className="absolute right-6 flex items-center gap-2">
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="p-1 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors cursor-pointer"
+                    title="Xóa tìm kiếm"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+
+                {/* Clean shortcut hint - hidden on mobile */}
+                {!searchTerm && !isSearchFocused && (
+                  <kbd className="hidden sm:inline-block bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-[10px] text-white/30 font-mono select-none">
+                    /
+                  </kbd>
+                )}
+              </div>
+            </div>
+            
+            {/* Float result count below search input when searching */}
+            {searchTerm && (
+              <div className="absolute left-0 right-0 top-full mt-2 text-center z-20">
+                <span className="text-[11px] font-bold text-amber-400 bg-[#0a2e1f]/90 border border-amber-400/30 px-3.5 py-1 rounded-full shadow-[0_10px_25px_rgba(0,0,0,0.5)] backdrop-blur-md">
+                  Tìm thấy {filteredRemedies.length} kết quả phù hợp
+                </span>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center overflow-x-auto no-scrollbar gap-6 sm:gap-10 px-4 py-6 border-b border-white/5">
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(cat)}
-                className="relative py-2 group/tab transition-all shrink-0"
-              >
-                <span className={`text-[13px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${
-                  activeFilter === cat ? 'text-amber-400' : 'text-white/40 group-hover/tab:text-amber-300'
-                }`}>
-                  {cat}
-                </span>
-                <motion.div 
-                  className={`absolute -bottom-0.5 left-0 h-[2px] bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)] transition-all duration-500 ${
-                    activeFilter === cat ? 'w-full opacity-100' : 'w-0 opacity-0 group-hover/tab:w-full group-hover/tab:opacity-100'
+          {/* Filter Tabs - Horizontal scroll on Mobile, Wraps and centers on Desktop */}
+          <div className="w-full max-w-4xl flex justify-center border-b border-white/5 pb-6">
+            <div className="flex items-center sm:flex-wrap sm:justify-center overflow-x-auto sm:overflow-visible no-scrollbar gap-2 sm:gap-3 px-4 py-1 select-none w-full max-w-3xl justify-start">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  className={`px-4 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-[0.1em] transition-all duration-300 border shrink-0 cursor-pointer ${
+                    activeFilter === cat 
+                      ? 'bg-gradient-to-r from-amber-400 to-amber-300 text-[#051a11] border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.35)] font-black' 
+                      : 'bg-white/5 text-white/50 border-white/5 hover:bg-white/10 hover:text-white hover:border-white/10'
                   }`}
-                />
-              </button>
-            ))}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
