@@ -301,7 +301,7 @@ export function HeritageMapPage() {
   return (
     <div className="bg-[#051a11] h-screen relative overflow-hidden font-body">
       {/* HEADER TITLE */}
-      <div className="absolute top-[72px] sm:top-[100px] left-0 sm:left-1/2 -translate-x-0 sm:-translate-x-1/2 z-[50] pointer-events-none text-left sm:text-center w-full sm:w-auto px-4 pl-16 sm:pl-4">
+      <div className="hidden md:block absolute top-[72px] sm:top-[100px] left-0 sm:left-1/2 -translate-x-0 sm:-translate-x-1/2 z-[50] pointer-events-none text-left sm:text-center w-full sm:w-auto px-4 pl-16 sm:pl-4">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -319,13 +319,15 @@ export function HeritageMapPage() {
         </motion.div>
       </div>
 
-      <Link 
-        to="/"
-        className="absolute top-[72px] sm:top-[100px] left-4 sm:left-6 md:left-12 z-[80] w-9.5 h-9.5 sm:w-12 sm:h-12 bg-[#051a11]/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-[#051a11] transition-all shadow-2xl group"
-        title="Về trang chủ"
-      >
-        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
-      </Link>
+      {(!activeLocationId || !isMobile) && (
+        <Link 
+          to="/"
+          className="absolute top-[72px] sm:top-[100px] left-4 sm:left-6 md:left-12 z-[80] w-9.5 h-9.5 sm:w-12 sm:h-12 bg-[#051a11]/90 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-emerald-400 hover:bg-emerald-500 hover:text-[#051a11] transition-all shadow-2xl group"
+          title="Về trang chủ"
+        >
+          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
+        </Link>
+      )}
 
       {/* SIDEBAR */}
       <div className="absolute top-[110px] sm:top-[120px] md:top-[160px] left-2 right-2 sm:left-4 sm:right-4 md:left-6 md:right-auto bottom-16 sm:bottom-8 z-[80] flex pointer-events-none">
@@ -336,7 +338,7 @@ export function HeritageMapPage() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -500, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 80 }}
-              className="w-full md:w-[380px] max-h-[50vh] md:max-h-full h-full flex flex-col pointer-events-auto"
+              className="w-[calc(100%-48px)] md:w-[380px] max-h-[65vh] md:max-h-full h-full flex flex-col pointer-events-auto"
             >
               <div className="bg-[#051a11]/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden h-full flex flex-col relative">
                 {/* Search Pill */}
@@ -426,7 +428,7 @@ export function HeritageMapPage() {
                 </div>
 
                 {/* Legend */}
-                <div className="p-6 mt-auto border-t border-white/5 bg-white/[0.01]">
+                <div className="hidden md:block p-6 mt-auto border-t border-white/5 bg-white/[0.01]">
                   <div className="grid grid-cols-2 gap-y-3 gap-x-4">
                     {[
                       { label: 'Khu bảo tồn', color: '#10b981' },

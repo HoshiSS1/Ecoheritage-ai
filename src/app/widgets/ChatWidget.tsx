@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { Send, Leaf, Sparkles, Loader2, MessageCircle, X, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
 import { GoogleGenerativeAI, type GenerationConfig, type Content, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { toast } from 'sonner';
@@ -225,6 +225,9 @@ const renderBoldText = (text: string) => {
 };
 
 export function ChatWidget({ user }: ChatWidgetProps) {
+  const location = useLocation();
+  const isMapPageOnMobile = location.pathname === '/heritage/map' && typeof window !== 'undefined' && window.innerWidth < 768;
+
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -391,6 +394,8 @@ export function ChatWidget({ user }: ChatWidgetProps) {
     setIsOpen(true);
     setIsMinimized(false);
   };
+
+  if (isMapPageOnMobile) return null;
 
   return (
     <>
